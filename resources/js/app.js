@@ -11,14 +11,16 @@ const JsonHeaders = {
     'X-Requested-With': 'XMLHttpRequest',
 };
 
-// --- BUSCADOR ---
+let authMode = 'login';
+
+// --- 1. BUSCADOR ---
 window.Search = function() {
     const q = document.getElementById('q').value.trim();
     const url = q ? `/?search=${encodeURIComponent(q)}` : '/';
     window.location.href = url;
 };
 
-// --- CARRITO ---
+// --- 2. CARRITO ---
 window.getCart = () => {
     try {
         return JSON.parse(localStorage.getItem('electroshop-cart') || '[]');
@@ -49,26 +51,23 @@ window.updateCartUI = function() {
     if (!itemsContainer) return;
 
     if (cart.length === 0) {
-        itemsContainer.innerHTML = `
-            <div class="h-full flex flex-col items-center justify-center text-center opacity-50 py-20">
-                <p class="font-black uppercase text-xs">Tu carrito está vacío</p>
-            </div>`;
+        itemsContainer.innerHTML = `<div class="py-20 text-center opacity-50"><p class="font-black uppercase text-xs">Vacío</p></div>`;
         return;
     }
 
     itemsContainer.innerHTML = cart.map(item => `
-        <article class="flex gap-4 p-4 bg-white border border-slate-100 rounded-3xl">
+        <article class="flex gap-4 p-4 bg-white border border-slate-100 rounded-3xl animate-fade-in">
             <img src="${item.image}" class="w-16 h-16 object-contain">
             <div class="flex-1">
-                <h4 class="text-xs font-bold truncate">${item.name}</h4>
-                <p class="font-black text-sm italic">S/.${item.price.toFixed(2)}</p>
+                <h4 class="text-xs font-bold truncate text-slate-800">${item.name}</h4>
+                <p class="font-black text-sm italic text-blue-600">S/.${item.price.toFixed(2)}</p>
                 <div class="flex justify-between items-center mt-2">
-                    <div class="flex gap-4 bg-slate-100 px-3 py-1 rounded-full text-xs font-bold">
+                    <div class="flex gap-4 bg-slate-100 px-3 py-1 rounded-full text-xs font-bold text-slate-600">
                         <button onclick="changeQty(${item.id}, -1)">−</button>
                         <span>${item.qty}</span>
                         <button onclick="changeQty(${item.id}, 1)">+</button>
                     </div>
-                    <button onclick="removeFromCart(${item.id})" class="text-red-500 text-[9px] font-black uppercase">Borrar</button>
+                    <button onclick="removeFromCart(${item.id})" class="text-red-500 text-[9px] font-black uppercase underline">Borrar</button>
                 </div>
             </div>
         </article>
@@ -88,41 +87,115 @@ window.ToggleCart = function(show) {
     if (show) {
         drawer.classList.remove('translate-x-full');
         overlay.classList.remove('hidden');
-        document.body.classList.add('modal-open');
+        document.body.classList.add('overflow-hidden');
     } else {
         drawer.classList.add('translate-x-full');
         overlay.classList.add('hidden');
-        document.body.classList.remove('modal-open');
+        document.body.classList.remove('overflow-hidden');
     }
 };
 
-// --- AUTENTICACIÓN ---
+// --- 3. AUTENTICACIÓN ---
+
 window.openAuthModal = function() {
     const modal = document.getElementById('AuthModal');
     const container = document.getElementById('ModalContainer');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-    setTimeout(() => {
-        container.classList.remove('translate-y-full', 'opacity-0', 'md:scale-95');
-    }, 10);
+    modal.classList.replace('hidden', 'flex');
+    setTimeout(() => container.classList.remove('translate-y-full', 'opacity-0', 'md:scale-95'), 10);
 };
 
 window.closeAuthModal = function() {
-    const modal = document.getElementById('AuthModal');
     const container = document.getElementById('ModalContainer');
     container.classList.add('translate-y-full', 'opacity-0');
     setTimeout(() => {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        document.getElementById('AuthModal').classList.replace('flex', 'hidden');
+        resetAuthForm();
     }, 400);
 };
 
-// Inicializar al cargar
+function resetAuthForm() {
+    document.getElementById('AuthEmail').readOnly = false;
+    document.getElementById('AuthEmail').classList.remove('opacity-50');
+    document.getElementById('PassWrapper').classList.add('hidden');
+    document.getElementById('AuthSubtitle').innerText = 'Ingresa tu correo para continuar';
+    document.getElementById('AuthBtn').innerText = 'Continuar';
+    document.getElementById('AuthAlert').classList.add('hidden');
+}
+
+// Función del Ojito
+window.togglePassword = function() {
+    const passInput = document.getElementById('AuthPass');
+    const eyeIcon = document.getElementById('eyeIcon');
+    if (passInput.type === 'password') {
+        passInput.type = 'text';
+        eyeIcon.classList.add('text-blue-600');
+    } else {
+        passInput.type = 'password';
+        eyeIcon.classList.remove('text-blue-600');
+    }
+};
+
+window.handleAuthStep = async function() {
+    const email = document.getElementById('AuthEmail').value.trim();
+    const password = document.getElementById('AuthPass').value.trim();
+    const alertBox = document.getElementById('AuthAlert');
+    const btn = document.getElementById('AuthBtn');
+
+    if (!email) return;
+    alertBox.classList.add('hidden');
+
+    // Paso 1: Verificar correo
+    if (document.getElementById('PassWrapper').classList.contains('hidden')) {
+        btn.innerText = 'Verificando...';
+        try {
+            const res = await fetch('/auth/check', {
+                method: 'POST',
+                headers: JsonHeaders,
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+
+            document.getElementById('PassWrapper').classList.remove('hidden');
+            document.getElementById('AuthEmail').readOnly = true;
+            document.getElementById('AuthEmail').classList.add('opacity-50');
+
+            if (data.exists) {
+                authMode = 'login';
+                document.getElementById('AuthSubtitle').innerText = 'Bienvenido, ingresa tu clave';
+                btn.innerText = 'Iniciar Sesión';
+            } else {
+                authMode = 'register';
+                document.getElementById('AuthSubtitle').innerText = 'Correo nuevo: Crea tu clave';
+                btn.innerText = 'Crear Cuenta';
+            }
+        } catch (e) { console.error(e); }
+        return;
+    }
+
+    // Paso 2: Autenticar
+    if (!password) return;
+    btn.innerText = 'Procesando...';
+
+    try {
+        const res = await fetch('/auth/process', {
+            method: 'POST',
+            headers: JsonHeaders,
+            body: JSON.stringify({ email, password, mode: authMode })
+        });
+        const result = await res.json();
+
+        if (result.success) {
+            window.location.reload();
+        } else {
+            alertBox.innerText = result.message || 'Error';
+            alertBox.classList.remove('hidden');
+            btn.innerText = (authMode === 'login') ? 'Iniciar Sesión' : 'Crear Cuenta';
+        }
+    } catch (e) { console.error(e); }
+};
+
+// Inicializar
 document.addEventListener('DOMContentLoaded', () => {
     window.updateCartUI();
-
-    // Escuchar Enter en buscador
-    document.getElementById('q')?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') window.Search();
-    });
+    document.getElementById('q')?.addEventListener('keydown', (e) => e.key === 'Enter' && window.Search());
 });

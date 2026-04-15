@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Productos;
+use App\Models\Producto;
 
 class HomeController extends Controller
 {
@@ -11,7 +11,7 @@ class HomeController extends Controller
     {
         $Search = $request->search ?? '';
 
-        $Query = Productos::query();
+        $Query = Producto::with('marca');
 
         if ($Search) {
             $Query->where('Nombre', 'like', "%{$Search}%");
@@ -22,6 +22,6 @@ class HomeController extends Controller
         return view('index', [
             'Products' => $Products,
             'Search' => $Search
-    ]);
+        ]);
     }
 }

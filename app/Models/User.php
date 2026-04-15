@@ -2,31 +2,51 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use Notifiable;
+
+    protected $table = 'Usuarios';
+    protected $primaryKey = 'Id';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'Nombre', 'Apellidos', 'Correo', 'Password',
+        'Telefono', 'Dni', 'Ruc', 'RazonSocial'
+    ];
+
+    protected $hidden = [
+        'Password',
+    ];
+
+    public function getAuthPassword()
+    {
+        return $this->Password;
+    }
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Relación con los roles.
+     * UsuarioRoles es la tabla pivote.
      */
-    protected function casts(): array
+    public function roles(): BelongsToMany
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsToMany(
+            Role::class,
+            'UsuarioRoles', // Tabla intermedia
+            'UsuarioId',    // FK en tabla intermedia para este modelo
+            'RolId'         // FK en tabla intermedia para el modelo Role
+        );
+    }
+
+    /**
+     * Función para verificar roles en el Blade.
+     */
+    public function hasRole($roleName): bool
+    {
+        return $this->roles->contains('Nombre', $roleName);
     }
 }
