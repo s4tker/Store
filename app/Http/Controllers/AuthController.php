@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers; // <--- CORREGIDO: Debe ser Controllers
+namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Role; // Importamos el modelo Role
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB; // Para transacciones seguras
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -27,9 +27,10 @@ class AuthController extends Controller
             try {
                 return DB::transaction(function () use ($email, $password) {
                     $user = User::create([
-                        'Correo' => $email,
+                        'Alias'    => explode('@', $email)[0],
+                        'Correo'   => $email,
                         'Password' => Hash::make($password),
-                        'Nombre' => explode('@', $email)[0],
+                        'Nombre'   => null,
                     ]);
 
                     $role = Role::where('Nombre', 'Cliente')->first();
@@ -44,12 +45,13 @@ class AuthController extends Controller
                 return response()->json(['success' => false, 'message' => 'Error al crear cuenta']);
             }
         } else {
-            // Login
             $user = User::where('Correo', $email)->first();
+
             if ($user && Hash::check($password, $user->Password)) {
                 Auth::login($user);
                 return response()->json(['success' => true]);
             }
+
             return response()->json(['success' => false, 'message' => 'Clave incorrecta']);
         }
     }
