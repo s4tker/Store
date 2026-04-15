@@ -1,8 +1,3 @@
-/**
- * Lógica Global de ElectroShop
- * Maneja Carrito, Autenticación y Buscador
- */
-
 const Token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 const JsonHeaders = {
     'Content-Type': 'application/json',
@@ -101,7 +96,10 @@ window.openAuthModal = function() {
     const modal = document.getElementById('AuthModal');
     const container = document.getElementById('ModalContainer');
     modal.classList.replace('hidden', 'flex');
-    setTimeout(() => container.classList.remove('translate-y-full', 'opacity-0', 'md:scale-95'), 10);
+    setTimeout(() => {
+        container.classList.remove('translate-y-full', 'opacity-0', 'md:scale-95');
+        document.getElementById('AuthEmail').focus(); // Foco al abrir
+    }, 10);
 };
 
 window.closeAuthModal = function() {
@@ -114,15 +112,17 @@ window.closeAuthModal = function() {
 };
 
 function resetAuthForm() {
-    document.getElementById('AuthEmail').readOnly = false;
-    document.getElementById('AuthEmail').classList.remove('opacity-50');
+    const emailInput = document.getElementById('AuthEmail');
+    emailInput.readOnly = false;
+    emailInput.value = '';
+    emailInput.classList.remove('opacity-50');
+    document.getElementById('AuthPass').value = '';
     document.getElementById('PassWrapper').classList.add('hidden');
     document.getElementById('AuthSubtitle').innerText = 'Ingresa tu correo para continuar';
     document.getElementById('AuthBtn').innerText = 'Continuar';
     document.getElementById('AuthAlert').classList.add('hidden');
 }
 
-// Función del Ojito
 window.togglePassword = function() {
     const passInput = document.getElementById('AuthPass');
     const eyeIcon = document.getElementById('eyeIcon');
@@ -135,18 +135,35 @@ window.togglePassword = function() {
     }
 };
 
+// Función para validar formato de correo
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 window.handleAuthStep = async function() {
-    const email = document.getElementById('AuthEmail').value.trim();
-    const password = document.getElementById('AuthPass').value.trim();
+    const emailInput = document.getElementById('AuthEmail');
+    const passInput = document.getElementById('AuthPass');
+    const passWrapper = document.getElementById('PassWrapper');
     const alertBox = document.getElementById('AuthAlert');
     const btn = document.getElementById('AuthBtn');
 
-    if (!email) return;
+    const email = emailInput.value.trim();
+    const password = passInput.value.trim();
+
     alertBox.classList.add('hidden');
 
+    // Validación de formato de correo
+    if (!validateEmail(email)) {
+        alertBox.innerText = 'Ingresa un correo válido (ejemplo@correo.com)';
+        alertBox.classList.remove('hidden');
+        return;
+    }
+
     // Paso 1: Verificar correo
-    if (document.getElementById('PassWrapper').classList.contains('hidden')) {
+    if (passWrapper.classList.contains('hidden')) {
         btn.innerText = 'Verificando...';
+        btn.disabled = true;
+
         try {
             const res = await fetch('/auth/check', {
                 method: 'POST',
@@ -155,9 +172,10 @@ window.handleAuthStep = async function() {
             });
             const data = await res.json();
 
-            document.getElementById('PassWrapper').classList.remove('hidden');
-            document.getElementById('AuthEmail').readOnly = true;
-            document.getElementById('AuthEmail').classList.add('opacity-50');
+            passWrapper.classList.remove('hidden');
+            emailInput.readOnly = true;
+            emailInput.classList.add('opacity-50');
+            btn.disabled = false;
 
             if (data.exists) {
                 authMode = 'login';
@@ -168,13 +186,25 @@ window.handleAuthStep = async function() {
                 document.getElementById('AuthSubtitle').innerText = 'Correo nuevo: Crea tu clave';
                 btn.innerText = 'Crear Cuenta';
             }
-        } catch (e) { console.error(e); }
+
+            setTimeout(() => passInput.focus(), 100); // Foco al password
+
+        } catch (e) {
+            btn.disabled = false;
+            console.error(e);
+        }
         return;
     }
 
     // Paso 2: Autenticar
-    if (!password) return;
+    if (!password) {
+        alertBox.innerText = 'Ingresa tu contraseña';
+        alertBox.classList.remove('hidden');
+        return;
+    }
+
     btn.innerText = 'Procesando...';
+    btn.disabled = true;
 
     try {
         const res = await fetch('/auth/process', {
@@ -189,13 +219,29 @@ window.handleAuthStep = async function() {
         } else {
             alertBox.innerText = result.message || 'Error';
             alertBox.classList.remove('hidden');
+            btn.disabled = false;
             btn.innerText = (authMode === 'login') ? 'Iniciar Sesión' : 'Crear Cuenta';
         }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        btn.disabled = false;
+        console.error(e);
+    }
 };
 
-// Inicializar
+// Inicializar y Eventos de Teclado
 document.addEventListener('DOMContentLoaded', () => {
     window.updateCartUI();
+
+    // Enter en Buscador
     document.getElementById('q')?.addEventListener('keydown', (e) => e.key === 'Enter' && window.Search());
+
+    // Enter en Modal de Auth
+    ['AuthEmail', 'AuthPass'].forEach(id => {
+        document.getElementById(id)?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                window.handleAuthStep();
+            }
+        });
+    });
 });

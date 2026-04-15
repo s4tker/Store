@@ -26,8 +26,11 @@ class AuthController extends Controller
         if ($mode === 'register') {
             try {
                 return DB::transaction(function () use ($email, $password) {
+                    // Extraer alias: de "usuario@gmail.com" toma "usuario"
+                    $userAlias = explode('@', $email)[0];
+
                     $user = User::create([
-                        'Alias'    => explode('@', $email)[0],
+                        'Alias'    => $userAlias,
                         'Correo'   => $email,
                         'Password' => Hash::make($password),
                         'Nombre'   => null,
@@ -55,7 +58,6 @@ class AuthController extends Controller
             return response()->json(['success' => false, 'message' => 'Clave incorrecta']);
         }
     }
-
     public function logout()
     {
         Auth::logout();
