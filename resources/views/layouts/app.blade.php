@@ -10,11 +10,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('styles')
 </head>
-<body class="antialiased bg-slate-50">
+<body class="min-h-screen antialiased bg-slate-50 flex flex-col">
 
     @include('partials.navbar')
 
-    <main class="max-w-7xl mx-auto p-4 md:p-10">
+    <main class="w-full max-w-7xl mx-auto flex-1 p-4 md:p-10">
         @yield('content')
     </main>
 

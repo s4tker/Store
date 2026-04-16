@@ -69,7 +69,7 @@
 }
 
 .admin-kicker {
-    @apply text-[11px] font-extrabold uppercase tracking-[0.22em];
+    @apply text-[10px] font-extrabold uppercase tracking-[0.18em];
     color: #94a3b8;
 }
 
@@ -78,7 +78,7 @@
 }
 
 .admin-nav-item {
-    @apply w-full rounded-2xl px-4 py-3 text-left text-[13px] font-bold text-slate-200 transition-all;
+    @apply w-full rounded-2xl px-3.5 py-2.5 text-left text-[12px] font-bold text-slate-200 transition-all;
     background: rgba(255, 255, 255, 0.05);
 }
 
@@ -99,7 +99,7 @@
 }
 
 .admin-sidebar-card-head h2 {
-    @apply text-sm font-black text-white;
+    @apply text-[13px] sm:text-sm font-black text-white;
 }
 
 .admin-sidebar-card-head span {
@@ -117,12 +117,12 @@
 }
 
 .admin-sidebar-list-item strong {
-    @apply block text-sm font-semibold text-slate-100;
+    @apply block text-[13px] sm:text-sm font-semibold text-slate-100;
 }
 
 .admin-sidebar-list-item small,
 .admin-sidebar-empty {
-    @apply text-xs text-slate-400;
+    @apply text-[11px] sm:text-xs text-slate-400;
 }
 
 .admin-user {
@@ -130,7 +130,7 @@
 }
 
 .admin-avatar {
-    @apply flex h-12 w-12 items-center justify-center rounded-xl text-base font-black text-slate-950;
+    @apply flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black text-slate-950;
     background: #bfdbfe;
 }
 
@@ -139,11 +139,11 @@
 }
 
 .admin-user-name {
-    @apply truncate text-sm font-bold text-white;
+    @apply truncate text-[13px] sm:text-sm font-bold text-white;
 }
 
 .admin-user-link {
-    @apply mt-1 inline-block text-xs font-bold text-slate-300 no-underline transition-colors hover:text-white;
+    @apply mt-1 inline-block text-[11px] sm:text-xs font-bold text-slate-300 no-underline transition-colors hover:text-white;
 }
 
 .admin-main {
@@ -173,7 +173,7 @@
 
 .admin-header,
 .admin-card {
-    @apply rounded-[28px] border p-5;
+    @apply rounded-[24px] border p-4 sm:p-5;
     border-color: rgba(226, 232, 240, 0.95);
     background: rgba(255, 255, 255, 0.98);
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
@@ -190,12 +190,12 @@
 }
 
 .admin-title {
-    @apply mt-2 text-xl font-black tracking-tight text-slate-900;
+    @apply mt-2 text-lg font-black tracking-tight text-slate-900;
 }
 
 @media (min-width: 768px) {
     .admin-title {
-        @apply text-3xl;
+        @apply text-2xl;
     }
 }
 
@@ -205,7 +205,7 @@
 
 .admin-summary span,
 .catalog-stats span {
-    @apply rounded-full border px-3 py-2 text-[11px] font-bold uppercase text-slate-600;
+    @apply rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase text-slate-600;
     border-color: #dbeafe;
     background: #eff6ff;
 }
@@ -255,7 +255,13 @@
 }
 
 .admin-card-header h2 {
-    @apply text-lg font-black text-slate-900;
+    @apply text-base font-black text-slate-900;
+}
+
+@media (min-width: 768px) {
+    .admin-card-header h2 {
+        @apply text-lg;
+    }
 }
 
 .editor-actions {
@@ -264,7 +270,7 @@
 
 .discount-pill,
 .editor-mode-badge {
-    @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-black uppercase;
+    @apply inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-black uppercase;
 }
 
 .discount-pill {
@@ -316,15 +322,15 @@
 }
 
 .label-admin {
-    @apply mb-2 block text-[10px] font-black uppercase tracking-[0.16em] text-slate-500;
+    @apply mb-2 block text-[9px] sm:text-[10px] font-black uppercase tracking-[0.14em] text-slate-500;
 }
 
 .helper-admin {
-    @apply text-sm text-slate-500;
+    @apply text-[13px] text-slate-500;
 }
 
 .input-admin {
-    @apply w-full rounded-2xl border px-4 py-3 text-[13px] font-semibold text-slate-800 outline-none transition-colors;
+    @apply w-full rounded-2xl border px-4 py-3 text-[12px] sm:text-[13px] font-semibold text-slate-800 outline-none transition-colors;
     border-color: #dbe3ef;
     background: rgba(248, 250, 252, 0.95);
     max-width: 100%;
@@ -406,7 +412,7 @@
 }
 
 .upload-card {
-    @apply flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-[24px] border px-5 py-5 text-center transition-colors;
+    @apply flex min-h-[100px] cursor-pointer flex-col items-center justify-center rounded-[22px] border px-4 py-4 text-center transition-colors;
 }
 
 .upload-card-rich {
@@ -421,11 +427,11 @@
 }
 
 .upload-title {
-    @apply text-sm font-black uppercase text-slate-700;
+    @apply text-[13px] sm:text-sm font-black uppercase text-slate-700;
 }
 
 .upload-name {
-    @apply mt-2 text-sm text-slate-500;
+    @apply mt-2 text-[13px] sm:text-sm text-slate-500;
 }
 
 .admin-inline-header {
@@ -491,7 +497,7 @@
 .secondary-admin-btn,
 .btn-primary-admin,
 .ghost-admin-btn {
-    @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-black uppercase transition-colors;
+    @apply inline-flex items-center justify-center rounded-full px-3.5 py-2 text-[11px] font-black uppercase transition-colors;
 }
 
 .secondary-admin-btn {
@@ -499,7 +505,7 @@
 }
 
 .btn-primary-admin {
-    @apply w-full bg-slate-950 px-5 py-3 text-white hover:bg-blue-600;
+    @apply w-full bg-slate-950 px-4 py-2.5 text-white hover:bg-blue-600;
 }
 
 .ghost-admin-btn {
@@ -556,7 +562,7 @@
 }
 
 .product-card-admin {
-    @apply rounded-[24px] border border-slate-200 bg-slate-50 p-3 transition-colors;
+    @apply rounded-[24px] border border-slate-200 bg-slate-50 p-2.5 sm:p-3 transition-colors;
 }
 
 .product-card-admin.is-active {
@@ -570,7 +576,7 @@
 }
 
 .product-card-thumb {
-    @apply h-20 w-20 rounded-2xl border border-slate-200 bg-white object-contain p-2;
+    @apply h-16 w-16 sm:h-20 sm:w-20 rounded-2xl border border-slate-200 bg-white object-contain p-2;
     flex-shrink: 0;
 }
 
@@ -589,15 +595,15 @@
 }
 
 .product-card-topline h3 {
-    @apply text-sm font-black text-slate-900;
+    @apply text-[13px] sm:text-sm font-black text-slate-900;
 }
 
 .product-card-copy p {
-    @apply mt-1 text-sm text-slate-500;
+    @apply mt-1 text-[12px] sm:text-sm text-slate-500;
 }
 
 .product-card-price {
-    @apply rounded-full bg-white px-3 py-1 text-xs font-black text-slate-900;
+    @apply rounded-full bg-white px-3 py-1 text-[11px] sm:text-xs font-black text-slate-900;
 }
 
 .product-card-meta {
@@ -605,7 +611,7 @@
 }
 
 .product-card-meta span {
-    @apply rounded-full bg-white px-3 py-1 text-[11px] font-bold uppercase text-slate-500;
+    @apply rounded-full bg-white px-2.5 py-1 text-[10px] font-bold uppercase text-slate-500;
 }
 
 .product-card-actions {
@@ -617,7 +623,7 @@
 }
 
 .danger-inline-btn {
-    @apply inline-flex items-center justify-center rounded-full bg-red-50 px-3 py-2 text-xs font-black text-red-600 transition-colors hover:bg-red-100;
+    @apply inline-flex items-center justify-center rounded-full bg-red-50 px-3 py-2 text-[11px] font-black text-red-600 transition-colors hover:bg-red-100;
 }
 
 .danger-inline-btn.is-chip {
@@ -630,7 +636,7 @@
 
 .table-item,
 .category-tree {
-    @apply rounded-2xl border border-slate-200 bg-slate-50 p-4;
+    @apply rounded-2xl border border-slate-200 bg-slate-50 p-3.5 sm:p-4;
 }
 
 .table-item {
@@ -649,13 +655,13 @@
 
 .table-item-main h3,
 .category-tree-header strong {
-    @apply text-sm font-black text-slate-900;
+    @apply text-[13px] sm:text-sm font-black text-slate-900;
 }
 
 .table-item-main p,
 .table-item-side span,
 .category-tree-header span {
-    @apply text-sm text-slate-500;
+    @apply text-[12px] sm:text-sm text-slate-500;
 }
 
 .table-thumb {
@@ -663,7 +669,7 @@
 }
 
 .table-item-side strong {
-    @apply text-lg font-black text-slate-900;
+    @apply text-base sm:text-lg font-black text-slate-900;
 }
 
 .category-tree-header {
@@ -677,7 +683,7 @@
 
 .subcategory-item,
 .chip {
-    @apply inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-semibold text-slate-700;
+    @apply inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-[12px] sm:text-sm font-semibold text-slate-700;
 }
 
 .category-tree,
@@ -687,7 +693,7 @@
 }
 
 .empty-state {
-    @apply rounded-2xl border border-dashed border-slate-300 px-6 py-10 text-center text-sm font-semibold text-slate-500;
+    @apply rounded-2xl border border-dashed border-slate-300 px-5 py-8 text-center text-[13px] sm:text-sm font-semibold text-slate-500;
 }
 
 .admin-toast {

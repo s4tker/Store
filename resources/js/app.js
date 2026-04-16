@@ -174,12 +174,8 @@ window.ToggleMobileCatalog = function(show) {
 
 window.SetMainProductImage = function(url) {
     const image = document.getElementById('MainProductImage');
-    const zoomedImage = document.getElementById('ZoomedProductImage');
     if (image && url) {
         image.src = url;
-    }
-    if (zoomedImage && url) {
-        zoomedImage.src = url;
     }
 };
 
@@ -232,6 +228,63 @@ window.AddCurrentProductToCart = function(product) {
     window.ToggleCart(true);
 };
 
+function updateProductZoomOrigin(frame, clientX, clientY) {
+    const bounds = frame.getBoundingClientRect();
+    const x = ((clientX - bounds.left) / bounds.width) * 100;
+    const y = ((clientY - bounds.top) / bounds.height) * 100;
+
+    frame.style.setProperty('--zoom-x', `${Math.min(100, Math.max(0, x))}%`);
+    frame.style.setProperty('--zoom-y', `${Math.min(100, Math.max(0, y))}%`);
+}
+
+function initProductImageZoom() {
+    document.querySelectorAll('[data-product-zoom]').forEach((frame) => {
+        let touchZoomActive = false;
+
+        // este bloque activa el zoom en escritorio
+        frame.addEventListener('mouseenter', () => {
+            if (!window.matchMedia('(hover: hover)').matches) return;
+            frame.classList.add('is-zoomed');
+        });
+
+        frame.addEventListener('mousemove', (event) => {
+            if (window.matchMedia('(hover: hover)').matches) {
+                frame.classList.add('is-zoomed');
+            }
+            updateProductZoomOrigin(frame, event.clientX, event.clientY);
+        });
+
+        frame.addEventListener('mouseleave', () => {
+            frame.classList.remove('is-zoomed');
+            frame.style.setProperty('--zoom-x', '50%');
+            frame.style.setProperty('--zoom-y', '50%');
+        });
+
+        // este bloque activa el zoom en celular al tocar
+        frame.addEventListener('click', (event) => {
+            if (window.matchMedia('(hover: hover)').matches) return;
+
+            updateProductZoomOrigin(frame, event.clientX, event.clientY);
+            touchZoomActive = !touchZoomActive;
+            frame.classList.toggle('is-zoomed', touchZoomActive);
+        });
+
+        frame.addEventListener('touchmove', (event) => {
+            if (!event.touches.length) return;
+
+            const touch = event.touches[0];
+            updateProductZoomOrigin(frame, touch.clientX, touch.clientY);
+            touchZoomActive = true;
+            frame.classList.add('is-zoomed');
+        }, { passive: true });
+
+        frame.addEventListener('touchend', () => {
+            if (!touchZoomActive) {
+                frame.classList.remove('is-zoomed');
+            }
+        });
+    });
+}
 window.ToggleCompareProduct = function(product) {
     const key = 'electroshop-compare';
     let compare = [];
@@ -426,6 +479,7 @@ window.handleAuthStep = async function() {
 document.addEventListener('DOMContentLoaded', () => {
     window.updateCartUI();
     syncSubcategoryOptions();
+    initProductImageZoom();
 
     // Enter en Buscador
     document.getElementById('q')?.addEventListener('keydown', (e) => e.key === 'Enter' && window.Search());
@@ -447,7 +501,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 import Alpine from 'alpinejs'
- 
+
 window.Alpine = Alpine
- 
 Alpine.start()

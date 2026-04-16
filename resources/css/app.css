@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Configuración de Fuente Global */
+/* configuracion de fuente global */
 * {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
@@ -14,7 +14,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* --- Componentes de Autenticación --- */
+/* componentes de autenticacion */
 .auth-input {
     width: 100%;
     background-color: #f1f5f9;
@@ -42,17 +42,17 @@ body {
     box-shadow: 0 10px 20px -5px rgba(59,130,246,0.1);
 }
 
-/* --- Botones Personalizados --- */
+/* botones principales */
 .btn-primary-es {
     width: 100%;
     background-color: #0f172a;
     color: white;
     font-weight: 800;
-    padding: 1rem;
-    border-radius: 1.25rem;
+    padding: 0.82rem 1rem;
+    border-radius: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 11px;
+    letter-spacing: 0.08em;
+    font-size: 10px;
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
@@ -63,7 +63,7 @@ body {
     transform: translateY(-1px);
 }
 
-/* --- Cards de Producto --- */
+/* cards de producto */
 .product-card {
     background-color: white;
     border-radius: 1.5rem;
@@ -79,19 +79,68 @@ body {
     }
 }
 
+.product-card p,
+.product-card h3 {
+    word-break: break-word;
+}
+
 .product-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.12);
 }
 
-/* --- Logo Circular --- */
+/* zoom de producto */
+.product-image-zoom {
+    --zoom-x: 50%;
+    --zoom-y: 50%;
+}
+
+.product-image-zoom-target {
+    transform-origin: var(--zoom-x) var(--zoom-y);
+    transition: transform 180ms ease;
+    will-change: transform;
+    touch-action: pan-y;
+    user-select: none;
+}
+
+.product-image-zoom:hover .product-image-zoom-target,
+.product-image-zoom.is-zoomed .product-image-zoom-target {
+    transform: scale(2.2);
+}
+
+.product-image-zoom.is-zoomed {
+    cursor: zoom-out;
+}
+
+.product-qty-input {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.product-qty-input::-webkit-outer-spin-button,
+.product-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+@media (hover: none) {
+    .product-image-zoom:hover .product-image-zoom-target {
+        transform: none;
+    }
+}
+
+/* logo circular */
 .logo-img {
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 50%;
 }
 
-/* --- Animaciones de Entrada --- */
+/* animaciones de entrada */
 @keyframes fade-in {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -101,7 +150,7 @@ body {
     animation: fade-in 0.3s ease-out forwards;
 }
 
-/* --- Ajustes de Scroll --- */
+/* ajustes de scroll */
 body.modal-open {
     overflow: hidden;
 }

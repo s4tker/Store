@@ -14,29 +14,29 @@
 
         @auth
             @if(Auth::user()->hasRole('admin') || Auth::user()->hasRole('administrador'))
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-[#0f172a] px-3 py-1.5 rounded-lg transition-all active:scale-95 shrink-0">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-[#0f172a] px-2.5 md:px-3 py-1.5 rounded-lg transition-all active:scale-95 shrink-0">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4z"></path></svg>
-                    <span class="text-[11px] font-black uppercase hidden sm:block text-slate-900">Panel Admin</span>
-                    <span class="text-[10px] font-black uppercase sm:hidden text-slate-900">Admin</span>
+                    <span class="text-[10px] md:text-[11px] font-black uppercase hidden sm:block text-slate-900">Panel Admin</span>
+                    <span class="text-[9px] font-black uppercase sm:hidden text-slate-900">Admin</span>
                 </a>
             @endif
         @endauth
 
         <div class="flex-1 min-w-0 flex bg-slate-800/50 rounded-xl px-2 md:px-4 py-1.5 items-center border border-slate-700 focus-within:border-blue-500 transition-all">
             <input id="q" type="text" value="{{ $Search ?? '' }}" placeholder="Buscar productos..."
-                class="flex-1 bg-transparent outline-none text-[13px] md:text-sm text-slate-100 py-1 placeholder-slate-500 min-w-0 border-none focus:ring-0">
-            <button type="button" onclick="Search()" class="hidden sm:block text-blue-400 font-bold text-xs px-2">Buscar</button>
+                class="flex-1 bg-transparent outline-none text-[12px] md:text-sm text-slate-100 py-1 placeholder-slate-500 min-w-0 border-none focus:ring-0">
+            <button type="button" onclick="Search()" class="hidden sm:block text-blue-400 font-bold text-[11px] px-2">Buscar</button>
         </div>
 
         <div class="flex items-center gap-2 md:gap-6 shrink-0">
             @auth
                 <a href="{{ route('account') }}" class="flex flex-col items-end">
-                    <span class="hidden md:block text-[10px] text-slate-500 font-bold uppercase tracking-widest">Mi Cuenta</span>
-                    <span class="text-[12px] md:text-sm font-bold text-slate-200 truncate max-w-[60px] md:max-w-none">{{ Auth::user()->Nombre }}</span>
+                    <span class="hidden md:block text-[9px] text-slate-500 font-bold uppercase tracking-widest">Mi Cuenta</span>
+                    <span class="text-[11px] md:text-sm font-bold text-slate-200 truncate max-w-[60px] md:max-w-none">{{ Auth::user()->Nombre }}</span>
                 </a>
             @else
                 <button type="button" onclick="openAuthModal()" class="flex flex-col items-end">
-                    <span class="text-[12px] md:text-sm font-bold text-slate-200">Ingresar</span>
+                    <span class="text-[11px] md:text-sm font-bold text-slate-200">Ingresar</span>
                 </button>
             @endauth
 
