@@ -1,0 +1,705 @@
+@reference "tailwindcss";
+
+:root {
+    --admin-dark: #0f172a;
+    --admin-dark-soft: #172554;
+    --admin-blue: #2563eb;
+    --admin-blue-soft: #dbeafe;
+    --admin-slate: #64748b;
+    --admin-border: #e2e8f0;
+    --admin-bg: #f8fafc;
+    --admin-surface: #ffffff;
+    --admin-muted: #f1f5f9;
+    --admin-danger: #dc2626;
+}
+
+.admin-body {
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 28%),
+        linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+    min-height: 100vh;
+}
+
+.admin-shell {
+    @apply min-h-screen;
+}
+
+.admin-sidebar-overlay {
+    @apply fixed inset-0 z-40 bg-slate-950/55;
+}
+
+.admin-sidebar {
+    @apply fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col gap-6 px-4 py-5 transition-transform duration-300;
+    background: #0f172a;
+    transform: translateX(-100%);
+    box-shadow: 18px 0 40px rgba(15, 23, 42, 0.16);
+}
+
+.admin-sidebar.is-open {
+    transform: translateX(0);
+}
+
+@media (min-width: 1024px) {
+    .admin-sidebar {
+        transform: none;
+        width: 300px;
+        padding: 26px;
+        overflow-y: auto;
+    }
+
+    .admin-sidebar-overlay {
+        display: none;
+    }
+}
+
+.admin-sidebar-top {
+    @apply flex flex-col gap-2;
+}
+
+.admin-logo-link {
+    @apply no-underline;
+}
+
+.admin-logo-text {
+    @apply text-3xl font-black tracking-tight text-white;
+}
+
+.admin-logo-text span {
+    color: #60a5fa;
+}
+
+.admin-kicker {
+    @apply text-[11px] font-extrabold uppercase tracking-[0.22em];
+    color: #94a3b8;
+}
+
+.admin-nav {
+    @apply grid gap-2;
+}
+
+.admin-nav-item {
+    @apply w-full rounded-2xl px-4 py-3 text-left text-sm font-bold text-slate-200 transition-all;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-nav-item:hover,
+.admin-nav-item.active {
+    background: rgba(96, 165, 250, 0.22);
+    color: white;
+}
+
+.admin-sidebar-card,
+.admin-user {
+    @apply rounded-2xl p-4;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.admin-sidebar-card-head {
+    @apply mb-3 flex items-center justify-between gap-3;
+}
+
+.admin-sidebar-card-head h2 {
+    @apply text-sm font-black text-white;
+}
+
+.admin-sidebar-card-head span {
+    @apply rounded-full px-3 py-1 text-xs font-bold text-slate-900;
+    background: #bfdbfe;
+}
+
+.admin-sidebar-list {
+    @apply space-y-2;
+}
+
+.admin-sidebar-list-item {
+    @apply rounded-xl px-3 py-2;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-sidebar-list-item strong {
+    @apply block text-sm font-semibold text-slate-100;
+}
+
+.admin-sidebar-list-item small,
+.admin-sidebar-empty {
+    @apply text-xs text-slate-400;
+}
+
+.admin-user {
+    @apply mt-auto flex items-center gap-3;
+}
+
+.admin-avatar {
+    @apply flex h-12 w-12 items-center justify-center rounded-xl text-base font-black text-slate-950;
+    background: #bfdbfe;
+}
+
+.admin-user-copy {
+    @apply min-w-0;
+}
+
+.admin-user-name {
+    @apply truncate text-sm font-bold text-white;
+}
+
+.admin-user-link {
+    @apply mt-1 inline-block text-xs font-bold text-slate-300 no-underline transition-colors hover:text-white;
+}
+
+.admin-main {
+    @apply px-4 py-5;
+}
+
+@media (min-width: 1024px) {
+    .admin-main {
+        margin-left: 362px;
+        padding: 34px 34px 40px 10px;
+    }
+}
+
+.admin-menu-btn {
+    @apply mb-4 inline-flex h-11 w-11 flex-col items-center justify-center gap-1 rounded-xl bg-slate-950 text-white lg:hidden;
+}
+
+.admin-menu-btn span {
+    @apply block h-0.5 w-5 rounded-full bg-white;
+}
+
+@media (min-width: 1024px) {
+    .admin-menu-btn {
+        display: none;
+    }
+}
+
+.admin-header,
+.admin-card {
+    @apply rounded-[28px] border p-5;
+    border-color: rgba(226, 232, 240, 0.95);
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.admin-header {
+    @apply mb-6 flex flex-col gap-4;
+}
+
+@media (min-width: 768px) {
+    .admin-header {
+        @apply flex-row items-end justify-between;
+    }
+}
+
+.admin-title {
+    @apply mt-2 text-2xl font-black tracking-tight text-slate-900;
+}
+
+@media (min-width: 768px) {
+    .admin-title {
+        @apply text-4xl;
+    }
+}
+
+.admin-summary {
+    @apply flex flex-wrap gap-2;
+}
+
+.admin-summary span,
+.catalog-stats span {
+    @apply rounded-full border px-3 py-2 text-xs font-bold uppercase text-slate-600;
+    border-color: #dbeafe;
+    background: #eff6ff;
+}
+
+.admin-sections {
+    @apply space-y-5;
+}
+
+.admin-grid {
+    @apply grid gap-5;
+}
+
+@media (min-width: 1200px) {
+    .admin-grid:not(.admin-grid-products) {
+        grid-template-columns: minmax(0, 0.88fr) minmax(300px, 1fr);
+        align-items: start;
+    }
+}
+
+.admin-grid-products {
+    align-items: start;
+}
+
+@media (min-width: 1360px) {
+    .admin-grid-products {
+        grid-template-columns: minmax(0, 1.1fr) minmax(390px, 0.9fr);
+    }
+}
+
+.admin-card-header {
+    @apply mb-5 flex flex-col gap-3;
+}
+
+.admin-card-header-tight {
+    @apply gap-4;
+}
+
+.admin-card-header-stack {
+    @apply gap-4;
+}
+
+@media (min-width: 640px) {
+    .admin-card-header,
+    .admin-card-header-tight {
+        @apply flex-row items-start justify-between;
+    }
+}
+
+.admin-card-header h2 {
+    @apply text-xl font-black text-slate-900;
+}
+
+.editor-actions {
+    @apply flex flex-wrap items-center gap-2;
+}
+
+.discount-pill,
+.editor-mode-badge {
+    @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-black uppercase;
+}
+
+.discount-pill {
+    @apply bg-slate-100 text-slate-600;
+}
+
+.discount-pill.is-positive {
+    @apply bg-blue-100 text-blue-700;
+}
+
+.editor-mode-badge {
+    @apply bg-slate-100 text-slate-700;
+}
+
+.editor-mode-badge.is-editing {
+    @apply bg-blue-100 text-blue-700;
+}
+
+.admin-form-grid,
+.catalog-filters {
+    @apply grid grid-cols-1 gap-4;
+}
+
+@media (min-width: 768px) {
+    .admin-form-grid,
+    .catalog-filters {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+}
+
+.field-half {
+    @apply md:col-span-3;
+}
+
+.field-third {
+    @apply md:col-span-2;
+}
+
+.field-metric {
+    min-width: 0;
+}
+
+.field-span-3 {
+    @apply md:col-span-6;
+}
+
+.field-description {
+    min-width: 0;
+}
+
+.label-admin {
+    @apply mb-2 block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500;
+}
+
+.helper-admin {
+    @apply text-sm text-slate-500;
+}
+
+.input-admin {
+    @apply w-full rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition-colors;
+    border-color: #dbe3ef;
+    background: rgba(248, 250, 252, 0.95);
+    max-width: 100%;
+}
+
+.input-admin:focus {
+    border-color: #60a5fa;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.16);
+}
+
+.input-admin[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.input-admin[type="number"]::-webkit-outer-spin-button,
+.input-admin[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.textarea-admin {
+    min-height: 88px;
+    max-height: 132px;
+    resize: none;
+    line-height: 1.45;
+    overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+    .product-editor-card .admin-form-grid {
+        gap: 22px 18px;
+    }
+
+    .product-editor-card .field-metric {
+        @apply md:col-span-2;
+    }
+
+    .product-editor-card .field-description textarea {
+        max-width: 760px;
+    }
+}
+
+.field-metric .label-admin {
+    margin-bottom: 0.75rem;
+}
+
+.field-metric + .field-metric {
+    margin-left: 2px;
+}
+
+.product-editor-card .admin-inline-header {
+    margin-bottom: 0.75rem;
+}
+
+.compact-admin-form {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .compact-admin-form {
+        max-width: 640px;
+    }
+
+    .compact-admin-form .field-half,
+    .compact-admin-form .field-span-3 {
+        @apply md:col-span-6;
+    }
+
+    .compact-admin-form .btn-primary-admin {
+        width: auto;
+        min-width: 190px;
+    }
+
+    .compact-admin-form .form-actions-inline {
+        align-items: start;
+    }
+}
+
+.upload-card {
+    @apply flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-[24px] border px-5 py-5 text-center transition-colors;
+}
+
+.upload-card-rich {
+    border-style: dashed;
+    border-color: #cbd5e1;
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.9), rgba(255, 255, 255, 1));
+}
+
+.upload-card:hover {
+    border-color: #60a5fa;
+    background: white;
+}
+
+.upload-title {
+    @apply text-sm font-black uppercase text-slate-700;
+}
+
+.upload-name {
+    @apply mt-2 text-sm text-slate-500;
+}
+
+.admin-inline-header {
+    @apply mb-4 flex flex-col gap-3;
+}
+
+@media (min-width: 640px) {
+    .admin-inline-header {
+        @apply flex-row items-end justify-between;
+    }
+}
+
+.gallery-block {
+    @apply mt-4 grid gap-4;
+}
+
+@media (min-width: 1024px) {
+    .gallery-block {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.gallery-title {
+    @apply mb-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500;
+}
+
+.image-grid {
+    @apply grid gap-3;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+.image-grid-dashed {
+    @apply rounded-[24px] border border-dashed border-slate-200 p-3;
+}
+
+.image-card {
+    @apply overflow-hidden rounded-2xl border bg-white;
+    border-color: #dbe3ef;
+}
+
+.image-card.is-marked-remove {
+    opacity: 0.45;
+    border-color: #fca5a5;
+    background: #fef2f2;
+}
+
+.image-card-preview {
+    @apply h-32 w-full object-cover;
+}
+
+.image-card-footer {
+    @apply flex items-center justify-between gap-2 px-3 py-3 text-xs font-semibold text-slate-500;
+}
+
+.image-card-remove {
+    @apply rounded-full bg-red-50 px-3 py-1 font-black text-red-600 transition-colors hover:bg-red-100;
+}
+
+.empty-inline-state {
+    @apply flex min-h-[132px] items-center justify-center rounded-2xl border border-dashed border-slate-300 px-4 text-center text-sm font-semibold text-slate-400;
+}
+
+.secondary-admin-btn,
+.btn-primary-admin,
+.ghost-admin-btn {
+    @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-black uppercase transition-colors;
+}
+
+.secondary-admin-btn {
+    @apply bg-slate-900 text-white hover:bg-blue-600;
+}
+
+.btn-primary-admin {
+    @apply w-full bg-slate-950 px-5 py-3 text-white hover:bg-blue-600;
+}
+
+.ghost-admin-btn {
+    @apply border border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700;
+}
+
+.ghost-admin-btn-small {
+    @apply px-3 py-2;
+}
+
+.attribute-stack {
+    @apply space-y-3;
+}
+
+.attribute-row {
+    @apply grid grid-cols-1 gap-3;
+}
+
+@media (min-width: 768px) {
+    .attribute-row {
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr) 52px;
+    }
+}
+
+.attribute-remove {
+    @apply h-11 rounded-2xl bg-red-50 text-2xl font-black text-red-500 transition-transform hover:scale-[1.02];
+}
+
+.form-actions {
+    @apply pt-1;
+}
+
+.form-actions-split {
+    @apply flex flex-col gap-3;
+}
+
+.form-actions-inline {
+    @apply flex items-end;
+}
+
+@media (min-width: 640px) {
+    .form-actions-split {
+        @apply flex-row;
+    }
+
+    .form-actions-split .btn-primary-admin,
+    .form-actions-split .ghost-admin-btn {
+        width: auto;
+    }
+}
+
+.product-catalog {
+    @apply space-y-3;
+}
+
+.product-card-admin {
+    @apply rounded-[24px] border border-slate-200 bg-slate-50 p-3 transition-colors;
+}
+
+.product-card-admin.is-active {
+    border-color: #93c5fd;
+    background: linear-gradient(180deg, rgba(239, 246, 255, 0.95), rgba(255, 255, 255, 1));
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
+}
+
+.product-card-main {
+    @apply flex w-full items-start gap-3 rounded-[20px] p-1 text-left;
+}
+
+.product-card-thumb {
+    @apply h-20 w-20 rounded-2xl border border-slate-200 bg-white object-contain p-2;
+    flex-shrink: 0;
+}
+
+.product-card-copy {
+    @apply min-w-0 flex-1;
+}
+
+.product-card-topline {
+    @apply flex flex-col gap-2;
+}
+
+@media (min-width: 640px) {
+    .product-card-topline {
+        @apply flex-row items-start justify-between;
+    }
+}
+
+.product-card-topline h3 {
+    @apply text-sm font-black text-slate-900;
+}
+
+.product-card-copy p {
+    @apply mt-1 text-sm text-slate-500;
+}
+
+.product-card-price {
+    @apply rounded-full bg-white px-3 py-1 text-xs font-black text-slate-900;
+}
+
+.product-card-meta {
+    @apply mt-3 flex flex-wrap gap-2;
+}
+
+.product-card-meta span {
+    @apply rounded-full bg-white px-3 py-1 text-[11px] font-bold uppercase text-slate-500;
+}
+
+.product-card-actions {
+    @apply mt-3 flex flex-wrap gap-2;
+}
+
+.inline-actions {
+    @apply flex flex-wrap items-center gap-2;
+}
+
+.danger-inline-btn {
+    @apply inline-flex items-center justify-center rounded-full bg-red-50 px-3 py-2 text-xs font-black text-red-600 transition-colors hover:bg-red-100;
+}
+
+.danger-inline-btn.is-chip {
+    @apply h-7 w-7 rounded-full p-0;
+}
+
+.table-list {
+    @apply space-y-3;
+}
+
+.table-item,
+.category-tree {
+    @apply rounded-2xl border border-slate-200 bg-slate-50 p-4;
+}
+
+.table-item {
+    @apply flex flex-col gap-3;
+}
+
+@media (min-width: 640px) {
+    .table-item {
+        @apply flex-row items-center justify-between;
+    }
+}
+
+.table-item-main {
+    @apply flex min-w-0 items-center gap-3;
+}
+
+.table-item-main h3,
+.category-tree-header strong {
+    @apply text-sm font-black text-slate-900;
+}
+
+.table-item-main p,
+.table-item-side span,
+.category-tree-header span {
+    @apply text-sm text-slate-500;
+}
+
+.table-thumb {
+    @apply h-14 w-14 rounded-xl border border-slate-200 bg-white object-contain p-2;
+}
+
+.table-item-side strong {
+    @apply text-lg font-black text-slate-900;
+}
+
+.category-tree-header {
+    @apply flex flex-wrap items-center justify-between gap-2;
+}
+
+.subcategory-list,
+.chip-list {
+    @apply mt-3 flex flex-wrap gap-2;
+}
+
+.subcategory-item,
+.chip {
+    @apply inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-semibold text-slate-700;
+}
+
+.category-tree,
+.chip-list,
+.table-list {
+    contain: layout paint;
+}
+
+.empty-state {
+    @apply rounded-2xl border border-dashed border-slate-300 px-6 py-10 text-center text-sm font-semibold text-slate-500;
+}
+
+.admin-toast {
+    @apply fixed bottom-5 right-5 z-50 max-w-sm rounded-2xl bg-slate-950 px-4 py-3 text-sm font-bold text-white opacity-0 transition-all duration-300;
+    transform: translateY(20px);
+}
+
+.admin-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.admin-toast.is-error {
+    background: #b91c1c;
+}

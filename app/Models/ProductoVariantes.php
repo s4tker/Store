@@ -4,15 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProductoImagenes extends Model
+class ProductoVariantes extends Model
 {
-    protected $table = 'ProductoImagenes';
+    protected $table = 'ProductoVariantes';
     protected $primaryKey = 'Id';
     public $timestamps = false;
 
     protected $fillable = [
         'ProductoId',
-        'Url',
-        'Orden',
+        'Sku',
+        'Precio',
+        'PrecioOferta',
     ];
 }

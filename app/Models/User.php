@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -13,9 +14,11 @@ class User extends Authenticatable
     protected $table = 'Usuarios';
     protected $primaryKey = 'Id';
     public $timestamps = false;
+    const CREATED_AT = 'CreatedAt';
+    const UPDATED_AT = null;
 
     protected $fillable = [
-        'Alias', 'Nombre', 'Apellidos', 'Correo', 'Password',
+        'Nombre', 'Apellidos', 'Correo', 'Password',
         'Telefono', 'Dni', 'Ruc', 'RazonSocial'
     ];
 
@@ -36,17 +39,28 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(
             Role::class,
-            'UsuarioRoles', // Tabla intermedia
-            'UsuarioId',    // FK en tabla intermedia para este modelo
-            'RolId'         // FK en tabla intermedia para el modelo Role
+            'UsuarioRoles',
+            'UsuarioId',
+            'RolId'
         );
     }
 
-    /**
-     * Función para verificar roles en el Blade.
-     */
+    public function direcciones(): HasMany
+    {
+        return $this->hasMany(Direccion::class, 'UsuarioId', 'Id');
+    }
+
     public function hasRole($roleName): bool
     {
-        return $this->roles->contains('Nombre', $roleName);
+        $expected = mb_strtolower((string) $roleName);
+
+        return $this->roles->contains(function ($role) use ($expected) {
+            return mb_strtolower((string) $role->Nombre) === $expected;
+        });
+    }
+
+    public function getCreatedAtAttribute()
+    {
+        return $this->attributes['CreatedAt'] ?? null;
     }
 }

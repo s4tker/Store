@@ -13,51 +13,73 @@ class AuthController extends Controller
 {
     public function checkEmail(Request $request)
     {
-        $user = User::where('Correo', $request->email)->first();
-        return response()->json(['exists' => (bool)$user]);
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $user = User::where('Correo', $data['email'])->first();
+
+        return response()->json(['exists' => (bool) $user]);
     }
 
     public function authenticate(Request $request)
     {
-        $email = $request->email;
-        $password = $request->password;
-        $mode = $request->mode;
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string', 'min:6'],
+            'mode' => ['required', 'in:login,register'],
+        ]);
 
-        if ($mode === 'register') {
+        if ($data['mode'] === 'register') {
             try {
-                return DB::transaction(function () use ($email, $password) {
-                    // Extraer alias: de "usuario@gmail.com" toma "usuario"
-                    $userAlias = explode('@', $email)[0];
-
+                return DB::transaction(function () use ($data) {
+                    $name = str(explode('@', $data['email'])[0])->replace(['.', '_', '-'], ' ')->title()->value();
                     $user = User::create([
-                        'Alias'    => $userAlias,
-                        'Correo'   => $email,
-                        'Password' => Hash::make($password),
-                        'Nombre'   => null,
+                        'Nombre' => $name,
+                        'Correo' => $data['email'],
+                        'Password' => Hash::make($data['password']),
                     ]);
 
-                    $role = Role::where('Nombre', 'Cliente')->first();
+                    $role = Role::query()
+                        ->whereRaw('LOWER(Nombre) = ?', ['cliente'])
+                        ->first();
+
                     if ($role) {
                         $user->roles()->attach($role->Id);
                     }
 
                     Auth::login($user);
-                    return response()->json(['success' => true]);
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Cuenta creada correctamente.',
+                    ]);
                 });
             } catch (\Exception $e) {
-                return response()->json(['success' => false, 'message' => 'Error al crear cuenta']);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al crear cuenta',
+                ], 422);
             }
-        } else {
-            $user = User::where('Correo', $email)->first();
-
-            if ($user && Hash::check($password, $user->Password)) {
-                Auth::login($user);
-                return response()->json(['success' => true]);
-            }
-
-            return response()->json(['success' => false, 'message' => 'Clave incorrecta']);
         }
+
+        $user = User::where('Correo', $data['email'])->first();
+
+        if ($user && Hash::check($data['password'], $user->Password)) {
+            Auth::login($user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sesión iniciada correctamente.',
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Clave incorrecta',
+        ], 422);
     }
+
     public function logout()
     {
         Auth::logout();

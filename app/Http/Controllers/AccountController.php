@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use App\Models\Usuario;
+use App\Models\User;
 use App\Models\Direccion;
 use App\Models\PasswordReset;
 
@@ -30,7 +30,7 @@ class AccountController extends Controller
     //  Actualizar datos
     public function update(Request $request)
     {
-        $user = Usuario::findOrFail(Auth::id());
+        $user = User::findOrFail(Auth::id());
 
         $request->validate([
             'Nombre' => 'required|max:60',
@@ -64,7 +64,7 @@ class AccountController extends Controller
             'new_password' => 'required|min:6|confirmed'
         ]);
 
-        $user = Usuario::where('Id', Auth::id())->firstOrFail();
+        $user = User::where('Id', Auth::id())->firstOrFail();
 
         // Validar contraseña actual
         if (!Hash::check($request->current_password, $user->Password)) {

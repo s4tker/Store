@@ -9,4 +9,6 @@ class Marca extends Model
     protected $table = 'Marcas';
     protected $primaryKey = 'Id';
     public $timestamps = false;
+
+    protected $fillable = ['Nombre', 'Slug'];
 }
