@@ -12,6 +12,7 @@
 @endsection
 
 @section('content')
+        @if($errors->any())
             <div class="mb-8 p-5 bg-red-50 border-l-4 border-red-500 rounded-2xl shadow-sm">
                 <h3 class="font-black text-red-800 text-xs uppercase tracking-widest mb-3">Revisa los siguientes campos:</h3>
                 <ul class="text-red-700 text-sm space-y-1 font-medium">
@@ -112,7 +113,7 @@
 
                 <div class="flex flex-col md:flex-row gap-4 pt-6">
                     <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl uppercase text-[11px] tracking-[0.2em] transition-all shadow-xl shadow-blue-600/20 active:scale-95">
-                        💾 Guardar Cambios
+                        Guardar Cambios
                     </button>
                     <a href="{{ route('account') }}" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-5 rounded-2xl uppercase text-[11px] tracking-[0.2em] transition-all text-center">
                         Cancelar
