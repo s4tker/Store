@@ -36,14 +36,18 @@ class AccountController extends Controller
             'Nombre' => 'required|max:60',
             'Apellidos' => 'required|max:100',
             'Correo' => 'required|email|unique:Usuarios,Correo,' . $user->Id . ',Id',
-            'Telefono' => 'nullable|size:9'
+            'Telefono' => 'nullable|size:9',
+            'Dni' => 'required|max:15|unique:Usuarios,Dni,' . $user->Id . ',Id',
+            'Ruc' => 'nullable|max:15|unique:Usuarios,Ruc,' . $user->Id . ',Id'
         ]);
 
         $user->update($request->only(
             'Nombre',
             'Apellidos',
             'Correo',
-            'Telefono'
+            'Telefono',
+            'Dni',
+            'Ruc'
         ));
 
         return redirect()->route('account')

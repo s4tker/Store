@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -62,6 +63,13 @@
     </nav>
 
     <main class="max-w-7xl mx-auto p-4 md:p-10">
+=======
+@extends('layouts.app')
+
+@section('title', '{{ $Product->Nombre }} | ElectroShop')
+
+@section('content')
+>>>>>>> 9e8ad49 (Feat: soporte de DNI/RUC en usuarios y actualización de vistas)
         <div class="mb-5 flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
             <a href="{{ route('home') }}" class="hover:text-blue-600">Inicio</a>
             <span>/</span>
@@ -300,5 +308,9 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 </body>
 </html>
+=======
+@endsection
+>>>>>>> 9e8ad49 (Feat: soporte de DNI/RUC en usuarios y actualización de vistas)
