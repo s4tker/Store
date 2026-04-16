@@ -11,8 +11,72 @@ let authMode = 'login';
 // --- 1. BUSCADOR ---
 window.Search = function() {
     const q = document.getElementById('q').value.trim();
-    const url = q ? `/?search=${encodeURIComponent(q)}` : '/';
+    const params = new URLSearchParams(window.location.search);
+
+    if (q) {
+        params.set('search', q);
+    } else {
+        params.delete('search');
+    }
+
+    const category = document.getElementById('IndexCategoryFilter')?.value || '';
+    const subcategory = document.getElementById('IndexSubcategoryFilter')?.value || '';
+
+    if (category) {
+        params.set('category', category);
+    }
+
+    if (subcategory) {
+        params.set('subcategory', subcategory);
+    }
+
+    const query = params.toString();
+    const url = query ? `/?${query}` : '/';
     window.location.href = url;
+};
+
+window.ApplyCatalogFilters = function() {
+    const params = new URLSearchParams(window.location.search);
+    const category = document.getElementById('IndexCategoryFilter')?.value || '';
+    const subcategory = document.getElementById('IndexSubcategoryFilter')?.value || '';
+    const search = document.getElementById('q')?.value.trim() || '';
+
+    if (search) {
+        params.set('search', search);
+    } else {
+        params.delete('search');
+    }
+
+    if (category) {
+        params.set('category', category);
+    } else {
+        params.delete('category');
+    }
+
+    if (subcategory) {
+        params.set('subcategory', subcategory);
+    } else {
+        params.delete('subcategory');
+    }
+
+    const query = params.toString();
+    window.location.href = query ? `/?${query}` : '/';
+};
+
+window.SetCategoryFilter = function(categoryId) {
+    const categoryInput = document.getElementById('IndexCategoryFilter');
+    const subcategoryInput = document.getElementById('IndexSubcategoryFilter');
+
+    if (categoryInput) {
+        categoryInput.value = categoryId;
+        syncSubcategoryOptions();
+    }
+
+    if (subcategoryInput) {
+        subcategoryInput.value = '';
+    }
+
+    window.ApplyCatalogFilters();
 };
 
 // --- 2. CARRITO ---
@@ -89,6 +153,136 @@ window.ToggleCart = function(show) {
         document.body.classList.remove('overflow-hidden');
     }
 };
+
+window.ToggleMobileCatalog = function(show) {
+    const drawer = document.getElementById('MobileCatalogDrawer');
+    const overlay = document.getElementById('MobileCatalogOverlay');
+
+    if (!drawer || !overlay) return;
+
+    if (show) {
+        drawer.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        return;
+    }
+
+    drawer.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+};
+
+window.SetMainProductImage = function(url) {
+    const image = document.getElementById('MainProductImage');
+    const zoomedImage = document.getElementById('ZoomedProductImage');
+    if (image && url) {
+        image.src = url;
+    }
+    if (zoomedImage && url) {
+        zoomedImage.src = url;
+    }
+};
+
+window.OpenImageZoom = function() {
+    const modal = document.getElementById('ImageZoomModal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
+};
+
+window.CloseImageZoom = function() {
+    const modal = document.getElementById('ImageZoomModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
+};
+
+window.ChangeProductQty = function(delta) {
+    const input = document.getElementById('ProductQty');
+    if (!input) return;
+
+    const current = parseInt(input.value || '1', 10);
+    const min = parseInt(input.min || '1', 10);
+    const max = parseInt(input.max || '999', 10);
+    const next = Math.min(max, Math.max(min, current + delta));
+    input.value = next;
+};
+
+window.AddCurrentProductToCart = function(product) {
+    const qtyInput = document.getElementById('ProductQty');
+    const qty = Math.max(1, parseInt(qtyInput?.value || '1', 10));
+    const cart = window.getCart();
+    const existing = cart.find((item) => item.id === product.id);
+
+    if (existing) {
+        existing.qty = Math.min((existing.qty || 0) + qty, product.maxQty || 99);
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            qty: Math.min(qty, product.maxQty || 99),
+        });
+    }
+
+    window.setCart(cart);
+    window.ToggleCart(true);
+};
+
+window.ToggleCompareProduct = function(product) {
+    const key = 'electroshop-compare';
+    let compare = [];
+
+    try {
+        compare = JSON.parse(localStorage.getItem(key) || '[]');
+    } catch {
+        compare = [];
+    }
+
+    const exists = compare.find((item) => item.id === product.id);
+
+    if (exists) {
+        compare = compare.filter((item) => item.id !== product.id);
+        localStorage.setItem(key, JSON.stringify(compare));
+        window.alert('Producto retirado de comparar.');
+        return;
+    }
+
+    if (compare.length >= 4) {
+        window.alert('Solo puedes comparar hasta 4 productos.');
+        return;
+    }
+
+    compare.push(product);
+    localStorage.setItem(key, JSON.stringify(compare));
+    window.alert('Producto agregado para comparar.');
+};
+
+function syncSubcategoryOptions() {
+    const categoryInput = document.getElementById('IndexCategoryFilter');
+    const subcategoryInput = document.getElementById('IndexSubcategoryFilter');
+
+    if (!categoryInput || !subcategoryInput) return;
+
+    const selectedCategory = categoryInput.value;
+
+    Array.from(subcategoryInput.options).forEach((option, index) => {
+        if (index === 0) {
+            option.hidden = false;
+            return;
+        }
+
+        const matches = !selectedCategory || option.dataset.parent === selectedCategory;
+        option.hidden = !matches;
+
+        if (!matches && option.selected) {
+            option.selected = false;
+        }
+    });
+}
 
 // --- 3. AUTENTICACIÓN ---
 
@@ -231,9 +425,15 @@ window.handleAuthStep = async function() {
 // Inicializar y Eventos de Teclado
 document.addEventListener('DOMContentLoaded', () => {
     window.updateCartUI();
+    syncSubcategoryOptions();
 
     // Enter en Buscador
     document.getElementById('q')?.addEventListener('keydown', (e) => e.key === 'Enter' && window.Search());
+    document.getElementById('IndexCategoryFilter')?.addEventListener('change', () => {
+        syncSubcategoryOptions();
+        const subcategoryInput = document.getElementById('IndexSubcategoryFilter');
+        if (subcategoryInput) subcategoryInput.value = '';
+    });
 
     // Enter en Modal de Auth
     ['AuthEmail', 'AuthPass'].forEach(id => {

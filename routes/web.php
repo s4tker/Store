@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 // HOME
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/producto/{slug}', [HomeController::class, 'showProduct'])->name('product.show');
 
 // AUTH (AJAX)
 Route::post('/auth/check', [AuthController::class, 'checkEmail'])->name('auth.check');

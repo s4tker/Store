@@ -61,7 +61,7 @@
 }
 
 .admin-logo-text {
-    @apply text-3xl font-black tracking-tight text-white;
+    @apply text-2xl font-black tracking-tight text-white;
 }
 
 .admin-logo-text span {
@@ -78,7 +78,7 @@
 }
 
 .admin-nav-item {
-    @apply w-full rounded-2xl px-4 py-3 text-left text-sm font-bold text-slate-200 transition-all;
+    @apply w-full rounded-2xl px-4 py-3 text-left text-[13px] font-bold text-slate-200 transition-all;
     background: rgba(255, 255, 255, 0.05);
 }
 
@@ -190,12 +190,12 @@
 }
 
 .admin-title {
-    @apply mt-2 text-2xl font-black tracking-tight text-slate-900;
+    @apply mt-2 text-xl font-black tracking-tight text-slate-900;
 }
 
 @media (min-width: 768px) {
     .admin-title {
-        @apply text-4xl;
+        @apply text-3xl;
     }
 }
 
@@ -205,7 +205,7 @@
 
 .admin-summary span,
 .catalog-stats span {
-    @apply rounded-full border px-3 py-2 text-xs font-bold uppercase text-slate-600;
+    @apply rounded-full border px-3 py-2 text-[11px] font-bold uppercase text-slate-600;
     border-color: #dbeafe;
     background: #eff6ff;
 }
@@ -255,7 +255,7 @@
 }
 
 .admin-card-header h2 {
-    @apply text-xl font-black text-slate-900;
+    @apply text-lg font-black text-slate-900;
 }
 
 .editor-actions {
@@ -316,7 +316,7 @@
 }
 
 .label-admin {
-    @apply mb-2 block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500;
+    @apply mb-2 block text-[10px] font-black uppercase tracking-[0.16em] text-slate-500;
 }
 
 .helper-admin {
@@ -324,7 +324,7 @@
 }
 
 .input-admin {
-    @apply w-full rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition-colors;
+    @apply w-full rounded-2xl border px-4 py-3 text-[13px] font-semibold text-slate-800 outline-none transition-colors;
     border-color: #dbe3ef;
     background: rgba(248, 250, 252, 0.95);
     max-width: 100%;
