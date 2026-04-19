@@ -1,0 +1,315 @@
+@reference "tailwindcss";
+
+/* bloque base */
+.PedidosPage {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+.PedidosEyebrow {
+    font-size: 0.66rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #64748b;
+}
+
+/* bloque hero */
+.PedidosHero {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.35rem;
+    border: 1px solid rgba(191, 219, 254, 0.95);
+    border-radius: 2rem;
+    background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 35%),
+        linear-gradient(135deg, #ffffff 0%, #eff6ff 55%, #dbeafe 100%);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+}
+
+.PedidosTitle {
+    margin-top: 0.65rem;
+    font-size: 1.55rem;
+    font-weight: 900;
+    line-height: 1.08;
+    color: #0f172a;
+}
+
+.PedidosLead {
+    margin-top: 0.7rem;
+    max-width: 42rem;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #475569;
+}
+
+.PedidosBackLink {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1.15rem;
+    border-radius: 999px;
+    background: #0f172a;
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.PedidosBackLink:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+/* bloque panel */
+.PedidosPanel {
+    padding: 1.2rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.8rem;
+    background: white;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+}
+
+.PedidosPanelHead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.PedidosPanelHead h2 {
+    margin-top: 0.35rem;
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.PedidosTag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+/* bloque lista */
+.PedidosList {
+    display: grid;
+    gap: 1rem;
+}
+
+.PedidosCard {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.35rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.PedidosCardTop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+}
+
+.PedidosCode {
+    font-size: 1rem;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.PedidosState {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.PedidosState[data-state="Pendiente"] {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.PedidosState[data-state="Pagado"] {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.PedidosState[data-state="Cancelado"] {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.PedidosMeta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.PedidosMetaItem {
+    padding: 0.9rem;
+    border-radius: 1rem;
+    background: #f8fafc;
+}
+
+.PedidosMetaItem span {
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.PedidosMetaItem strong {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.PedidosItems {
+    display: grid;
+    gap: 0.7rem;
+}
+
+.PedidosItem {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem;
+    border-radius: 1rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+}
+
+.PedidosItem img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    border-radius: 0.9rem;
+    background: #f8fafc;
+}
+
+.PedidosItemCopy {
+    min-width: 0;
+}
+
+.PedidosItemCopy h3 {
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.PedidosItemCopy p {
+    margin-top: 0.25rem;
+    font-size: 0.76rem;
+    line-height: 1.5;
+    color: #64748b;
+}
+
+/* bloque acciones */
+.PedidosActions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.PedidosCancelButton {
+    border: none;
+    border-radius: 999px;
+    padding: 0.8rem 1rem;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.PedidosCancelButton:hover {
+    background: #fecaca;
+    transform: translateY(-1px);
+}
+
+.PedidosCancelButton:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* bloque estado */
+.PedidosEmpty {
+    padding: 1rem;
+    border-radius: 1.15rem;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.88rem;
+    line-height: 1.7;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* bloque desktop */
+@media (min-width: 900px) {
+    .PedidosHero {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 1.65rem 1.8rem;
+    }
+
+    .PedidosCard {
+        padding: 1.15rem;
+    }
+}
+
+/* bloque movil */
+@media (max-width: 640px) {
+    .PedidosHero,
+    .PedidosPanel {
+        padding: 1rem;
+        border-radius: 1.35rem;
+    }
+
+    .PedidosTitle {
+        font-size: 1.2rem;
+    }
+
+    .PedidosLead {
+        font-size: 0.84rem;
+    }
+
+    .PedidosMeta {
+        grid-template-columns: 1fr;
+    }
+
+    .PedidosItem {
+        align-items: flex-start;
+    }
+}

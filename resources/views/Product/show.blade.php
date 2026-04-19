@@ -8,6 +8,10 @@
     $mainImage = $galleryImages->first();
     $cartProductPayload = [
         'id' => $Product->Id,
+        'productId' => $Product->Id,
+        'variantId' => $Variant?->Id,
+        'sku' => $Variant?->Sku,
+        'slug' => $Product->Slug,
         'name' => $Product->Nombre,
         'price' => $FinalPrice,
         'image' => $Product->image_url,

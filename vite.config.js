@@ -8,8 +8,13 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/admin.css',
+                'resources/css/compra.css',
+                'resources/css/pedidos.css',
                 'resources/js/app.js',
                 'resources/js/AdminControl.js',
+                'resources/js/compra.js',
+                'resources/js/login.js',
+                'resources/js/pedidos.js',
             ],
             refresh: true,
         }),

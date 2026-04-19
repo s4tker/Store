@@ -28,7 +28,7 @@
                     <span class="text-[13px] md:text-sm font-bold text-slate-100 group-hover:text-white">{{ Auth::user()->Nombre }}</span>
                 </a>
             @else
-                <button type="button" onclick="openAuthModal()" class="text-[13px] md:text-sm font-bold text-slate-200 hover:text-white bg-slate-800 px-4 py-2 rounded-xl">Ingresar</button>
+                <a href="{{ route('login') }}" class="text-[13px] md:text-sm font-bold text-slate-200 hover:text-white bg-slate-800 px-4 py-2 rounded-xl">Ingresar</a>
             @endauth
 
             <button type="button" onclick="ToggleCart(true)" class="relative bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl shadow-xl shadow-blue-600/20 active:scale-90 transition-all">

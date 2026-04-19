@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
+    public function showLogin(Request $request)
+    {
+        return view('Login.login', [
+            'RedirectTo' => $request->query('redirect', ''),
+        ]);
+    }
+
     public function checkEmail(Request $request)
     {
         $data = $request->validate([
@@ -32,7 +39,7 @@ class AuthController extends Controller
 
         if ($data['mode'] === 'register') {
             try {
-                return DB::transaction(function () use ($data) {
+                return DB::transaction(function () use ($data, $request) {
                     $name = str(explode('@', $data['email'])[0])->replace(['.', '_', '-'], ' ')->title()->value();
                     $user = User::create([
                         'Nombre' => $name,
@@ -53,6 +60,7 @@ class AuthController extends Controller
                     return response()->json([
                         'success' => true,
                         'message' => 'Cuenta creada correctamente.',
+                        'redirect' => $this->resolveRedirect($request),
                     ]);
                 });
             } catch (\Exception $e) {
@@ -71,6 +79,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Sesión iniciada correctamente.',
+                'redirect' => $this->resolveRedirect($request),
             ]);
         }
 
@@ -84,5 +93,16 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('home');
+    }
+
+    protected function resolveRedirect(Request $request): string
+    {
+        $redirect = (string) $request->input('redirect', '');
+
+        if ($redirect !== '' && str_starts_with($redirect, '/')) {
+            return $redirect;
+        }
+
+        return route('home');
     }
 }

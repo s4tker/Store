@@ -103,7 +103,10 @@
                 <div class="space-y-2">
                     <a href="{{ route('home') }}" class="block rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700">Inicio</a>
                     @auth
+                    <a href="{{ route('pedidos.index') }}" class="block rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700">Pedidos</a>
                     <a href="{{ route('account') }}" class="block rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700">Mi cuenta</a>
+                    @else
+                    <a href="{{ route('login') }}" class="block rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700">Ingresar</a>
                     @endauth
                 </div>
             </div>
@@ -111,57 +114,5 @@
     </div>
 </aside>
 
-<div id="CartOverlay" class="fixed inset-0 z-[85] hidden bg-[#0f172a]/70 backdrop-blur-sm" onclick="ToggleCart(false)"></div>
-<aside id="CartDrawer" class="fixed right-0 top-0 z-[90] h-full w-full max-w-md translate-x-full bg-white shadow-2xl transition-transform duration-300">
-    <div class="h-full flex flex-col">
-        <div class="px-6 py-5 border-b flex items-center justify-between">
-            <h2 class="text-xl font-black italic uppercase text-slate-900">Tu Carrito</h2>
-            <button onclick="ToggleCart(false)" class="text-2xl text-slate-400 hover:text-slate-900">&times;</button>
-        </div>
-        <div id="CartItems" class="flex-1 overflow-y-auto px-6 py-6 space-y-4"></div>
-        <div class="p-6 border-t bg-slate-50">
-            <div class="flex items-center justify-between font-black uppercase text-xs mb-4 text-slate-600">
-                <span>Total estimado</span>
-                <span id="CartTotal" class="text-lg italic text-blue-600">S/.0.00</span>
-            </div>
-            <button class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl opacity-60 cursor-not-allowed uppercase text-[11px] tracking-widest">Próximamente Checkout</button>
-        </div>
-    </div>
-</aside>
-
-<div id="AuthModal" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center p-4 bg-[#0f172a]/90 backdrop-blur-xl transition-all" onclick="closeAuthModal()">
-    <div id="ModalContainer" class="bg-white w-full max-w-[95%] md:max-w-4xl rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl overflow-hidden translate-y-full md:translate-y-0 md:scale-95 opacity-0 flex flex-col md:flex-row min-h-[450px] transition-all duration-500" onclick="event.stopPropagation()">
-
-        <div class="hidden md:flex flex-1 bg-slate-50 items-center justify-center border-r">
-            <img src="{{ asset('img/logo/logo.png') }}" class="logo-img w-40 h-40 shadow-2xl rounded-full" alt="ElectroShop">
-        </div>
-
-        <div class="flex-1 p-8 md:p-16 flex flex-col justify-center">
-            <h2 class="text-2xl font-black italic uppercase mb-2">Electro<span class="text-blue-600">Shop</span></h2>
-            <p id="AuthSubtitle" class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-8">Ingresa tu correo para continuar</p>
-
-            <div class="space-y-4">
-                <input id="AuthEmail" type="email" placeholder="Correo electrónico" class="auth-input w-full p-4 bg-slate-100 rounded-2xl border-none font-bold">
-
-                <div id="PassWrapper" class="hidden relative">
-                    <input id="AuthPass" type="password" placeholder="Escribe tu contraseña" class="auth-input w-full p-4 bg-slate-100 rounded-2xl border-none font-bold pr-12">
-
-                    <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors">
-                        <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path id="eyePath" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
-                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
-                        </svg>
-                    </button>
-                </div>
-
-                <button id="AuthBtn" onclick="handleAuthStep()" class="btn-primary-es w-full bg-slate-900 text-white font-black py-4 rounded-2xl uppercase text-[11px] tracking-widest hover:bg-blue-600 transition-all">Continuar</button>
-
-                <div id="AuthAlert" class="hidden p-3 bg-red-50 text-red-600 text-[10px] font-bold uppercase rounded-xl text-center"></div>
-            </div>
-
-            <button onclick="closeAuthModal()" class="mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Cerrar</button>
-        </div>
-    </div>
-</div>
 </div>
 @endsection

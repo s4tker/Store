@@ -1,6 +1,7 @@
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 const adminProducts = JSON.parse(document.getElementById('AdminProductsData')?.textContent || '[]');
 const adminProductsMap = new Map(adminProducts.map((product) => [String(product.id), product]));
+const AdminSectionStorageKey = 'electroshop-admin-section';
 
 let previewUrls = [];
 
@@ -59,18 +60,23 @@ function initSidebar() {
 function initSectionNavigation() {
     const navItems = document.querySelectorAll('.admin-nav-item');
     const sections = document.querySelectorAll('.admin-section');
+    const setActiveSection = (target) => {
+        if (!target) {
+            return;
+        }
+
+        navItems.forEach((item) => item.classList.toggle('active', item.dataset.section === target));
+        sections.forEach((section) => section.classList.toggle('hidden', section.id !== `section-${target}`));
+        window.sessionStorage.setItem(AdminSectionStorageKey, target);
+    };
 
     navItems.forEach((button) => {
         button.addEventListener('click', () => {
-            const target = button.dataset.section;
-
-            navItems.forEach((item) => item.classList.remove('active'));
-            sections.forEach((section) => section.classList.add('hidden'));
-
-            button.classList.add('active');
-            document.getElementById(`section-${target}`)?.classList.remove('hidden');
+            setActiveSection(button.dataset.section);
         });
     });
+
+    setActiveSection(window.sessionStorage.getItem(AdminSectionStorageKey) || navItems[0]?.dataset.section);
 }
 
 function initProductEditor() {
@@ -668,6 +674,7 @@ function initFormHandlers() {
                 showToast(payload.message || 'Guardado correctamente.');
 
                 if (formId === 'FormAddProducto') {
+                    window.sessionStorage.setItem(AdminSectionStorageKey, 'productos');
                     window.setTimeout(() => window.location.reload(), 700);
                     return;
                 }
@@ -675,10 +682,12 @@ function initFormHandlers() {
                 form.reset();
                 resetCategoryFormState(formId);
                 if (formId === 'FormAddCategoria') {
+                    window.sessionStorage.setItem(AdminSectionStorageKey, 'categorias');
                     resetCategoryForm();
                 }
 
                 if (formId === 'FormAddMarca') {
+                    window.sessionStorage.setItem(AdminSectionStorageKey, 'marcas');
                     resetBrandForm();
                 }
 

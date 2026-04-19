@@ -28,16 +28,20 @@
             <button type="button" onclick="Search()" class="hidden sm:block text-blue-400 font-bold text-[11px] px-2">Buscar</button>
         </div>
 
-        <div class="flex items-center gap-2 md:gap-6 shrink-0">
+        <div class="flex items-center gap-2 md:gap-5 shrink-0">
             @auth
+                <a href="{{ route('pedidos.index') }}" class="hidden md:inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-blue-500 hover:text-white">
+                    Pedidos
+                </a>
+
                 <a href="{{ route('account') }}" class="flex flex-col items-end">
-                    <span class="hidden md:block text-[9px] text-slate-500 font-bold uppercase tracking-widest">Mi Cuenta</span>
-                    <span class="text-[11px] md:text-sm font-bold text-slate-200 truncate max-w-[60px] md:max-w-none">{{ Auth::user()->Nombre }}</span>
+                    <span class="text-[12px] md:text-sm font-extrabold text-white truncate max-w-[90px] md:max-w-[180px]">{{ Auth::user()->Nombre }}</span>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Mi Cuenta</span>
                 </a>
             @else
-                <button type="button" onclick="openAuthModal()" class="flex flex-col items-end">
+                <a href="{{ route('login') }}" class="flex flex-col items-end">
                     <span class="text-[11px] md:text-sm font-bold text-slate-200">Ingresar</span>
-                </button>
+                </a>
             @endauth
 
             <button type="button" onclick="ToggleCart(true)" class="relative bg-blue-600 text-white p-2 md:p-2.5 rounded-lg md:rounded-xl shadow-lg active:scale-90 transition-transform">

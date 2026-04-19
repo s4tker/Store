@@ -18,6 +18,7 @@
         @yield('content')
     </main>
 
+    @include('partials.cart-drawer')
     @include('partials.footer')
 
     @yield('scripts')
