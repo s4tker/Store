@@ -4,8 +4,11 @@
 
 @section('content')
 @php
+    // bloque galeria
     $galleryImages = $Product->imagenes->isNotEmpty() ? $Product->imagenes : collect([(object) ['Url' => $Product->image_url]]);
     $mainImage = $galleryImages->first();
+
+    // bloque carrito
     $cartProductPayload = [
         'id' => $Product->Id,
         'productId' => $Product->Id,
@@ -19,14 +22,17 @@
     ];
 @endphp
 
+{{-- bloque ruta --}}
 <div class="mb-5 flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
     <a href="{{ route('home') }}" class="hover:text-blue-600">Inicio</a>
     <span>/</span>
     <span>{{ $Product->categoria?->padre?->Nombre ?? $Product->categoria?->Nombre ?? 'Catálogo' }}</span>
 </div>
 
+{{-- bloque producto --}}
 <section class="grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
     <div class="space-y-4">
+        {{-- bloque imagen principal --}}
         <div class="rounded-[1.25rem] border border-slate-200 bg-white p-3 sm:p-4 shadow-sm">
             {{-- este cuadro controla el zoom con mouse y toque --}}
             <div
@@ -45,6 +51,7 @@
         </div>
 
         @if($galleryImages->count() > 1)
+        {{-- bloque miniaturas --}}
         <div class="grid grid-cols-4 sm:grid-cols-5 gap-2">
             @foreach($galleryImages as $image)
             @php
@@ -63,6 +70,7 @@
     </div>
 
     <div class="space-y-4">
+        {{-- bloque compra --}}
         <div class="rounded-[1.25rem] border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
             <div class="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -123,6 +131,7 @@
         </div>
 
         @if($Attributes->isNotEmpty())
+        {{-- bloque atributos --}}
         <div x-data="{ expanded: false }" class="rounded-[1.25rem] border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
             <div class="flex items-center justify-between gap-3">
                 <p class="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Características</p>
@@ -145,6 +154,7 @@
 </section>
 
 @if($RelatedProducts->isNotEmpty())
+{{-- bloque relacionados --}}
 <section class="mt-10">
     <div class="mb-4 flex items-end justify-between gap-3">
         <div>

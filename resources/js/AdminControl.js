@@ -1,3 +1,4 @@
+// bloque base
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 const adminProducts = JSON.parse(document.getElementById('AdminProductsData')?.textContent || '[]');
 const adminProductsMap = new Map(adminProducts.map((product) => [String(product.id), product]));
@@ -5,6 +6,7 @@ const AdminSectionStorageKey = 'electroshop-admin-section';
 
 let previewUrls = [];
 
+// bloque arranque
 document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
     initSectionNavigation();
@@ -16,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDeleteButtons();
 });
 
+// bloque sidebar
 function initSidebar() {
     const sidebar = document.getElementById('AdminSidebar');
     const overlay = document.getElementById('AdminSidebarOverlay');
@@ -57,6 +60,7 @@ function initSidebar() {
     });
 }
 
+// bloque secciones
 function initSectionNavigation() {
     const navItems = document.querySelectorAll('.admin-nav-item');
     const sections = document.querySelectorAll('.admin-section');
@@ -79,6 +83,7 @@ function initSectionNavigation() {
     setActiveSection(window.sessionStorage.getItem(AdminSectionStorageKey) || navItems[0]?.dataset.section);
 }
 
+// bloque producto
 function initProductEditor() {
     const form = document.getElementById('FormAddProducto');
     const categorySelect = document.getElementById('SelectCat');
@@ -184,6 +189,7 @@ function initProductEditor() {
     filterProducts();
 }
 
+// bloque atributos
 function addAttributeRow(name = '', value = '') {
     const container = document.getElementById('ContainerAtributos');
 
@@ -203,6 +209,7 @@ function addAttributeRow(name = '', value = '') {
     container.appendChild(row);
 }
 
+// bloque cargar
 function loadProductIntoForm(product) {
     const form = document.getElementById('FormAddProducto');
     const formTitle = document.getElementById('ProductFormTitle');
@@ -248,6 +255,7 @@ function loadProductIntoForm(product) {
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// bloque reset producto
 function resetProductForm() {
     const form = document.getElementById('FormAddProducto');
     const methodInput = document.getElementById('ProductFormMethod');
@@ -288,6 +296,7 @@ function resetProductForm() {
     document.getElementById('TxtDescuento').textContent = '0% desc.';
 }
 
+// bloque imagenes guardadas
 function renderExistingImages(images) {
     const grid = document.getElementById('ExistingImagesGrid');
 
@@ -319,6 +328,7 @@ function renderExistingImages(images) {
     });
 }
 
+// bloque imagenes nuevas
 function renderNewImagesPreview(files) {
     const grid = document.getElementById('NewImagesPreview');
 
@@ -353,6 +363,7 @@ function renderNewImagesPreview(files) {
     });
 }
 
+// bloque quitar imagen
 function toggleImageRemoval(imageId, card) {
     const container = document.getElementById('RemovedImagesContainer');
 
@@ -376,6 +387,7 @@ function toggleImageRemoval(imageId, card) {
     card.classList.add('is-marked-remove');
 }
 
+// bloque limpiar imagenes
 function clearRemovedImages() {
     const container = document.getElementById('RemovedImagesContainer');
 
@@ -384,6 +396,7 @@ function clearRemovedImages() {
     }
 }
 
+// bloque limpiar carga
 function clearNewImages() {
     const input = document.getElementById('ProductImages');
     const fileName = document.getElementById('FileName');
@@ -399,6 +412,7 @@ function clearNewImages() {
     renderNewImagesPreview([]);
 }
 
+// bloque limpiar atributos
 function clearAttributeRows() {
     const container = document.getElementById('ContainerAtributos');
 
@@ -407,12 +421,14 @@ function clearAttributeRows() {
     }
 }
 
+// bloque activo
 function highlightActiveProduct(productId) {
     document.querySelectorAll('.product-card-admin').forEach((card) => {
         card.classList.toggle('is-active', String(card.dataset.productId) === String(productId));
     });
 }
 
+// bloque filtros
 function filterProducts() {
     const search = document.getElementById('ProductSearch')?.value.trim().toLowerCase() || '';
     const brand = document.getElementById('FilterBrand')?.value.trim().toLowerCase() || '';
@@ -451,6 +467,7 @@ function filterProducts() {
     }
 }
 
+// bloque categoria base
 function initCategoryHelpers() {
     const typeSelect = document.getElementById('SelectCategoryType');
     const parentSelect = document.getElementById('CategoryParentSelect');
@@ -472,6 +489,7 @@ function initCategoryHelpers() {
     syncCategoryType();
 }
 
+// bloque editar categoria
 function initCategoryEditor() {
     const form = document.getElementById('FormAddCategoria');
     const resetButton = document.getElementById('BtnResetCategoryForm');
@@ -525,6 +543,7 @@ function initCategoryEditor() {
     });
 }
 
+// bloque reset categoria
 function resetCategoryForm() {
     const form = document.getElementById('FormAddCategoria');
     const methodInput = document.getElementById('CategoryFormMethod');
@@ -560,6 +579,7 @@ function resetCategoryForm() {
     }
 }
 
+// bloque editar marca
 function initBrandEditor() {
     const form = document.getElementById('FormAddMarca');
     const resetButton = document.getElementById('BtnResetBrandForm');
@@ -605,6 +625,7 @@ function initBrandEditor() {
     });
 }
 
+// bloque reset marca
 function resetBrandForm() {
     const form = document.getElementById('FormAddMarca');
     const methodInput = document.getElementById('BrandFormMethod');
@@ -635,6 +656,7 @@ function resetBrandForm() {
     }
 }
 
+// bloque guardado
 function initFormHandlers() {
     ['FormAddProducto', 'FormAddCategoria', 'FormAddMarca'].forEach((formId) => {
         const form = document.getElementById(formId);
@@ -704,12 +726,14 @@ function initFormHandlers() {
     });
 }
 
+// bloque apoyo categoria
 function resetCategoryFormState(formId) {
     if (formId === 'FormAddCategoria') {
         resetCategoryForm();
     }
 }
 
+// bloque eliminar
 function initDeleteButtons() {
     document.querySelectorAll('[data-delete-url]').forEach((button) => {
         button.addEventListener('click', async () => {
@@ -750,6 +774,7 @@ function initDeleteButtons() {
     });
 }
 
+// bloque toast
 function showToast(message, isError = false) {
     const toast = document.getElementById('Toast');
 

@@ -17,14 +17,17 @@
 
         {{-- bloque formulario --}}
         <div class="p-7 sm:p-10 md:p-14">
+            {{-- bloque encabezado --}}
             <div class="mb-8">
                 <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">acceso</p>
                 <h2 class="mt-3 text-2xl font-black italic uppercase text-slate-900">Electro<span class="text-blue-600">Shop</span></h2>
                 <p id="AuthSubtitle" class="mt-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">Ingresa tu correo para continuar</p>
             </div>
 
+            {{-- bloque redirect --}}
             <input type="hidden" id="AuthRedirect" value="{{ $RedirectTo }}">
 
+            {{-- bloque campos --}}
             <div class="space-y-4">
                 <input id="AuthEmail" type="email" placeholder="Correo electrónico" class="auth-input w-full rounded-2xl border-none bg-slate-100 p-4 font-bold">
 
@@ -43,6 +46,8 @@
 
                 <div id="AuthAlert" class="hidden rounded-xl bg-red-50 p-3 text-center text-[10px] font-bold uppercase text-red-600"></div>
             </div>
+
+            {{-- bloque cierre --}}
         </div>
     </section>
 </div>

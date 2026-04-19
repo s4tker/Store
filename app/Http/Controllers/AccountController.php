@@ -33,6 +33,7 @@ class AccountController extends Controller
         $user = User::findOrFail(Auth::id());
 
         $request->validate([
+            'Alias' => 'required|max:60',
             'Nombre' => 'required|max:60',
             'Apellidos' => 'required|max:100',
             'Correo' => 'required|email|unique:Usuarios,Correo,' . $user->Id . ',Id',
@@ -42,6 +43,7 @@ class AccountController extends Controller
         ]);
 
         $user->update($request->only(
+            'Alias',
             'Nombre',
             'Apellidos',
             'Correo',

@@ -25,7 +25,7 @@
             @auth
                 <a href="{{ route('account') }}" class="flex flex-col items-end group">
                     <span class="hidden md:block text-[9px] text-slate-500 font-black uppercase tracking-[0.2em] group-hover:text-blue-400 transition-colors">Mi Perfil</span>
-                    <span class="text-[13px] md:text-sm font-bold text-slate-100 group-hover:text-white">{{ Auth::user()->Nombre }}</span>
+                    <span class="text-[13px] md:text-sm font-bold text-slate-100 group-hover:text-white">{{ Auth::user()->Alias ?: Auth::user()->Nombre ?: 'Usuario' }}</span>
                 </a>
             @else
                 <a href="{{ route('login') }}" class="text-[13px] md:text-sm font-bold text-slate-200 hover:text-white bg-slate-800 px-4 py-2 rounded-xl">Ingresar</a>

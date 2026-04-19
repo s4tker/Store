@@ -61,9 +61,15 @@
             <form action="{{ route('account.update') }}" method="POST" class="space-y-8 relative z-10">
                 @csrf
 
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Alias *</label>
+                    <input type="text" name="Alias" value="{{ old('Alias', $user->Alias) }}" required
+                        class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-blue-500 transition-all font-bold text-slate-900 placeholder-slate-300 outline-none shadow-sm">
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre Completo *</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre *</label>
                         <input type="text" name="Nombre" value="{{ old('Nombre', $user->Nombre) }}" required
                             class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-blue-500 transition-all font-bold text-slate-900 placeholder-slate-300 outline-none shadow-sm">
                     </div>

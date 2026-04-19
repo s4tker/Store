@@ -35,7 +35,7 @@
                 </a>
 
                 <a href="{{ route('account') }}" class="flex flex-col items-end">
-                    <span class="text-[12px] md:text-sm font-extrabold text-white truncate max-w-[90px] md:max-w-[180px]">{{ Auth::user()->Nombre }}</span>
+                    <span class="text-[12px] md:text-sm font-extrabold text-white truncate max-w-[90px] md:max-w-[180px]">{{ Auth::user()->Alias ?: Auth::user()->Nombre ?: 'Usuario' }}</span>
                     <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Mi Cuenta</span>
                 </a>
             @else

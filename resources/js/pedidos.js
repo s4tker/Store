@@ -102,6 +102,7 @@ function GetPedidos() {
     }
 }
 
+// bloque texto
 function EscapeHtml(Value) {
     return String(Value)
         .replaceAll('&', '&amp;')

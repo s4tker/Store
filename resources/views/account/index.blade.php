@@ -55,17 +55,27 @@
                     <div class="text-center mb-8 pb-8 border-b border-slate-50">
                         <div class="relative inline-block group">
                             <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-[2rem] flex items-center justify-center text-white text-3xl font-black shadow-2xl shadow-blue-500/40 rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                                {{ strtoupper(substr($user->Nombre, 0, 1)) }}
+                                {{ strtoupper(substr($user->Alias ?: $user->Nombre ?: 'U', 0, 1)) }}
                             </div>
                             <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center border border-slate-100">
                                 <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
                             </div>
                         </div>
-                        <h2 class="text-xl font-black text-slate-900 mt-2">{{ $user->Nombre }} {{ $user->Apellidos }}</h2>
+                        <p class="text-[10px] font-black uppercase tracking-[0.16em] text-blue-600">{{ $user->Alias ?: 'sin alias' }}</p>
+                        <h2 class="text-xl font-black text-slate-900 mt-2">{{ trim(($user->Nombre ?? '') . ' ' . ($user->Apellidos ?? '')) ?: 'Nombre no registrado' }}</h2>
                         <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-tighter mt-2">{{ $user->Correo }}</span>
                     </div>
 
                     <div class="space-y-6 mb-8">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.438 0 4.73.626 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Alias</p>
+                                <p class="text-sm font-bold text-slate-700">{{ $user->Alias ?? 'No registrado' }}</p>
+                            </div>
+                        </div>
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v10a2 2 0 002 2h5m0 0h5m-5 0a2 2 0 002-2V8a2 2 0 012-2h5"></path></svg>

@@ -40,9 +40,10 @@ class AuthController extends Controller
         if ($data['mode'] === 'register') {
             try {
                 return DB::transaction(function () use ($data, $request) {
-                    $name = str(explode('@', $data['email'])[0])->replace(['.', '_', '-'], ' ')->title()->value();
+                    $alias = str(explode('@', $data['email'])[0])->replace(['.', ' ', '_'], '-')->lower()->value();
                     $user = User::create([
-                        'Nombre' => $name,
+                        'Alias' => $alias,
+                        'Nombre' => null,
                         'Correo' => $data['email'],
                         'Password' => Hash::make($data['password']),
                     ]);

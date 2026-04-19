@@ -207,12 +207,14 @@ function SetText(Id, Value) {
     }
 }
 
+// bloque pedidos
 function SavePedido(Pedido) {
     const Pedidos = GetPedidos();
     Pedidos.unshift(Pedido);
     localStorage.setItem(PedidoStorageKey, JSON.stringify(Pedidos));
 }
 
+// bloque lectura
 function GetPedidos() {
     try {
         const Pedidos = JSON.parse(localStorage.getItem(PedidoStorageKey) || '[]');
@@ -222,6 +224,7 @@ function GetPedidos() {
     }
 }
 
+// bloque texto
 function EscapeHtml(Value) {
     return String(Value)
         .replaceAll('&', '&amp;')

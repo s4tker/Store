@@ -32,6 +32,7 @@ function ResetAuthForm() {
     AlertBox.classList.add('hidden');
 }
 
+// bloque ojo
 window.togglePassword = function() {
     const PassInput = document.getElementById('AuthPass');
     const EyeIcon = document.getElementById('eyeIcon');
@@ -50,6 +51,7 @@ window.togglePassword = function() {
     EyeIcon.classList.remove('text-blue-600');
 };
 
+// bloque validacion
 function ValidateEmail(Email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(Email);
 }

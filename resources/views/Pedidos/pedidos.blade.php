@@ -21,6 +21,7 @@
 
     {{-- bloque panel --}}
     <section class="PedidosPanel">
+        {{-- bloque cabecera --}}
         <div class="PedidosPanelHead">
             <div>
                 <p class="PedidosEyebrow">resumen</p>
@@ -29,10 +30,12 @@
             <span class="PedidosTag" id="PedidosCount">0 pedidos</span>
         </div>
 
+        {{-- bloque vacio --}}
         <div id="PedidosEmpty" class="PedidosEmpty hidden">
             Aún no tienes pedidos simulados. Genera uno desde la vista de compra.
         </div>
 
+        {{-- bloque lista --}}
         <div id="PedidosList" class="PedidosList"></div>
     </section>
 </div>

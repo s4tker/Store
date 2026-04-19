@@ -8,6 +8,7 @@
 
 @section('content')
 @php
+    // bloque bootstrap
     $CompraBootstrap = [
         'Usuario' => $UsuarioCompra ? [
             'Nombre' => $UsuarioCompra->Nombre,
@@ -29,9 +30,11 @@
     ];
 @endphp
 
+{{-- bloque datos --}}
 <script id="CompraBootstrap" type="application/json">@json($CompraBootstrap)</script>
 
 <div class="CompraPage">
+    {{-- bloque hero --}}
     <section class="CompraHero">
         <div>
             <p class="CompraEyebrow">simulación de compra</p>
@@ -43,6 +46,7 @@
     </section>
 
     <div class="CompraGrid">
+        {{-- bloque formulario --}}
         <section class="CompraPanel">
             <div class="CompraPanelHead">
                 <div>
@@ -179,6 +183,7 @@
             </form>
         </section>
 
+        {{-- bloque resumen --}}
         <aside class="CompraSidebar">
             <section class="CompraPanel CompraPanelSticky">
                 <div class="CompraPanelHead">
