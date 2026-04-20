@@ -96,11 +96,6 @@
                 <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-slate-600">
                     stock: {{ $Stock }}
                 </span>
-                @if($Variant?->Sku)
-                <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-slate-600">
-                    sku: {{ $Variant->Sku }}
-                </span>
-                @endif
                 <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-slate-600">
                     {{ $Product->categoria?->Nombre ?? 'sin categoría' }}
                 </span>

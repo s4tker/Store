@@ -56,7 +56,7 @@ function RenderPedidos() {
                         <img src="${EscapeHtml(Item.image || '')}" alt="${EscapeHtml(Item.name || 'Producto')}">
                         <div class="PedidosItemCopy">
                             <h3>${EscapeHtml(Item.name || 'Producto')}</h3>
-                            <p>cantidad: ${Number(Item.qty) || 0}${Item.sku ? ` · sku: ${EscapeHtml(Item.sku)}` : ''}</p>
+                            <p>cantidad: ${Number(Item.qty) || 0}</p>
                         </div>
                     </div>
                 `).join('')}

@@ -118,7 +118,7 @@ function RenderCompraSummary() {
             <img src="${EscapeHtml(Item.image || '')}" alt="${EscapeHtml(Item.name || 'Producto')}" class="CompraItemImage">
             <div class="CompraItemMeta">
                 <h3>${EscapeHtml(Item.name || 'Producto')}</h3>
-                <p>cantidad: ${Number(Item.qty) || 0}${Item.sku ? ` · sku: ${EscapeHtml(Item.sku)}` : ''}</p>
+                <p>cantidad: ${Number(Item.qty) || 0}</p>
                 <div class="CompraItemPrice">S/.${((Number(Item.price) || 0) * (Number(Item.qty) || 0)).toFixed(2)}</div>
             </div>
         </article>
