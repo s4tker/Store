@@ -49,7 +49,8 @@ class AuthController extends Controller
                     ]);
 
                     $role = Role::query()
-                        ->whereRaw('LOWER(Nombre) = ?', ['cliente'])
+                        ->whereRaw('LOWER(Nombre) in (?, ?, ?)', ['usuario', 'cliente', 'user'])
+                        ->orderByRaw("CASE WHEN LOWER(Nombre) = 'usuario' THEN 0 WHEN LOWER(Nombre) = 'cliente' THEN 1 ELSE 2 END")
                         ->first();
 
                     if ($role) {

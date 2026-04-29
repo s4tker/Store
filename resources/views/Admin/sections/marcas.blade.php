@@ -3,8 +3,9 @@
     <div class="admin-card">
         <div class="admin-card-header admin-card-header-tight">
             <div>
-                <p class="admin-kicker" id="BrandFormEyebrow">Fabricantes</p>
+                <p class="admin-kicker" id="BrandFormEyebrow">marcas</p>
                 <h2 id="BrandFormTitle">Nueva marca</h2>
+                <p class="admin-card-intro">Registra y actualiza las marcas de tu catálogo.</p>
             </div>
             <button type="button" class="secondary-admin-btn" id="BtnResetBrandForm">Nueva</button>
         </div>
@@ -36,12 +37,14 @@
     <div class="admin-card">
         <div class="admin-card-header">
             <div>
-                <p class="admin-kicker">Listado actual</p>
+                <p class="admin-kicker">listado</p>
                 <h2>Marcas registradas</h2>
+                <p class="admin-card-intro">Cada marca se puede editar o borrar desde aquí.</p>
             </div>
+            <button type="button" class="ghost-admin-btn admin-list-toggle" data-toggle-target="BrandListPanel" data-toggle-label-show="Ver marcas" data-toggle-label-hide="Ocultar marcas">Ver marcas</button>
         </div>
 
-        <div class="chip-list">
+        <div id="BrandListPanel" class="chip-list admin-collapsible-panel hidden">
             @forelse($Marcas as $marca)
                 <div class="chip">
                     <span>{{ $marca->Nombre }}</span>
@@ -54,8 +57,8 @@
                         >
                             Editar
                         </button>
-                        <button type="button" class="danger-inline-btn is-chip" data-delete-url="{{ route('admin.marcas.destroy', $marca->Id) }}" data-delete-label="marca {{ $marca->Nombre }}">
-                            ×
+                        <button type="button" class="danger-inline-btn danger-inline-btn-soft" data-delete-url="{{ route('admin.marcas.destroy', $marca->Id) }}" data-delete-label="marca {{ $marca->Nombre }}">
+                            Borrar
                         </button>
                     </div>
                 </div>

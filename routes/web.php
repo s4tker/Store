@@ -21,6 +21,8 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/usuarios', [AdminController::class, 'users'])->name('admin.usuarios.index');
+    Route::get('/admin/estadisticas', [AdminController::class, 'statistics'])->name('admin.estadisticas.index');
     Route::post('/admin/productos/store', [AdminController::class, 'storeProduct'])->name('admin.productos.store');
     Route::put('/admin/productos/{producto}', [AdminController::class, 'updateProduct'])->name('admin.productos.update');
     Route::delete('/admin/productos/{producto}', [AdminController::class, 'destroyProduct'])->name('admin.productos.destroy');
@@ -30,6 +32,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/marcas/store', [AdminController::class, 'storeBrand'])->name('admin.marcas.store');
     Route::put('/admin/marcas/{marca}', [AdminController::class, 'updateBrand'])->name('admin.marcas.update');
     Route::delete('/admin/marcas/{marca}', [AdminController::class, 'destroyBrand'])->name('admin.marcas.destroy');
+    Route::post('/admin/usuarios/store', [AdminController::class, 'storeUser'])->name('admin.usuarios.store');
+    Route::put('/admin/usuarios/{usuario}', [AdminController::class, 'updateUser'])->name('admin.usuarios.update');
+    Route::delete('/admin/usuarios/{usuario}', [AdminController::class, 'destroyUser'])->name('admin.usuarios.destroy');
 });
 
 // ACCOUNT (PROTEGIDO)

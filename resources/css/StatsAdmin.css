@@ -1,0 +1,203 @@
+@reference "tailwindcss";
+
+.stats-admin-shell {
+    @apply space-y-6;
+}
+
+.stats-admin-hero,
+.stats-admin-toolbar,
+.stats-admin-card {
+    @apply rounded-[2rem] border bg-white;
+    border-color: rgba(147, 197, 253, 0.72);
+    box-shadow: 0 18px 40px rgba(37, 99, 235, 0.06);
+}
+
+.stats-admin-hero,
+.stats-admin-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-admin-hero::after,
+.stats-admin-card::after {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(191, 219, 254, 0.82);
+    border-radius: 1.5rem;
+    pointer-events: none;
+}
+
+.stats-admin-hero {
+    @apply flex flex-col gap-4 p-5 md:flex-row md:items-end md:justify-between md:p-6;
+}
+
+.stats-admin-kicker {
+    @apply text-[10px] font-black uppercase tracking-[0.24em];
+    color: #2563eb;
+}
+
+.stats-admin-hero h1,
+.stats-admin-card h2 {
+    @apply mt-1 text-lg font-black tracking-tight text-slate-900;
+}
+
+.stats-admin-hero p,
+.stats-admin-copy {
+    @apply mt-1 text-[13px] font-semibold leading-5 text-slate-500;
+}
+
+.stats-admin-hero-tags,
+.stats-admin-periods,
+.stats-admin-actions,
+.stats-admin-summary {
+    @apply flex flex-wrap gap-2;
+}
+
+.stats-admin-hero-tags span,
+.stats-admin-period,
+.stats-admin-action,
+.stats-admin-summary-card em {
+    @apply inline-flex items-center rounded-full px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em];
+}
+
+.stats-admin-hero-tags span,
+.stats-admin-summary-card em {
+    color: #0f3d91;
+    background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+    border: 1px solid rgba(96, 165, 250, 0.32);
+}
+
+.stats-admin-toolbar {
+    @apply flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between;
+}
+
+.stats-admin-period,
+.stats-admin-action {
+    color: #0f3d91;
+    background: rgba(219, 234, 254, 0.88);
+    border: 1px solid rgba(96, 165, 250, 0.34);
+    transition: 180ms ease;
+}
+
+.stats-admin-period.is-active,
+.stats-admin-action:hover {
+    color: white;
+    background: linear-gradient(135deg, #0f3d91 0%, #38bdf8 100%);
+}
+
+.stats-admin-grid {
+    @apply grid gap-6;
+}
+
+@media (min-width: 1200px) {
+    .stats-admin-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+}
+
+.stats-admin-card {
+    @apply p-4 md:p-5;
+}
+
+.stats-admin-card-head {
+    @apply relative z-[1] mb-5;
+}
+
+.stats-admin-summary {
+    @apply relative z-[1] mb-5 grid gap-3;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.stats-admin-summary-card {
+    @apply rounded-[1.4rem] border bg-white p-4;
+    border-color: rgba(191, 219, 254, 0.9);
+}
+
+.stats-admin-summary-card strong {
+    @apply mt-3 block text-2xl font-black text-slate-900;
+}
+
+.stats-admin-summary-card span {
+    @apply mt-2 block text-xs font-semibold text-slate-500;
+}
+
+.stats-admin-metrics {
+    @apply mb-5 grid gap-3 md:grid-cols-2;
+}
+
+.stats-admin-metric {
+    @apply rounded-[1.4rem] border bg-white p-4;
+    border-color: rgba(191, 219, 254, 0.9);
+}
+
+.stats-admin-metric span {
+    @apply text-[11px] font-black uppercase tracking-[0.14em] text-slate-500;
+}
+
+.stats-admin-metric strong {
+    @apply mt-2 block text-xl font-black text-slate-900;
+}
+
+.stats-admin-table-shell {
+    @apply relative z-[1] rounded-[1.6rem] border bg-white p-4;
+    border-color: rgba(191, 219, 254, 0.9);
+}
+
+.stats-admin-table-head {
+    @apply mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between;
+}
+
+.stats-admin-table-head strong {
+    @apply text-sm font-black text-slate-900;
+}
+
+.stats-admin-table-head span {
+    @apply text-xs font-semibold text-slate-500;
+}
+
+.stats-admin-table-wrap {
+    @apply overflow-x-auto;
+}
+
+.stats-admin-table {
+    @apply min-w-full border-separate;
+    border-spacing: 0 0.65rem;
+}
+
+.stats-admin-table th {
+    @apply px-3 pb-1 text-left text-[10px] font-black uppercase tracking-[0.14em] text-slate-500;
+}
+
+.stats-admin-table td {
+    @apply rounded-xl border bg-slate-50 px-3 py-3 text-[12px] font-semibold text-slate-700;
+    border-color: rgba(226, 232, 240, 0.95);
+}
+
+.stats-admin-table td strong {
+    @apply font-black text-slate-900;
+}
+
+.stats-admin-empty {
+    @apply rounded-[1.4rem] border border-dashed px-4 py-6 text-center text-sm font-bold text-slate-500;
+    border-color: rgba(147, 197, 253, 0.82);
+}
+
+@media (max-width: 767px) {
+    .stats-admin-shell {
+        @apply space-y-5;
+    }
+
+    .stats-admin-hero,
+    .stats-admin-toolbar,
+    .stats-admin-card {
+        border-radius: 1.5rem;
+    }
+
+    .stats-admin-hero::after,
+    .stats-admin-card::after {
+        inset: 10px;
+        border-radius: 1.1rem;
+    }
+}

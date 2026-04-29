@@ -6,10 +6,31 @@ const AdminSectionStorageKey = 'electroshop-admin-section';
 
 let previewUrls = [];
 
+window.ToggleAdminNav = function(show) {
+    const drawer = document.getElementById('AdminNavDrawer');
+    const overlay = document.getElementById('AdminNavOverlay');
+
+    if (!drawer || !overlay) {
+        return;
+    }
+
+    if (show) {
+        drawer.classList.add('is-open');
+        overlay.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        return;
+    }
+
+    drawer.classList.remove('is-open');
+    overlay.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+};
+
 // bloque arranque
 document.addEventListener('DOMContentLoaded', () => {
-    initSidebar();
+    initAdminNavigation();
     initSectionNavigation();
+    initSectionToggles();
     initProductEditor();
     initCategoryHelpers();
     initCategoryEditor();
@@ -18,51 +39,16 @@ document.addEventListener('DOMContentLoaded', () => {
     initDeleteButtons();
 });
 
-// bloque sidebar
-function initSidebar() {
-    const sidebar = document.getElementById('AdminSidebar');
-    const overlay = document.getElementById('AdminSidebarOverlay');
-    const toggle = document.getElementById('AdminSidebarToggle');
+// bloque navegacion admin
+function initAdminNavigation() {
+    const overlay = document.getElementById('AdminNavOverlay');
 
-    if (!sidebar || !overlay || !toggle) {
-        return;
-    }
-
-    const closeSidebar = () => {
-        sidebar.classList.remove('is-open');
-        overlay.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
-    };
-
-    const openSidebar = () => {
-        sidebar.classList.add('is-open');
-        overlay.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
-    };
-
-    toggle.addEventListener('click', () => {
-        if (sidebar.classList.contains('is-open')) {
-            closeSidebar();
-            return;
-        }
-
-        openSidebar();
-    });
-
-    overlay.addEventListener('click', closeSidebar);
-
-    document.querySelectorAll('.admin-nav-item').forEach((item) => {
-        item.addEventListener('click', () => {
-            if (window.innerWidth < 1024) {
-                closeSidebar();
-            }
-        });
-    });
+    overlay?.addEventListener('click', () => window.ToggleAdminNav(false));
 }
 
 // bloque secciones
 function initSectionNavigation() {
-    const navItems = document.querySelectorAll('.admin-nav-item');
+    const navItems = document.querySelectorAll('[data-section]');
     const sections = document.querySelectorAll('.admin-section');
     const setActiveSection = (target) => {
         if (!target) {
@@ -77,10 +63,37 @@ function initSectionNavigation() {
     navItems.forEach((button) => {
         button.addEventListener('click', () => {
             setActiveSection(button.dataset.section);
+            if (window.innerWidth < 768 && typeof window.ToggleAdminNav === 'function') {
+                window.ToggleAdminNav(false);
+            }
         });
     });
 
     setActiveSection(window.sessionStorage.getItem(AdminSectionStorageKey) || navItems[0]?.dataset.section);
+}
+
+function initSectionToggles() {
+    document.querySelectorAll('[data-toggle-target]').forEach((button) => {
+        const target = document.getElementById(button.dataset.toggleTarget || '');
+
+        if (!target) {
+            return;
+        }
+
+        const syncLabel = () => {
+            const isHidden = target.classList.contains('hidden');
+            button.textContent = isHidden
+                ? (button.dataset.toggleLabelShow || 'Ver')
+                : (button.dataset.toggleLabelHide || 'Ocultar');
+        };
+
+        button.addEventListener('click', () => {
+            target.classList.toggle('hidden');
+            syncLabel();
+        });
+
+        syncLabel();
+    });
 }
 
 // bloque producto
@@ -202,7 +215,7 @@ function addAttributeRow(name = '', value = '') {
     row.innerHTML = `
         <input type="text" name="attr_nombre[]" class="input-admin" placeholder="Ej: RAM" value="${escapeHtml(name)}">
         <input type="text" name="attr_valor[]" class="input-admin" placeholder="Ej: 16 GB" value="${escapeHtml(value)}">
-        <button type="button" class="attribute-remove" aria-label="Eliminar atributo">×</button>
+        <button type="button" class="attribute-remove" aria-label="Quitar atributo">X</button>
     `;
 
     row.querySelector('.attribute-remove')?.addEventListener('click', () => row.remove());
@@ -658,7 +671,7 @@ function resetBrandForm() {
 
 // bloque guardado
 function initFormHandlers() {
-    ['FormAddProducto', 'FormAddCategoria', 'FormAddMarca'].forEach((formId) => {
+    ['FormAddProducto', 'FormAddCategoria', 'FormAddMarca', 'FormAdminUsuario'].forEach((formId) => {
         const form = document.getElementById(formId);
 
         if (!form) {
@@ -695,6 +708,10 @@ function initFormHandlers() {
 
                 showToast(payload.message || 'Guardado correctamente.');
 
+                if (form.dataset.sectionPersist) {
+                    window.sessionStorage.setItem(AdminSectionStorageKey, form.dataset.sectionPersist);
+                }
+
                 if (formId === 'FormAddProducto') {
                     window.sessionStorage.setItem(AdminSectionStorageKey, 'productos');
                     window.setTimeout(() => window.location.reload(), 700);
@@ -711,6 +728,10 @@ function initFormHandlers() {
                 if (formId === 'FormAddMarca') {
                     window.sessionStorage.setItem(AdminSectionStorageKey, 'marcas');
                     resetBrandForm();
+                }
+
+                if (formId === 'FormAdminUsuario' && typeof window.resetAdminUserForm === 'function') {
+                    window.resetAdminUserForm();
                 }
 
                 window.setTimeout(() => window.location.reload(), 700);
@@ -739,6 +760,7 @@ function initDeleteButtons() {
         button.addEventListener('click', async () => {
             const url = button.dataset.deleteUrl;
             const label = button.dataset.deleteLabel || 'registro';
+            const section = button.dataset.deleteSection || '';
 
             if (!window.confirm(`¿Eliminar ${label}?`)) {
                 return;
@@ -764,6 +786,11 @@ function initDeleteButtons() {
                 }
 
                 showToast(payload.message || 'Eliminado correctamente.');
+
+                if (section) {
+                    window.sessionStorage.setItem(AdminSectionStorageKey, section);
+                }
+
                 window.setTimeout(() => window.location.reload(), 700);
             } catch (error) {
                 button.disabled = false;

@@ -152,6 +152,7 @@ function BindCompraEvents() {
             id: crypto.randomUUID ? crypto.randomUUID() : `pedido-${Date.now()}`,
             codigo: Codigo,
             fecha: new Date().toLocaleString('es-PE'),
+            createdAtIso: new Date().toISOString(),
             metodoPago: Metodo,
             estadoPedido: EstadoPedido,
             estadoPago: EstadoPago,

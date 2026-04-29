@@ -7,8 +7,11 @@ use App\Models\Marca;
 use App\Models\Producto;
 use App\Models\ProductoImagenes;
 use App\Models\ProductoVariantes;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -45,11 +48,72 @@ class AdminController extends Controller
             ->get();
 
         return view('Admin.admin', [
+            'Search' => '',
+            'AdminNavLabel' => 'Panel Admin',
+            'AdminNavRoute' => route('admin.dashboard'),
+            'HideNavbarSearch' => true,
+            'HideNavbarOrders' => true,
+            'HideNavbarCart' => true,
+            'NavbarMobileTriggerAction' => 'ToggleAdminNav(true)',
             'Categorias' => $rootCategories,
             'TodasLasCategorias' => $allCategories,
             'Marcas' => $brands,
             'Productos' => $products,
             'ProductosAdmin' => $this->buildProductEditorPayloads($products),
+        ]);
+    }
+
+    public function users()
+    {
+        $roles = Role::query()
+            ->get(['Id', 'Nombre'])
+            ->filter(fn (Role $role) => in_array($this->resolveRoleKey($role->Nombre), ['admin', 'usuario'], true))
+            ->sortBy(fn (Role $role) => $this->resolveRoleSortOrder($role->Nombre))
+            ->values();
+
+        $allUsers = User::query()
+            ->select(['Id', 'Alias', 'Correo', 'CreatedAt'])
+            ->with('roles')
+            ->orderByDesc('Id')
+            ->get();
+
+        $adminUsers = $allUsers->filter(function (User $user) {
+            return $this->userHasAdminRole($user);
+        })->values();
+
+        return view('Admin.user.user', [
+            'Search' => '',
+            'AdminNavLabel' => 'Volver',
+            'AdminNavRoute' => route('admin.dashboard'),
+            'HideNavbarMobileTrigger' => true,
+            'HideNavbarSearch' => true,
+            'HideNavbarOrders' => true,
+            'HideNavbarCart' => true,
+            'RolesUsuarios' => $roles,
+            'UsuariosAdmin' => $this->buildUserManagementPayloads($adminUsers),
+            'UsuariosBusqueda' => $this->buildUserManagementPayloads($allUsers),
+        ]);
+    }
+
+    public function statistics()
+    {
+        $customers = User::query()
+            ->select(['Id', 'Alias', 'Nombre', 'Apellidos', 'Correo', 'CreatedAt'])
+            ->with('roles')
+            ->orderByDesc('Id')
+            ->get()
+            ->reject(fn (User $user) => $this->userHasAdminRole($user))
+            ->values();
+
+        return view('Admin.estadisticas.estadisticas', [
+            'Search' => '',
+            'AdminNavLabel' => 'Volver',
+            'AdminNavRoute' => route('admin.dashboard'),
+            'HideNavbarMobileTrigger' => true,
+            'HideNavbarSearch' => true,
+            'HideNavbarOrders' => true,
+            'HideNavbarCart' => true,
+            'ClientesStats' => $this->buildCustomerStatisticsPayloads($customers),
         ]);
     }
 
@@ -122,9 +186,19 @@ class AdminController extends Controller
         return $this->saveProduct($request);
     }
 
+    public function storeUser(Request $request)
+    {
+        return $this->saveUserAccount($request);
+    }
+
     public function updateProduct(Request $request, Producto $producto)
     {
         return $this->saveProduct($request, $producto);
+    }
+
+    public function updateUser(Request $request, User $usuario)
+    {
+        return $this->saveUserAccount($request, $usuario);
     }
 
     public function destroyProduct(Producto $producto)
@@ -144,6 +218,30 @@ class AdminController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Producto eliminado correctamente.',
+        ]);
+    }
+
+    public function destroyUser(User $usuario)
+    {
+        if ($this->isProtectedAdminUser($usuario)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No puedes eliminar una cuenta con rol administrador desde esta vista.',
+            ], 422);
+        }
+
+        if ((int) $usuario->Id === (int) auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No puedes eliminar tu propia cuenta desde esta sección.',
+            ], 422);
+        }
+
+        $usuario->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario eliminado correctamente.',
         ]);
     }
 
@@ -316,6 +414,59 @@ class AdminController extends Controller
         ]);
     }
 
+    protected function saveUserAccount(Request $request, ?User $user = null)
+    {
+        $data = $request->validate([
+            'Correo' => ['required', 'email', 'max:120', Rule::unique('Usuarios', 'Correo')->ignore($user?->Id, 'Id')],
+            'Password' => [$user ? 'nullable' : 'required', 'string', 'min:6', 'max:255'],
+            'RolId' => ['required', 'integer'],
+        ]);
+
+        $role = Role::query()->find((int) $data['RolId']);
+
+        if (! $role || ! in_array($this->resolveRoleKey($role->Nombre), ['admin', 'usuario'], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Solo puedes asignar los roles Administrador o Usuario.',
+            ], 422);
+        }
+
+        $user = DB::transaction(function () use ($data, $user, $role) {
+            $user ??= new User();
+
+            $correo = trim((string) $data['Correo']);
+            $alias = str(explode('@', $correo)[0])
+                ->replace(['.', ' ', '_'], '-')
+                ->lower()
+                ->value();
+
+            $user->fill([
+                'Alias' => $alias !== '' ? $alias : null,
+                'Correo' => $correo,
+            ]);
+
+            if (trim((string) ($data['Password'] ?? '')) !== '') {
+                $user->Password = Hash::make($data['Password']);
+            }
+
+            $user->save();
+            $user->roles()->sync([$role->Id]);
+
+            return $user->fresh('roles');
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => $request->route('usuario')
+                ? 'Usuario actualizado correctamente.'
+                : 'Usuario registrado correctamente.',
+            'data' => [
+                'id' => $user->Id,
+                'correo' => $user->Correo,
+            ],
+        ]);
+    }
+
     protected function resolveCategoryId(array $data)
     {
         if (empty($data['SubCategoriaId'])) {
@@ -482,6 +633,48 @@ class AdminController extends Controller
             ->all();
     }
 
+    protected function buildUserManagementPayload(User $user): array
+    {
+        $role = $user->roles->sortBy('Id')->first();
+
+        return [
+            'id' => $user->Id,
+            'alias' => $user->Alias,
+            'correo' => $user->Correo,
+            'rol_id' => $role?->Id,
+            'rol_nombre' => $this->formatRoleLabel($role?->Nombre),
+            'rol_clave' => $this->resolveRoleKey($role?->Nombre),
+            'creado_en' => $user->CreatedAt,
+        ];
+    }
+
+    protected function buildUserManagementPayloads($users): array
+    {
+        return $users
+            ->map(fn (User $user) => $this->buildUserManagementPayload($user))
+            ->values()
+            ->all();
+    }
+
+    protected function buildCustomerStatisticsPayload(User $user): array
+    {
+        return [
+            'id' => $user->Id,
+            'nombre' => trim(collect([$user->Nombre, $user->Apellidos])->filter()->implode(' ')) ?: ($user->Alias ?: 'Cliente sin nombre'),
+            'correo' => $user->Correo,
+            'alias' => $user->Alias,
+            'creado_en' => $user->CreatedAt,
+        ];
+    }
+
+    protected function buildCustomerStatisticsPayloads($users): array
+    {
+        return $users
+            ->map(fn (User $user) => $this->buildCustomerStatisticsPayload($user))
+            ->values()
+            ->all();
+    }
+
     protected function generateSku(string $name): string
     {
         do {
@@ -518,5 +711,47 @@ class AdminController extends Controller
         }
 
         return asset('storage/' . ltrim($path, '/'));
+    }
+
+    protected function userHasAdminRole(User $user): bool
+    {
+        return $user->roles->contains(function (Role $role) {
+            return $this->resolveRoleKey($role->Nombre) === 'admin';
+        });
+    }
+
+    protected function isProtectedAdminUser(User $user): bool
+    {
+        return $this->userHasAdminRole($user);
+    }
+
+    protected function resolveRoleKey(?string $roleName): string
+    {
+        $normalized = mb_strtolower(trim((string) $roleName));
+
+        return match ($normalized) {
+            'admin', 'administrador' => 'admin',
+            'cliente', 'usuario', 'user' => 'usuario',
+            default => $normalized,
+        };
+    }
+
+    protected function formatRoleLabel(?string $roleName): string
+    {
+        return match ($this->resolveRoleKey($roleName)) {
+            'admin' => 'Administrador',
+            'usuario' => 'Usuario',
+            '' => 'Sin rol',
+            default => Str::headline((string) $roleName),
+        };
+    }
+
+    protected function resolveRoleSortOrder(?string $roleName): int
+    {
+        return match ($this->resolveRoleKey($roleName)) {
+            'admin' => 0,
+            'usuario' => 1,
+            default => 99,
+        };
     }
 }
