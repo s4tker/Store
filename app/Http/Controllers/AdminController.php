@@ -94,7 +94,7 @@ class AdminController extends Controller
             ->orderByDesc('Id')
             ->get();
 
-        return view('Admin.products.index', [
+        return view('Admin.products.manage', [
             'Search' => '',
             'AdminNavLabel' => 'Volver',
             'AdminNavRoute' => route('admin.dashboard'),

@@ -347,8 +347,8 @@ function addAttributeRow(name = '', value = '') {
     const row = document.createElement('div');
     row.className = 'attribute-row';
     row.innerHTML = `
-        <input type="text" name="attr_nombre[]" class="input-admin" placeholder="Ej: RAM" value="${escapeHtml(name)}">
-        <input type="text" name="attr_valor[]" class="input-admin" placeholder="Ej: 16 GB" value="${escapeHtml(value)}">
+        <input type="text" name="attr_nombre[]" class="input-admin" placeholder="Atributo" value="${escapeHtml(name)}">
+        <input type="text" name="attr_valor[]" class="input-admin" placeholder="Valor" value="${escapeHtml(value)}">
         <button type="button" class="attribute-remove" aria-label="Quitar atributo">X</button>
     `;
 
