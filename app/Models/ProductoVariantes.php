@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductoVariantes extends Model
 {
@@ -16,4 +17,9 @@ class ProductoVariantes extends Model
         'Precio',
         'PrecioOferta',
     ];
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'ProductoId', 'Id');
+    }
 }

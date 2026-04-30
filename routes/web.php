@@ -42,6 +42,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pedidos', [PedidoController::class, 'index'])
         ->name('pedidos.index');
 
+    Route::post('/pedidos', [PedidoController::class, 'store'])
+        ->name('pedidos.store');
+
+    Route::get('/pedidos/{id}', [PedidoController::class, 'show'])
+        ->name('pedidos.show');
+
+    Route::post('/pedidos/{id}/cancelar', [PedidoController::class, 'cancelar'])
+        ->name('pedidos.cancelar');
+
     Route::get('/account', [AccountController::class, 'index'])
         ->name('account');
 

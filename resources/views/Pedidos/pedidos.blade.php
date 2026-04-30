@@ -1,4 +1,4 @@
-@extends('layouts.app')
+<!-- @extends('layouts.app')
 
 @section('title', 'Pedidos | ElectroShop')
 
@@ -43,4 +43,4 @@
 
 @section('scripts')
     @vite('resources/js/pedidos.js')
-@endsection
+@endsection -->

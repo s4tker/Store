@@ -1,5 +1,52 @@
 @reference "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc;
+}
+
+/* Scrollbar Industrial */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
+}
+
+/* Inputs y Cards */
+.industrial-input {
+    width: 100%;
+    padding: 1rem;
+    background-color: #f1f5f9;
+    border: 2px solid transparent;
+    border-radius: 1.25rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.industrial-input:focus {
+    background-color: #ffffff;
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.address-card.is-active {
+    border-color: #2563eb !important;
+    background-color: #eff6ff !important;
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1);
+}
+
+/* Animación para el botón principal */
+.btn-confirm:active {
+    transform: scale(0.98);
+}
+
 /* bloque base */
 .CompraPage {
     display: flex;
@@ -213,48 +260,61 @@
 
 /* bloque items */
 .CompraItems {
-    display: grid;
-    gap: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 400px; /* Altura máxima Senior */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    scrollbar-gutter: stable;
 }
 
+/* Scrollbar Industrial Premium */
+.CompraItems::-webkit-scrollbar {
+    width: 5px;
+}
+.CompraItems::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+.CompraItems::-webkit-scrollbar-thumb {
+    background: #2563eb; 
+    border-radius: 10px;
+}
+
+/* Card de Producto con Imagen (Estilo image_d6a793.png) */
 .CompraItem {
-    display: grid;
-    grid-template-columns: 72px minmax(0, 1fr);
-    gap: 0.9rem;
-    padding: 0.85rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 1.25rem;
-    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05); /* Fondo sutil oscuro */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.8rem;
+    transition: all 0.3s ease;
+}
+
+.CompraItem:hover {
+    border-color: rgba(37, 99, 235, 0.4);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .CompraItemImage {
-    width: 72px;
-    height: 72px;
-    border-radius: 1rem;
+    width: 80px;
+    height: 80px;
+    background: white; /* Resalta el producto */
+    padding: 0.5rem;
+    border-radius: 1.25rem;
     object-fit: contain;
-    background: #f8fafc;
-}
-
-.CompraItemMeta h3 {
-    font-size: 0.85rem;
-    font-weight: 800;
-    line-height: 1.4;
-    color: #0f172a;
-}
-
-.CompraItemMeta p {
-    margin-top: 0.3rem;
-    font-size: 0.76rem;
-    line-height: 1.5;
-    color: #64748b;
+    flex-shrink: 0;
 }
 
 .CompraItemPrice {
-    margin-top: 0.45rem;
-    font-size: 1rem;
+    font-size: 1.15rem;
     font-weight: 900;
     font-style: italic;
-    color: #2563eb;
+    color: #3b82f6; /* Azul vibrante */
 }
 
 /* bloque totales */
@@ -284,6 +344,7 @@
 .CompraTotalRow strong {
     font-size: 1rem;
 }
+
 
 /* bloque acciones */
 .CompraActions {

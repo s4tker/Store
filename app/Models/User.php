@@ -50,6 +50,11 @@ class User extends Authenticatable
         return $this->hasMany(Direccion::class, 'UsuarioId', 'Id');
     }
 
+    public function pedidos(): HasMany
+    {
+        return $this->hasMany(Pedido::class, 'UsuarioId', 'Id');
+    }
+
     public function hasRole($roleName): bool
     {
         $expected = mb_strtolower((string) $roleName);
