@@ -3,8 +3,32 @@ const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribut
 const adminProducts = JSON.parse(document.getElementById('AdminProductsData')?.textContent || '[]');
 const adminProductsMap = new Map(adminProducts.map((product) => [String(product.id), product]));
 const AdminSectionStorageKey = 'electroshop-admin-section';
+const AdminRootCategoryStorageKey = 'electroshop-admin-root-category';
+const ProductAttributePresets = {
+    tecnologia: {
+        hint: 'Para tecnología suelen servir modelo, color, almacenamiento, ram o conectividad.',
+        nameHint: 'Ejemplo útil: audífonos bluetooth, laptop gamer, iphone 15.',
+        attributes: ['Modelo', 'Color', 'Almacenamiento', 'RAM', 'Conectividad'],
+    },
+    ropa: {
+        hint: 'Para ropa normalmente vas a registrar talla, color, material, género y tipo de ajuste.',
+        nameHint: 'Ejemplo útil: polo oversize, jean recto, casaca denim.',
+        attributes: ['Talla', 'Color', 'Material', 'Género', 'Ajuste'],
+    },
+    maquillaje: {
+        hint: 'Para maquillaje suele importar tono, acabado, tipo de piel, contenido y cobertura.',
+        nameHint: 'Ejemplo útil: labial mate, base líquida, rubor en crema.',
+        attributes: ['Tono', 'Acabado', 'Tipo de piel', 'Contenido', 'Cobertura'],
+    },
+    default: {
+        hint: 'Agrega los atributos clave de la línea seleccionada para registrar mejor el producto.',
+        nameHint: 'Usa un nombre claro según la línea elegida.',
+        attributes: ['Color', 'Modelo', 'Material'],
+    },
+};
 
 let previewUrls = [];
+let activeRootCategoryId = '';
 
 window.ToggleAdminNav = function(show) {
     const drawer = document.getElementById('AdminNavDrawer');
@@ -31,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAdminNavigation();
     initSectionNavigation();
     initSectionToggles();
+    initProductRootCategories();
     initProductEditor();
     initCategoryHelpers();
     initCategoryEditor();
@@ -50,6 +75,12 @@ function initAdminNavigation() {
 function initSectionNavigation() {
     const navItems = document.querySelectorAll('[data-section]');
     const sections = document.querySelectorAll('.admin-section');
+
+    // algunas pantallas del admin no usan pestañas internas
+    if (!navItems.length || !sections.length) {
+        return;
+    }
+
     const setActiveSection = (target) => {
         if (!target) {
             return;
@@ -96,6 +127,98 @@ function initSectionToggles() {
     });
 }
 
+// bloque categorias principales de productos
+function initProductRootCategories() {
+    const buttons = document.querySelectorAll('[data-root-category-id]');
+    const categorySelect = document.getElementById('SelectCat');
+
+    if (!buttons.length || !categorySelect) {
+        return;
+    }
+
+    const syncButtons = () => {
+        buttons.forEach((button) => {
+            button.classList.toggle('is-active', String(button.dataset.rootCategoryId) === String(activeRootCategoryId));
+        });
+    };
+
+    const applyCategory = (categoryId, categoryName = '') => {
+        if (!categoryId) {
+            return;
+        }
+
+        activeRootCategoryId = String(categoryId);
+        window.sessionStorage.setItem(AdminRootCategoryStorageKey, activeRootCategoryId);
+
+        categorySelect.value = activeRootCategoryId;
+        categorySelect.dispatchEvent(new Event('change'));
+
+        syncButtons();
+        filterProducts();
+    };
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            applyCategory(button.dataset.rootCategoryId, button.dataset.rootCategoryName || '');
+        });
+    });
+
+    const rememberedCategory = window.sessionStorage.getItem(AdminRootCategoryStorageKey);
+    const initialButton = Array.from(buttons).find((button) => String(button.dataset.rootCategoryId) === String(rememberedCategory)) || buttons[0];
+
+    if (initialButton) {
+        applyCategory(initialButton.dataset.rootCategoryId, initialButton.dataset.rootCategoryName || '');
+    }
+}
+
+function getCategoryPreset(categoryName = '') {
+    const normalized = String(categoryName).trim().toLowerCase();
+
+    if (normalized.includes('ropa')) {
+        return ProductAttributePresets.ropa;
+    }
+
+    if (normalized.includes('maquill')) {
+        return ProductAttributePresets.maquillaje;
+    }
+
+    if (normalized.includes('tecnolog') || normalized.includes('electr') || normalized.includes('comp')) {
+        return ProductAttributePresets.tecnologia;
+    }
+
+    return ProductAttributePresets.default;
+}
+
+function renderProductAttributePresets(categoryName = '') {
+    const presetContainer = document.getElementById('ProductPresetAttributes');
+    const presetCopy = document.getElementById('ProductPresetCopy');
+    const productNameHint = document.getElementById('ProductNameHint');
+    const preset = getCategoryPreset(categoryName);
+
+    if (presetCopy) {
+        presetCopy.textContent = preset.hint;
+    }
+
+    if (productNameHint) {
+        productNameHint.textContent = preset.nameHint;
+    }
+
+    if (!presetContainer) {
+        return;
+    }
+
+    presetContainer.innerHTML = '';
+
+    preset.attributes.forEach((attributeName) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'admin-attribute-preset';
+        button.textContent = attributeName;
+        button.addEventListener('click', () => addAttributeRow(attributeName, ''));
+        presetContainer.appendChild(button);
+    });
+}
+
 // bloque producto
 function initProductEditor() {
     const form = document.getElementById('FormAddProducto');
@@ -120,6 +243,17 @@ function initProductEditor() {
     const syncCategoryState = (selectedSubcategory = '') => {
         const option = categorySelect.options[categorySelect.selectedIndex];
         const subcategories = JSON.parse(option?.dataset.subs || '[]');
+
+        if (option?.value) {
+            activeRootCategoryId = String(option.value);
+            window.sessionStorage.setItem(AdminRootCategoryStorageKey, activeRootCategoryId);
+
+            document.querySelectorAll('[data-root-category-id]').forEach((button) => {
+                button.classList.toggle('is-active', String(button.dataset.rootCategoryId) === activeRootCategoryId);
+            });
+        }
+
+        renderProductAttributePresets(option?.dataset.name || option?.textContent || '');
 
         subcategorySelect.innerHTML = '';
 
@@ -295,8 +429,13 @@ function resetProductForm() {
     submitButton.textContent = 'Registrar producto';
     statusSelect.value = 'Activo';
 
-    subcategorySelect.disabled = true;
-    subcategorySelect.innerHTML = '<option value="">Sin subcategorías</option>';
+    if (activeRootCategoryId) {
+        categorySelect.value = activeRootCategoryId;
+        categorySelect.dispatchEvent(new Event('change'));
+    } else {
+        subcategorySelect.disabled = true;
+        subcategorySelect.innerHTML = '<option value="">Sin subcategorías</option>';
+    }
 
     fileName.textContent = 'Puedes seleccionar varias imágenes a la vez.';
 
@@ -307,6 +446,8 @@ function resetProductForm() {
     highlightActiveProduct(null);
     document.getElementById('TxtDescuento')?.classList.remove('is-positive');
     document.getElementById('TxtDescuento').textContent = '0% desc.';
+
+    renderProductAttributePresets(categorySelect.options[categorySelect.selectedIndex]?.dataset.name || '');
 }
 
 // bloque imagenes guardadas
@@ -462,7 +603,8 @@ function filterProducts() {
 
         const matchesBrand = !brand || card.dataset.productBrand === brand;
         const matchesCategory = !category || card.dataset.productCategory === category;
-        const isVisible = matchesSearch && matchesBrand && matchesCategory;
+        const matchesRootCategory = !activeRootCategoryId || String(card.dataset.productRootCategoryId) === String(activeRootCategoryId);
+        const isVisible = matchesSearch && matchesBrand && matchesCategory && matchesRootCategory;
 
         card.classList.toggle('hidden', !isVisible);
 

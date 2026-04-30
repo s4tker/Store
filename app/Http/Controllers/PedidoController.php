@@ -27,7 +27,7 @@ class PedidoController extends Controller
             ->orderByDesc('CreatedAt')
             ->get();
 
-        return view('pedidos.index', [
+        return view('Pedidos.index', [
             'pedidos' => $pedidos,
         ]);
     }
@@ -74,7 +74,7 @@ class PedidoController extends Controller
     {
         $pedido = $this->findPedidoForUsuario($id);
 
-        return view('pedidos.show', [
+        return view('Pedidos.show', [
             'pedido' => $pedido,
         ]);
     }

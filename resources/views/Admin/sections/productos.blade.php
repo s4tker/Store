@@ -1,5 +1,21 @@
-<div class="admin-grid admin-grid-products">
-    <section class="admin-card product-editor-card">
+{{-- barra principal de categorías enlazada con la base de datos --}}
+<section class="admin-products-context">
+    <div class="admin-products-context-tabs" id="ProductRootCategories">
+        @foreach($Categorias as $cat)
+            <button
+                type="button"
+                class="admin-product-root-tab"
+                data-root-category-id="{{ $cat->Id }}"
+                data-root-category-name="{{ $cat->Nombre }}"
+            >
+                {{ $cat->Nombre }}
+            </button>
+        @endforeach
+    </div>
+</section>
+
+<div class="admin-product-columns">
+    <section class="admin-card admin-product-section product-editor-card">
         <div class="admin-card-header admin-card-header-tight">
             <div>
                 <p class="admin-kicker" id="ProductFormEyebrow">productos</p>
@@ -26,8 +42,8 @@
             <div id="RemovedImagesContainer"></div>
 
             <div class="field-half">
-                <label class="label-admin" for="ProductName">Nombre del producto</label>
-                <input type="text" name="Nombre" id="ProductName" required class="input-admin" placeholder="Ej: iPhone 15 Pro Max">
+                <input type="text" name="Nombre" id="ProductName" required class="input-admin" placeholder="Nombre del producto" aria-label="Nombre del producto">
+                <p class="helper-admin mt-2" id="ProductNameHint">Usa un nombre claro según la línea elegida.</p>
             </div>
 
             <div class="field-half">
@@ -119,10 +135,12 @@
                 <div class="admin-inline-header">
                     <div>
                         <label class="label-admin">Atributos dinámicos</label>
+                        <p class="helper-admin mt-2" id="ProductPresetCopy">Selecciona una línea para ver atributos sugeridos.</p>
                     </div>
                     <button type="button" class="secondary-admin-btn" id="BtnAddAttribute">Añadir campo</button>
                 </div>
 
+                <div class="admin-attribute-presets" id="ProductPresetAttributes"></div>
                 <div id="ContainerAtributos" class="attribute-stack"></div>
             </div>
 
@@ -133,47 +151,45 @@
         </form>
     </section>
 
-    <section class="admin-card product-catalog-card">
+    <section class="admin-product-section product-catalog-card">
         <div class="admin-card-header admin-card-header-stack">
             <div>
                 <p class="admin-kicker">listado</p>
                 <h2>Productos registrados</h2>
             </div>
-            <div class="catalog-stats admin-list-toggle-row">
+            <div class="catalog-stats">
                 <span id="ProductResultsCount">{{ $Productos->count() }} resultados</span>
-                <button type="button" class="ghost-admin-btn admin-list-toggle" data-toggle-target="ProductCatalogPanel" data-toggle-label-show="Ver productos" data-toggle-label-hide="Ocultar productos">Ver productos</button>
             </div>
         </div>
 
-        <div id="ProductCatalogPanel" class="admin-collapsible-panel hidden">
-            <div class="catalog-filters">
-                <div class="field-span-3">
-                    <label class="label-admin" for="ProductSearch">Buscar producto</label>
-                    <input type="search" id="ProductSearch" class="input-admin" placeholder="Nombre, marca, categoría o SKU">
-                </div>
-
-                <div class="field-half">
-                    <label class="label-admin" for="FilterBrand">Filtrar por marca</label>
-                    <select id="FilterBrand" class="input-admin">
-                        <option value="">Todas</option>
-                        @foreach($Marcas as $marca)
-                            <option value="{{ $marca->Nombre }}">{{ $marca->Nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="field-half">
-                    <label class="label-admin" for="FilterCategory">Filtrar por categoría</label>
-                    <select id="FilterCategory" class="input-admin">
-                        <option value="">Todas</option>
-                        @foreach($TodasLasCategorias as $categoria)
-                            <option value="{{ $categoria->Nombre }}">{{ $categoria->padre?->Nombre ? $categoria->padre->Nombre . ' / ' . $categoria->Nombre : $categoria->Nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
+        <div class="catalog-filters">
+            <div class="field-span-3">
+                <label class="label-admin" for="ProductSearch">Buscar producto</label>
+                <input type="search" id="ProductSearch" class="input-admin" placeholder="Nombre, marca, categoría o SKU">
             </div>
 
-            <div class="product-catalog" id="ProductCatalog">
+            <div class="field-half">
+                <label class="label-admin" for="FilterBrand">Filtrar por marca</label>
+                <select id="FilterBrand" class="input-admin">
+                    <option value="">Todas</option>
+                    @foreach($Marcas as $marca)
+                        <option value="{{ $marca->Nombre }}">{{ $marca->Nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="field-half">
+                <label class="label-admin" for="FilterCategory">Filtrar por categoría</label>
+                <select id="FilterCategory" class="input-admin">
+                    <option value="">Todas</option>
+                    @foreach($TodasLasCategorias as $categoria)
+                        <option value="{{ $categoria->Nombre }}">{{ $categoria->padre?->Nombre ? $categoria->padre->Nombre . ' / ' . $categoria->Nombre : $categoria->Nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="product-catalog" id="ProductCatalog">
             @forelse($Productos as $producto)
                 @php
                     $firstVariant = $producto->variantes->sortBy('Id')->first();
@@ -187,6 +203,7 @@
                     data-product-name="{{ \Illuminate\Support\Str::lower($producto->Nombre) }}"
                     data-product-brand="{{ \Illuminate\Support\Str::lower($producto->marca?->Nombre ?? '') }}"
                     data-product-category="{{ \Illuminate\Support\Str::lower($categoryLabel) }}"
+                    data-product-root-category-id="{{ $producto->categoria?->ParentId ?: $producto->categoria?->Id }}"
                     data-product-sku="{{ \Illuminate\Support\Str::lower($firstVariant?->Sku ?? '') }}"
                 >
                     <button type="button" class="product-card-main" data-load-product="{{ $producto->Id }}">
@@ -217,11 +234,10 @@
             @empty
                 <div class="empty-state">Todavía no hay productos registrados.</div>
             @endforelse
-            </div>
+        </div>
 
-            <div class="empty-state hidden" id="NoProductResults">
-                No hay productos que coincidan con los filtros actuales.
-            </div>
+        <div class="empty-state hidden" id="NoProductResults">
+            No hay productos que coincidan con los filtros actuales.
         </div>
     </section>
 </div>

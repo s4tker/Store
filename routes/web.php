@@ -21,6 +21,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/productos', [AdminController::class, 'products'])->name('admin.productos.index');
     Route::get('/admin/usuarios', [AdminController::class, 'users'])->name('admin.usuarios.index');
     Route::get('/admin/estadisticas', [AdminController::class, 'statistics'])->name('admin.estadisticas.index');
     Route::post('/admin/productos/store', [AdminController::class, 'storeProduct'])->name('admin.productos.store');

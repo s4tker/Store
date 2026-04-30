@@ -20,6 +20,7 @@ class AdminController extends Controller
 {
     public function index()
     {
+        // datos del dashboard principal
         $rootCategories = Categoria::with('subcategorias')
             ->select(['Id', 'Nombre', 'Slug', 'ParentId'])
             ->whereNull('ParentId')
@@ -55,6 +56,52 @@ class AdminController extends Controller
             'HideNavbarOrders' => true,
             'HideNavbarCart' => true,
             'NavbarMobileTriggerAction' => 'ToggleAdminNav(true)',
+            'Categorias' => $rootCategories,
+            'TodasLasCategorias' => $allCategories,
+            'Marcas' => $brands,
+            'Productos' => $products,
+            'ProductosAdmin' => $this->buildProductEditorPayloads($products),
+        ]);
+    }
+
+    public function products()
+    {
+        // datos de la vista independiente de productos
+        $rootCategories = Categoria::with('subcategorias')
+            ->select(['Id', 'Nombre', 'Slug', 'ParentId'])
+            ->whereNull('ParentId')
+            ->orderBy('Nombre')
+            ->get();
+
+        $allCategories = Categoria::with('padre')
+            ->select(['Id', 'Nombre', 'Slug', 'ParentId'])
+            ->orderBy('Nombre')
+            ->get();
+
+        $brands = Marca::query()
+            ->select(['Id', 'Nombre', 'Slug'])
+            ->orderBy('Nombre')
+            ->get();
+
+        $products = Producto::query()
+            ->select(['Id', 'Nombre', 'Slug', 'Descripcion', 'CategoriaId', 'MarcaId', 'Estado'])
+            ->with([
+                'categoria.padre',
+                'marca',
+                'imagenes',
+                'variantes' => fn ($query) => $query->orderBy('Id'),
+            ])
+            ->orderByDesc('Id')
+            ->get();
+
+        return view('Admin.products.index', [
+            'Search' => '',
+            'AdminNavLabel' => 'Volver',
+            'AdminNavRoute' => route('admin.dashboard'),
+            'HideNavbarMobileTrigger' => true,
+            'HideNavbarSearch' => true,
+            'HideNavbarOrders' => true,
+            'HideNavbarCart' => true,
             'Categorias' => $rootCategories,
             'TodasLasCategorias' => $allCategories,
             'Marcas' => $brands,
