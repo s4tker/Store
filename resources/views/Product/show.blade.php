@@ -7,6 +7,7 @@
     // bloque galeria
     $galleryImages = $Product->imagenes->isNotEmpty() ? $Product->imagenes : collect([(object) ['Url' => $Product->image_url]]);
     $mainImage = $galleryImages->first();
+    $mainImageUrl = \App\Models\Producto::resolveImageUrl($mainImage->Url ?? $Product->image_url);
 
     // bloque carrito
     $cartProductPayload = [
@@ -42,7 +43,7 @@
             >
                 <img
                     id="MainProductImage"
-                    src="{{ str_starts_with($mainImage->Url ?? '', 'http') ? $mainImage->Url : (isset($mainImage->Id) ? asset('storage/' . ltrim($mainImage->Url, '/')) : $Product->image_url) }}"
+                    src="{{ $mainImageUrl }}"
                     alt="{{ $Product->Nombre }}"
                     class="product-image-zoom-target h-[260px] w-full object-contain sm:h-[340px] lg:h-[460px]"
                     draggable="false"
@@ -55,7 +56,7 @@
         <div class="grid grid-cols-4 sm:grid-cols-5 gap-2">
             @foreach($galleryImages as $image)
             @php
-                $thumbUrl = str_starts_with($image->Url ?? '', 'http') ? $image->Url : (isset($image->Id) ? asset('storage/' . ltrim($image->Url, '/')) : $Product->image_url);
+                $thumbUrl = \App\Models\Producto::resolveImageUrl($image->Url ?? $Product->image_url);
             @endphp
             <button
                 type="button"

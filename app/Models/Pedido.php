@@ -25,6 +25,21 @@ class Pedido extends Model
         'CreatedAt' => 'datetime',
     ];
 
+    public function setEstadoAttribute(?string $value): void
+    {
+        $this->attributes['Estado'] = mb_strtolower(trim((string) ($value ?: 'pendiente')));
+    }
+
+    public function getEstadoNormalizadoAttribute(): string
+    {
+        return mb_strtolower(trim((string) $this->Estado));
+    }
+
+    public function getEstadoTextoAttribute(): string
+    {
+        return ucfirst($this->estado_normalizado ?: 'pendiente');
+    }
+
     public function usuario(): BelongsTo
     {
         return $this->belongsTo(User::class, 'UsuarioId', 'Id');

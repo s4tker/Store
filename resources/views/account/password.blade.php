@@ -116,20 +116,3 @@
         </div>
     </aside>
 @endsection
-
-@section('scripts')
-    <script>
-        function togglePasswordVisibility(inputId, eyeId) {
-            const input = document.getElementById(inputId);
-            const eyePath = document.querySelector(`#${eyeId} path:first-child`);
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                eyePath.style.display = 'none';
-            } else {
-                input.type = 'password';
-                eyePath.style.display = 'block';
-            }
-        }
-    </script>
-@endsection

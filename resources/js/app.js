@@ -261,6 +261,24 @@ window.ChangeProductQty = function(Delta) {
     Input.value = Next;
 };
 
+window.togglePasswordVisibility = function(InputId, EyeId) {
+    const Input = document.getElementById(InputId);
+    const EyePath = document.querySelector(`#${EyeId} path:first-child`);
+
+    if (!Input || !EyePath) {
+        return;
+    }
+
+    if (Input.type === 'password') {
+        Input.type = 'text';
+        EyePath.style.display = 'none';
+        return;
+    }
+
+    Input.type = 'password';
+    EyePath.style.display = 'block';
+};
+
 // bloque agregar
 window.AddCurrentProductToCart = function(Product) {
     const QtyInput = document.getElementById('ProductQty');
@@ -415,6 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.updateCartUI();
     SyncSubcategoryOptions();
     InitProductImageZoom();
+    Alpine.start();
 
     document.getElementById('q')?.addEventListener('keydown', (Event) => Event.key === 'Enter' && window.Search());
 
@@ -480,4 +499,3 @@ function EscapeHtml(Value) {
 }
 
 window.Alpine = Alpine
-Alpine.start()

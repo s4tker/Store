@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Inventario extends Model
 {
     protected $table = 'Inventario';
-    protected $primaryKey = 'VarianteId';
-    public $incrementing = false;
+    protected $primaryKey = 'Id';
     public $timestamps = false;
 
     protected $fillable = [

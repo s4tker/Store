@@ -31,19 +31,30 @@ return new class extends Migration
             DB::statement("
                 UPDATE `Pedidos`
                 SET `Estado` = CASE CAST(`Estado` AS CHAR)
-                    WHEN '0' THEN 'Pendiente'
-                    WHEN '1' THEN 'Pagado'
-                    WHEN '2' THEN 'Enviado'
-                    WHEN '3' THEN 'Entregado'
-                    WHEN '4' THEN 'Cancelado'
-                    ELSE 'Pendiente'
+                    WHEN '0' THEN 'pendiente'
+                    WHEN '1' THEN 'pagado'
+                    WHEN '2' THEN 'enviado'
+                    WHEN '3' THEN 'entregado'
+                    WHEN '4' THEN 'cancelado'
+                    ELSE 'pendiente'
                 END
             ");
         }
 
         DB::statement("
+            UPDATE `Pedidos`
+            SET `Estado` = CASE LOWER(TRIM(`Estado`))
+                WHEN 'pagado' THEN 'pagado'
+                WHEN 'enviado' THEN 'enviado'
+                WHEN 'entregado' THEN 'entregado'
+                WHEN 'cancelado' THEN 'cancelado'
+                ELSE 'pendiente'
+            END
+        ");
+
+        DB::statement("
             ALTER TABLE `Pedidos`
-            MODIFY `Estado` VARCHAR(50) {$nullable}
+            MODIFY `Estado` VARCHAR(50) {$nullable} DEFAULT 'pendiente'
         ");
     }
 
@@ -56,7 +67,11 @@ return new class extends Migration
         DB::statement("
             UPDATE `Pedidos`
             SET `Estado` = CASE
-                WHEN `Estado` IN ('Pendiente', 'Pagado', 'Enviado', 'Entregado', 'Cancelado') THEN `Estado`
+                WHEN LOWER(`Estado`) = 'pendiente' THEN 'Pendiente'
+                WHEN LOWER(`Estado`) = 'pagado' THEN 'Pagado'
+                WHEN LOWER(`Estado`) = 'enviado' THEN 'Enviado'
+                WHEN LOWER(`Estado`) = 'entregado' THEN 'Entregado'
+                WHEN LOWER(`Estado`) = 'cancelado' THEN 'Cancelado'
                 ELSE 'Pendiente'
             END
         ");

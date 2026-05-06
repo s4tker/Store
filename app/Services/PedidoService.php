@@ -44,7 +44,7 @@ class PedidoService
                 ]);
             }
 
-            $stock = Inventario::find($varianteId);
+            $stock = Inventario::where('VarianteId', $varianteId)->first();
             $stockDisponible = $stock ? (int) $stock->Stock : 0;
             $cantidad = $item['qty'] ?? 1;
 
@@ -70,7 +70,7 @@ class PedidoService
                 'UsuarioId' => $usuarioId,
                 'DireccionId' => $direccionId,
                 'Total' => $total,
-                'Estado' => 'Pendiente',
+                'Estado' => 'pendiente',
                 'CreatedAt' => Carbon::now(),
             ]);
 
@@ -108,14 +108,14 @@ class PedidoService
             throw new ModelNotFoundException("Pedido con ID {$pedidoId} no encontrado.");
         }
 
-        if ($pedido->Estado !== 'Pendiente') {
+        if (mb_strtolower((string) $pedido->Estado) !== 'pendiente') {
             throw ValidationException::withMessages([
-                'pedido' => 'Solo se pueden cancelar pedidos en estado Pendiente.',
+                'pedido' => 'Solo se pueden cancelar pedidos en estado pendiente.',
             ]);
         }
 
         return DB::transaction(function () use ($pedido) {
-            $pedido->Estado = 'Cancelado';
+            $pedido->Estado = 'cancelado';
             $pedido->save();
 
             foreach ($pedido->detalles as $detalle) {

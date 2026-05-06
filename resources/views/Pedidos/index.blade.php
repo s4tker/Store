@@ -82,15 +82,17 @@
                     <div class="w-full md:w-auto">
                         @php
                             $statusClasses = [
-                                'Pendiente' => 'bg-amber-100 text-amber-700 border-amber-200',
-                                'Completado' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
-                                'Cancelado' => 'bg-red-100 text-red-700 border-red-200',
-                                'Enviado' => 'bg-blue-100 text-blue-700 border-blue-200'
+                                'pendiente' => 'bg-amber-100 text-amber-700 border-amber-200',
+                                'pagado' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                                'entregado' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                                'cancelado' => 'bg-red-100 text-red-700 border-red-200',
+                                'enviado' => 'bg-blue-100 text-blue-700 border-blue-200',
                             ];
-                            $class = $statusClasses[$pedido->Estado] ?? 'bg-slate-100 text-slate-600';
+                            $estado = $pedido->estado_normalizado;
+                            $class = $statusClasses[$estado] ?? 'bg-slate-100 text-slate-600';
                         @endphp
                         <span class="px-4 py-1.5 rounded-full border {{ $class }} text-[10px] font-black uppercase tracking-tighter">
-                            {{ $pedido->Estado }}
+                            {{ $pedido->estado_texto }}
                         </span>
                     </div>
 
@@ -109,7 +111,7 @@
                             Detalles
                         </a>
 
-                        @if($pedido->Estado === 'Pendiente')
+                        @if($pedido->estado_normalizado === 'pendiente')
                             <form action="{{ route('pedidos.cancelar', $pedido->Id) }}" method="POST" 
                                   onsubmit="return confirm('¿Seguro que deseas cancelar este pedido?')"
                                   class="flex-1 md:flex-none">

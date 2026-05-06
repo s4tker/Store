@@ -46,6 +46,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pedidos', [PedidoController::class, 'store'])
         ->name('pedidos.store');
 
+    Route::get('/clientes/dni/{dni}', [PedidoController::class, 'buscarClientePorDni'])
+        ->name('clientes.buscar-dni');
+
     Route::get('/pedidos/{id}', [PedidoController::class, 'show'])
         ->name('pedidos.show');
 

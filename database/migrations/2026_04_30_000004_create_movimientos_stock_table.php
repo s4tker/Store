@@ -13,10 +13,12 @@ return new class extends Migration
         }
 
         Schema::create('MovimientosStock', function (Blueprint $table) {
+            $table->id('Id');
             $table->unsignedBigInteger('VarianteId');
             $table->string('Tipo', 50);
             $table->unsignedInteger('Cantidad');
             $table->string('Motivo', 255);
+            $table->timestamp('CreatedAt')->useCurrent();
         });
     }
 

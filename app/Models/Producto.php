@@ -40,15 +40,34 @@ class Producto extends Model
             ? $this->imagenes->first()
             : $this->imagenes()->first();
 
-        if (! $primeraImagen) {
+        return self::resolveImageUrl($primeraImagen?->Url);
+    }
+
+    public static function resolveImageUrl(?string $path): string
+    {
+        $path = ltrim((string) $path, '/');
+
+        if ($path === '') {
             return asset('img/logo/logo.png');
         }
 
-        if (str_starts_with($primeraImagen->Url, 'http')) {
-            return $primeraImagen->Url;
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
         }
 
-        return asset('storage/' . ltrim($primeraImagen->Url, '/'));
+        if (str_starts_with($path, 'storage/')) {
+            return asset($path);
+        }
+
+        if (file_exists(public_path($path))) {
+            return asset($path);
+        }
+
+        if (file_exists(storage_path('app/public/' . $path))) {
+            return asset('storage/' . $path);
+        }
+
+        return asset('img/logo/logo.png');
     }
 
     public function imagenes()

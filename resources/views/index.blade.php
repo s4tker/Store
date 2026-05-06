@@ -77,8 +77,8 @@
 </div>
 
 {{-- este panel solo se usa en movil --}}
-<div id="MobileCatalogOverlay" class="fixed inset-0 z-[95] hidden bg-[#0f172a]/70 backdrop-blur-sm md:hidden" onclick="ToggleMobileCatalog(false)"></div>
-<aside id="MobileCatalogDrawer" class="fixed left-0 top-0 z-[100] h-full w-full max-w-sm -translate-x-full bg-white shadow-2xl transition-transform duration-300 md:hidden">
+<div id="MobileCatalogOverlay" class="fixed inset-0 z-95 hidden bg-[#0f172a]/70 backdrop-blur-sm md:hidden" onclick="ToggleMobileCatalog(false)"></div>
+<aside id="MobileCatalogDrawer" class="fixed left-0 top-0 z-100 h-full w-full max-w-sm -translate-x-full bg-white shadow-2xl transition-transform duration-300 md:hidden">
     <div class="flex h-full flex-col">
         <div class="flex items-center justify-between border-b px-5 py-5">
             <h2 class="text-lg font-black uppercase italic text-slate-900">Explorar</h2>

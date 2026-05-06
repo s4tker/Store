@@ -8,9 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class MovimientoStock extends Model
 {
     protected $table = 'MovimientosStock';
+    protected $primaryKey = 'Id';
     public $timestamps = false;
-    protected $primaryKey = null;
-    public $incrementing = false;
 
     protected $fillable = [
         'VarianteId',

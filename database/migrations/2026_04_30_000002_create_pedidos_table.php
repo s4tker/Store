@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('UsuarioId');
             $table->unsignedBigInteger('DireccionId');
             $table->decimal('Total', 14, 2);
-            $table->string('Estado', 50);
+            $table->string('Estado', 50)->default('pendiente');
             $table->timestamp('CreatedAt')->useCurrent();
         });
     }
