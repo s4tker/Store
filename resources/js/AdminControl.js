@@ -6,23 +6,23 @@ const AdminSectionStorageKey = 'electroshop-admin-section';
 const AdminRootCategoryStorageKey = 'electroshop-admin-root-category';
 const ProductAttributePresets = {
     tecnologia: {
-        hint: 'Para tecnología suelen servir modelo, color, almacenamiento, ram o conectividad.',
-        nameHint: 'Ejemplo útil: audífonos bluetooth, laptop gamer, iphone 15.',
+        hint: '',
+        nameHint: '',
         attributes: ['Modelo', 'Color', 'Almacenamiento', 'RAM', 'Conectividad'],
     },
     ropa: {
-        hint: 'Para ropa normalmente vas a registrar talla, color, material, género y tipo de ajuste.',
-        nameHint: 'Ejemplo útil: polo oversize, jean recto, casaca denim.',
+        hint: '',
+        nameHint: '',
         attributes: ['Talla', 'Color', 'Material', 'Género', 'Ajuste'],
     },
     maquillaje: {
-        hint: 'Para maquillaje suele importar tono, acabado, tipo de piel, contenido y cobertura.',
-        nameHint: 'Ejemplo útil: labial mate, base líquida, rubor en crema.',
+        hint: '',
+        nameHint: '',
         attributes: ['Tono', 'Acabado', 'Tipo de piel', 'Contenido', 'Cobertura'],
     },
     default: {
-        hint: 'Agrega los atributos clave de la línea seleccionada para registrar mejor el producto.',
-        nameHint: 'Usa un nombre claro según la línea elegida.',
+        hint: '',
+        nameHint: '',
         attributes: ['Color', 'Modelo', 'Material'],
     },
 };
@@ -131,6 +131,7 @@ function initSectionToggles() {
 function initProductRootCategories() {
     const buttons = document.querySelectorAll('[data-root-category-id]');
     const categorySelect = document.getElementById('SelectCat');
+    const categoryFilter = document.getElementById('FilterCategory');
 
     if (!buttons.length || !categorySelect) {
         return;
@@ -149,6 +150,10 @@ function initProductRootCategories() {
 
         activeRootCategoryId = String(categoryId);
         window.sessionStorage.setItem(AdminRootCategoryStorageKey, activeRootCategoryId);
+        if (categoryFilter) {
+            categoryFilter.value = '';
+            categoryFilter.dataset.scope = 'root';
+        }
 
         categorySelect.value = activeRootCategoryId;
         categorySelect.dispatchEvent(new Event('change'));
@@ -225,6 +230,7 @@ function initProductEditor() {
     const categorySelect = document.getElementById('SelectCat');
     const subcategorySelect = document.getElementById('SelectSub');
     const priceInput = document.getElementById('InpPrecio');
+    const discountInput = document.getElementById('InpDescuentoManual');
     const offerInput = document.getElementById('InpOferta');
     const discountLabel = document.getElementById('TxtDescuento');
     const fileInput = document.getElementById('ProductImages');
@@ -279,12 +285,34 @@ function initProductEditor() {
         });
     };
 
-    const updateDiscount = () => {
+    const syncPriceFields = (source = 'offer') => {
         const price = Number.parseFloat(priceInput?.value || '0');
         const offer = Number.parseFloat(offerInput?.value || '0');
+        const discount = Number.parseFloat(discountInput?.value || '0');
 
-        if (price > 0 && offer > 0 && offer < price) {
-            const percent = Math.round(((price - offer) / price) * 100);
+        if (!price || price <= 0) {
+            if (discountLabel) {
+                discountLabel.textContent = '0% desc.';
+                discountLabel.classList.remove('is-positive');
+            }
+            return;
+        }
+
+        if (source === 'discount' && discountInput && discount > 0 && discount < 100) {
+            const calculatedOffer = (price * (1 - (discount / 100))).toFixed(2);
+            offerInput.value = calculatedOffer;
+        } else if (source === 'offer' && discountInput) {
+            if (offer > 0 && offer < price) {
+                discountInput.value = `${Math.round(((price - offer) / price) * 100)}`;
+            } else {
+                discountInput.value = '';
+            }
+        }
+
+        const nextOffer = Number.parseFloat(offerInput?.value || '0');
+
+        if (nextOffer > 0 && nextOffer < price) {
+            const percent = Math.round(((price - nextOffer) / price) * 100);
             discountLabel.textContent = `${percent}% desc.`;
             discountLabel.classList.add('is-positive');
             return;
@@ -295,8 +323,9 @@ function initProductEditor() {
     };
 
     categorySelect.addEventListener('change', () => syncCategoryState());
-    priceInput?.addEventListener('input', updateDiscount);
-    offerInput?.addEventListener('input', updateDiscount);
+    priceInput?.addEventListener('input', () => syncPriceFields('offer'));
+    offerInput?.addEventListener('input', () => syncPriceFields('offer'));
+    discountInput?.addEventListener('input', () => syncPriceFields('discount'));
 
     fileInput?.addEventListener('change', () => {
         renderNewImagesPreview(fileInput.files || []);
@@ -328,11 +357,23 @@ function initProductEditor() {
 
     [searchInput, brandFilter, categoryFilter].forEach((element) => {
         element?.addEventListener('input', filterProducts);
-        element?.addEventListener('change', filterProducts);
+        if (element !== categoryFilter) {
+            element?.addEventListener('change', filterProducts);
+        }
     });
 
+    if (categoryFilter) {
+        categoryFilter.dataset.scope = 'root';
+        categoryFilter.addEventListener('change', () => {
+            categoryFilter.dataset.scope = categoryFilter.value ? 'filtered' : 'all';
+            filterProducts();
+        });
+    }
+
+    form.addEventListener('submit', () => syncPriceFields('discount'));
+
     syncCategoryState();
-    updateDiscount();
+    syncPriceFields('offer');
     filterProducts();
 }
 
@@ -365,6 +406,7 @@ function loadProductIntoForm(product) {
     const methodInput = document.getElementById('ProductFormMethod');
     const editingInput = document.getElementById('EditingProductId');
     const categorySelect = document.getElementById('SelectCat');
+    const categoryFilter = document.getElementById('FilterCategory');
 
     if (!form || !methodInput || !editingInput || !categorySelect) {
         return;
@@ -386,9 +428,14 @@ function loadProductIntoForm(product) {
     document.getElementById('ProductBrand').value = product.marca_id || '';
     document.getElementById('InpPrecio').value = product.precio || '';
     document.getElementById('InpOferta').value = product.precio_oferta || '';
+    document.getElementById('InpDescuentoManual').value = '';
     document.getElementById('ProductStock').value = product.stock ?? 0;
-    document.getElementById('ProductStatus').value = product.estado || 'Activo';
     document.getElementById('ProductDescription').value = product.descripcion || '';
+
+    if (categoryFilter) {
+        categoryFilter.value = '';
+        categoryFilter.dataset.scope = 'root';
+    }
 
     categorySelect.value = product.categoria_id || '';
     categorySelect.dispatchEvent(new Event('change'));
@@ -397,8 +444,9 @@ function loadProductIntoForm(product) {
     (product.atributos || []).forEach((attribute) => addAttributeRow(attribute.nombre, attribute.valor));
     renderExistingImages(product.imagenes || []);
     highlightActiveProduct(product.id);
+    filterProducts();
 
-    document.getElementById('InpPrecio')?.dispatchEvent(new Event('input'));
+    document.getElementById('InpOferta')?.dispatchEvent(new Event('input'));
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -413,9 +461,7 @@ function resetProductForm() {
     const categorySelect = document.getElementById('SelectCat');
     const subcategorySelect = document.getElementById('SelectSub');
     const fileName = document.getElementById('FileName');
-    const statusSelect = document.getElementById('ProductStatus');
-
-    if (!form || !methodInput || !editingInput || !categorySelect || !subcategorySelect || !statusSelect) {
+    if (!form || !methodInput || !editingInput || !categorySelect || !subcategorySelect) {
         return;
     }
 
@@ -427,8 +473,6 @@ function resetProductForm() {
     formTitle.textContent = 'Registrar producto';
     formEyebrow.textContent = 'Nuevo producto';
     submitButton.textContent = 'Registrar producto';
-    statusSelect.value = 'Activo';
-
     if (activeRootCategoryId) {
         categorySelect.value = activeRootCategoryId;
         categorySelect.dispatchEvent(new Event('change'));
@@ -444,6 +488,7 @@ function resetProductForm() {
     clearAttributeRows();
     renderExistingImages([]);
     highlightActiveProduct(null);
+    document.getElementById('InpDescuentoManual').value = '';
     document.getElementById('TxtDescuento')?.classList.remove('is-positive');
     document.getElementById('TxtDescuento').textContent = '0% desc.';
 
@@ -586,7 +631,9 @@ function highlightActiveProduct(productId) {
 function filterProducts() {
     const search = document.getElementById('ProductSearch')?.value.trim().toLowerCase() || '';
     const brand = document.getElementById('FilterBrand')?.value.trim().toLowerCase() || '';
-    const category = document.getElementById('FilterCategory')?.value.trim().toLowerCase() || '';
+    const categoryFilter = document.getElementById('FilterCategory');
+    const category = categoryFilter?.value.trim().toLowerCase() || '';
+    const categoryScope = categoryFilter?.dataset.scope || 'root';
     const cards = document.querySelectorAll('.product-card-admin');
     const emptyState = document.getElementById('NoProductResults');
     const countLabel = document.getElementById('ProductResultsCount');
@@ -603,7 +650,9 @@ function filterProducts() {
 
         const matchesBrand = !brand || card.dataset.productBrand === brand;
         const matchesCategory = !category || card.dataset.productCategory === category;
-        const matchesRootCategory = !activeRootCategoryId || String(card.dataset.productRootCategoryId) === String(activeRootCategoryId);
+        const matchesRootCategory = categoryScope === 'all'
+            ? true
+            : (!activeRootCategoryId || String(card.dataset.productRootCategoryId) === String(activeRootCategoryId));
         const isVisible = matchesSearch && matchesBrand && matchesCategory && matchesRootCategory;
 
         card.classList.toggle('hidden', !isVisible);
@@ -614,7 +663,7 @@ function filterProducts() {
     });
 
     if (countLabel) {
-        countLabel.textContent = `${visibleCount} resultado(s)`;
+        countLabel.textContent = `${visibleCount}`;
     }
 
     if (emptyState) {

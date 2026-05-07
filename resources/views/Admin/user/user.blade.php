@@ -3,11 +3,28 @@
 @section('title', 'Gestionar usuarios | ElectroShop')
 
 @section('styles')
-    @vite(['resources/css/AdminUser.css'])
+    @vite(['resources/css/admin.css', 'resources/css/AdminUser.css'])
 @endsection
 
 @section('content')
-<section class="user-admin-shell">
+<section class="admin-page-shell user-admin-shell">
+    <header class="admin-page-hero">
+        <div class="admin-page-hero-copy">
+            <a href="{{ route('admin.dashboard') }}" class="admin-page-backlink">Volver al dashboard</a>
+            <p class="admin-page-kicker">usuarios</p>
+            <h1 class="admin-page-title">Gestión de usuarios</h1>
+            <p class="admin-page-description">Crea, corrige y filtra accesos administrativos con una interfaz más limpia y directa.</p>
+            <div class="admin-card-band">
+                <span class="admin-card-pill">alta rápida</span>
+                <span class="admin-card-pill is-soft">filtro instantáneo</span>
+            </div>
+        </div>
+        <div class="admin-page-stats">
+            <span>{{ count($UsuariosAdmin) }} admins</span>
+            <span>{{ count($UsuariosBusqueda) }} usuarios</span>
+        </div>
+    </header>
+
     <div class="user-admin-grid">
         <section class="user-admin-card">
             <div class="user-admin-card-head">
@@ -81,7 +98,7 @@
                     <p class="user-admin-kicker">cuentas del panel</p>
                     <h2>Administradores</h2>
                 </div>
-                <span class="user-admin-badge" id="UserResultsCount">{{ count($UsuariosAdmin) }} resultados</span>
+                <span class="user-admin-badge" id="UserResultsCount">{{ count($UsuariosAdmin) }}</span>
             </div>
 
             <div class="user-admin-search-box user-admin-search-box-soft">

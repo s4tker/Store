@@ -217,7 +217,7 @@ function filterAdminUsers() {
     });
 
     if (countLabel) {
-        countLabel.textContent = `${visibleCount} resultado(s)`;
+        countLabel.textContent = `${visibleCount}`;
     }
 
     if (emptyState) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use App\Models\Marca;
+use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\ProductoImagenes;
 use App\Models\ProductoVariantes;
@@ -146,11 +147,25 @@ class AdminController extends Controller
     {
         $customers = User::query()
             ->select(['Id', 'Alias', 'Nombre', 'Apellidos', 'Correo', 'CreatedAt'])
-            ->with('roles')
+            ->with([
+                'roles',
+                'pedidos' => fn ($query) => $query
+                    ->select(['Id', 'UsuarioId', 'Total', 'Estado', 'CreatedAt'])
+                    ->orderByDesc('CreatedAt'),
+            ])
             ->orderByDesc('Id')
             ->get()
             ->reject(fn (User $user) => $this->userHasAdminRole($user))
             ->values();
+
+        $orders = Pedido::query()
+            ->select(['Id', 'UsuarioId', 'Total', 'Estado', 'CreatedAt'])
+            ->with([
+                'usuario' => fn ($query) => $query->select(['Id', 'Alias', 'Nombre', 'Apellidos', 'Correo']),
+                'detalles' => fn ($query) => $query->select(['Id', 'PedidoId', 'Cantidad', 'Precio']),
+            ])
+            ->orderByDesc('CreatedAt')
+            ->get();
 
         return view('Admin.estadisticas.estadisticas', [
             'Search' => '',
@@ -161,6 +176,7 @@ class AdminController extends Controller
             'HideNavbarOrders' => true,
             'HideNavbarCart' => true,
             'ClientesStats' => $this->buildCustomerStatisticsPayloads($customers),
+            'PedidosStats' => $this->buildOrderStatisticsPayloads($orders),
         ]);
     }
 
@@ -705,12 +721,18 @@ class AdminController extends Controller
 
     protected function buildCustomerStatisticsPayload(User $user): array
     {
+        $orders = $user->pedidos ?? collect();
+        $latestOrderDate = optional($orders->sortByDesc('CreatedAt')->first())->CreatedAt;
+
         return [
             'id' => $user->Id,
             'nombre' => trim(collect([$user->Nombre, $user->Apellidos])->filter()->implode(' ')) ?: ($user->Alias ?: 'Cliente sin nombre'),
             'correo' => $user->Correo,
             'alias' => $user->Alias,
             'creado_en' => $user->CreatedAt,
+            'pedidos_count' => $orders->count(),
+            'total_gastado' => (float) $orders->sum(fn ($order) => (float) $order->Total),
+            'ultimo_pedido_en' => $latestOrderDate,
         ];
     }
 
@@ -718,6 +740,35 @@ class AdminController extends Controller
     {
         return $users
             ->map(fn (User $user) => $this->buildCustomerStatisticsPayload($user))
+            ->values()
+            ->all();
+    }
+
+    protected function buildOrderStatisticsPayload(Pedido $order): array
+    {
+        $customerName = trim(collect([
+            $order->usuario?->Nombre,
+            $order->usuario?->Apellidos,
+        ])->filter()->implode(' ')) ?: ($order->usuario?->Alias ?: 'Cliente sin nombre');
+
+        return [
+            'id' => $order->Id,
+            'codigo' => 'PED-' . str_pad((string) $order->Id, 5, '0', STR_PAD_LEFT),
+            'cliente_id' => $order->UsuarioId,
+            'cliente_nombre' => $customerName,
+            'cliente_correo' => $order->usuario?->Correo,
+            'estado_pedido' => $order->Estado ?: 'Pendiente',
+            'total' => (float) $order->Total,
+            'items_count' => (int) ($order->detalles?->sum('Cantidad') ?? 0),
+            'lineas_count' => (int) ($order->detalles?->count() ?? 0),
+            'creado_en' => $order->CreatedAt,
+        ];
+    }
+
+    protected function buildOrderStatisticsPayloads($orders): array
+    {
+        return $orders
+            ->map(fn (Pedido $order) => $this->buildOrderStatisticsPayload($order))
             ->values()
             ->all();
     }

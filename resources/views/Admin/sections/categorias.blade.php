@@ -2,10 +2,9 @@
     {{-- Formulario de categorías: permite crear principal o subcategoría --}}
     <div class="admin-card">
         <div class="admin-card-header admin-card-header-tight">
-            <div>
+            <div class="admin-card-header-copy">
                 <p class="admin-kicker" id="CategoryFormEyebrow">categorías</p>
                 <h2 id="CategoryFormTitle">Registrar categoría</h2>
-                <p class="admin-card-intro">Crea una categoría principal o una subcategoría.</p>
             </div>
             <button type="button" class="secondary-admin-btn" id="BtnResetCategoryForm">Nueva</button>
         </div>
@@ -55,10 +54,9 @@
     {{-- Vista de jerarquía actual de categorías --}}
     <div class="admin-card">
         <div class="admin-card-header">
-            <div>
+            <div class="admin-card-header-copy">
                 <p class="admin-kicker">listado</p>
                 <h2>Categorías y subcategorías</h2>
-                <p class="admin-card-intro">Edita o elimina elementos desde esta lista.</p>
             </div>
             <button type="button" class="ghost-admin-btn admin-list-toggle" data-toggle-target="CategoryListPanel" data-toggle-label-show="Ver categorías" data-toggle-label-hide="Ocultar categorías">Ver categorías</button>
         </div>

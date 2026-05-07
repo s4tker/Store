@@ -2,10 +2,9 @@
     {{-- Formulario para registrar marcas --}}
     <div class="admin-card">
         <div class="admin-card-header admin-card-header-tight">
-            <div>
+            <div class="admin-card-header-copy">
                 <p class="admin-kicker" id="BrandFormEyebrow">marcas</p>
                 <h2 id="BrandFormTitle">Nueva marca</h2>
-                <p class="admin-card-intro">Registra y actualiza las marcas de tu catálogo.</p>
             </div>
             <button type="button" class="secondary-admin-btn" id="BtnResetBrandForm">Nueva</button>
         </div>
@@ -36,10 +35,9 @@
     {{-- Listado compacto de marcas registradas --}}
     <div class="admin-card">
         <div class="admin-card-header">
-            <div>
+            <div class="admin-card-header-copy">
                 <p class="admin-kicker">listado</p>
                 <h2>Marcas registradas</h2>
-                <p class="admin-card-intro">Cada marca se puede editar o borrar desde aquí.</p>
             </div>
             <button type="button" class="ghost-admin-btn admin-list-toggle" data-toggle-target="BrandListPanel" data-toggle-label-show="Ver marcas" data-toggle-label-hide="Ocultar marcas">Ver marcas</button>
         </div>

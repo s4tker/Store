@@ -1,203 +1,427 @@
 const customersStats = JSON.parse(document.getElementById('CustomersStatsData')?.textContent || '[]');
-const orderStorageKey = 'electroshop-orders';
+const ordersStats = JSON.parse(document.getElementById('OrdersStatsData')?.textContent || '[]');
+
 const periodLabels = {
     day: 'día',
     week: 'semana',
     month: 'mes',
     year: 'año',
-    all: 'todo el historial',
+    all: 'histórico',
 };
 
-let currentPeriod = 'day';
+const scopeLabels = {
+    revenue: 'Ventas',
+    orders: 'Pedidos',
+    customers: 'Clientes',
+};
+
+const state = {
+    currentPeriod: 'day',
+    currentGranularity: 'auto',
+    currentView: 'both',
+    currentTimelineScope: 'revenue',
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!document.getElementById('StatsPeriodFilters')) {
         return;
     }
 
-    bindPeriodFilters();
+    bindButtonGroup('[data-period]', 'currentPeriod');
+    bindButtonGroup('[data-granularity]', 'currentGranularity');
+    bindButtonGroup('[data-view]', 'currentView', applyViewMode);
+    bindButtonGroup('[data-scope]', 'currentTimelineScope');
+    bindPanelToggles();
     bindExportButtons();
     renderStatistics();
+    applyViewMode();
 });
 
-function bindPeriodFilters() {
-    document.querySelectorAll('[data-period]').forEach((button) => {
+function bindButtonGroup(selector, stateKey, afterUpdate) {
+    document.querySelectorAll(selector).forEach((button) => {
         button.addEventListener('click', () => {
-            currentPeriod = button.dataset.period || 'day';
-            document.querySelectorAll('[data-period]').forEach((item) => item.classList.toggle('is-active', item === button));
+            const datasetKey = Object.keys(button.dataset).find((key) => key !== 'panelType');
+            state[stateKey] = button.dataset[datasetKey] || state[stateKey];
+
+            document.querySelectorAll(selector).forEach((item) => {
+                item.classList.toggle('is-active', item === button);
+            });
+
+            if (typeof afterUpdate === 'function') {
+                afterUpdate();
+            }
+
             renderStatistics();
         });
     });
 }
 
 function bindExportButtons() {
+    document.getElementById('ExportSummaryBtn')?.addEventListener('click', () => {
+        const dataset = getCurrentDataset();
+        const series = buildMainSeries(dataset);
+
+        exportCsv(`resumen-${state.currentPeriod}.csv`, [
+            ['Periodo', 'Agrupacion', 'Clientes', 'Pedidos', 'Ingresos', 'Ticket promedio', 'Items vendidos'],
+            [
+                periodLabels[state.currentPeriod],
+                granularityLabel(dataset.granularity),
+                dataset.customers.length,
+                dataset.orders.length,
+                formatMoneyNumber(sumOrderTotals(dataset.orders)),
+                formatMoneyNumber(dataset.orders.length ? sumOrderTotals(dataset.orders) / dataset.orders.length : 0),
+                sumOrderItems(dataset.orders),
+            ],
+            [],
+            ['Etiqueta', 'Valor'],
+            ...series.map((point) => [point.label, point.value]),
+        ]);
+    });
+
     document.getElementById('ExportCustomersBtn')?.addEventListener('click', () => {
-        const rows = filterByPeriod(normalizeCustomers(customersStats), currentPeriod);
-        exportCsv(`clientes-${currentPeriod}.csv`, [
-            ['Nombre', 'Correo', 'Alias', 'Fecha registro'],
-            ...rows.map((item) => [item.nombre, item.correo, item.alias || '', formatDateTime(item.date)]),
+        const dataset = getCurrentDataset();
+        const rows = buildCustomerPeriodRows(dataset.allCustomers, dataset.customers, dataset.orders);
+
+        exportCsv(`clientes-${state.currentPeriod}.csv`, [
+            ['Nombre', 'Correo', 'Alias', 'Pedidos', 'Gastado', 'Registro', 'Ultimo pedido'],
+            ...rows.map((item) => [
+                item.nombre,
+                item.correo,
+                item.alias || '',
+                item.periodOrders,
+                formatMoneyNumber(item.periodSpent),
+                formatDateTime(item.date),
+                item.latestOrderDate ? formatDateTime(item.latestOrderDate) : '',
+            ]),
         ]);
     });
 
     document.getElementById('ExportOrdersBtn')?.addEventListener('click', () => {
-        const rows = filterByPeriod(normalizeOrders(getOrders()), currentPeriod);
-        exportCsv(`compras-${currentPeriod}.csv`, [
-            ['Codigo', 'Total', 'Estado pedido', 'Estado pago', 'Metodo', 'Fecha'],
-            ...rows.map((item) => [item.codigo, item.totalText, item.estadoPedido, item.estadoPago, item.metodoPago, formatDateTime(item.date)]),
+        const dataset = getCurrentDataset();
+
+        exportCsv(`pedidos-${state.currentPeriod}.csv`, [
+            ['Codigo', 'Cliente', 'Correo', 'Total', 'Estado', 'Items', 'Fecha'],
+            ...dataset.orders.map((item) => [
+                item.codigo,
+                item.customerName,
+                item.customerEmail || '',
+                formatMoneyNumber(item.totalValue),
+                item.estadoPedido,
+                item.itemsCount,
+                formatDateTime(item.date),
+            ]),
         ]);
     });
 }
 
+function bindPanelToggles() {
+    document.querySelectorAll('[data-toggle-panel]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const panelId = button.getAttribute('data-toggle-panel');
+            const panel = panelId ? document.getElementById(panelId) : null;
+
+            if (!panel) {
+                return;
+            }
+
+            const collapsed = panel.classList.toggle('is-collapsed');
+            button.classList.toggle('is-collapsed', collapsed);
+            button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        });
+    });
+}
+
 function renderStatistics() {
-    const customers = normalizeCustomers(customersStats);
-    const orders = normalizeOrders(getOrders());
+    const dataset = getCurrentDataset();
 
-    renderSummaryCards('CustomerSummaryCards', customers, false);
-    renderSummaryCards('OrderSummaryCards', orders, true);
-    renderCustomersTable(filterByPeriod(customers, currentPeriod));
-    renderOrdersTable(filterByPeriod(orders, currentPeriod));
+    renderGeneralSummary(dataset);
+    renderMainChart(dataset);
+    renderTopCustomersChart(dataset);
+    renderStatusChart(dataset);
+    renderCustomerSummary(dataset);
+    renderOrderSummary(dataset);
+    renderCustomersTable(dataset);
+    renderOrdersTable(dataset);
+    renderCustomerChart(dataset);
+    renderOrderChart(dataset);
 }
 
-function renderSummaryCards(targetId, items, isOrder) {
-    const target = document.getElementById(targetId);
+function getCurrentDataset() {
+    const allCustomers = normalizeCustomers(customersStats);
+    const allOrders = normalizeOrders(ordersStats);
+    const customers = filterByPeriod(allCustomers, state.currentPeriod);
+    const orders = filterByPeriod(allOrders, state.currentPeriod);
 
-    if (!target) {
-        return;
-    }
-
-    const periods = ['day', 'week', 'month', 'year', 'all'];
-    target.innerHTML = periods.map((period) => {
-        const filtered = filterByPeriod(items, period);
-        const count = filtered.length;
-        const total = isOrder ? sumOrderTotals(filtered) : null;
-
-        return `
-            <article class="stats-admin-summary-card">
-                <em>${periodLabels[period]}</em>
-                <strong>${count}</strong>
-                <span>${isOrder ? `${formatMoney(total)} acumulado` : 'registros'}</span>
-            </article>
-        `;
-    }).join('');
+    return {
+        allCustomers,
+        customers,
+        orders,
+        granularity: resolveGranularity(state.currentGranularity, state.currentPeriod, customers, orders),
+    };
 }
 
-function renderCustomersTable(items) {
+function renderGeneralSummary({ customers, orders }) {
+    const target = document.getElementById('GeneralSummaryCards');
+    if (!target) return;
+
+    const total = sumOrderTotals(orders);
+    const avg = orders.length ? total / orders.length : 0;
+    const buyers = new Set(orders.map((item) => item.customerId).filter(Boolean)).size;
+
+    target.innerHTML = [
+        buildSummaryCard('Clientes', customers.length, `Nuevos en ${periodLabels[state.currentPeriod]}`),
+        buildSummaryCard('Pedidos', orders.length, `${buyers} compradores`),
+        buildSummaryCard('Ingresos', formatMoney(total), `${sumOrderItems(orders)} unidades`),
+        buildSummaryCard('Ticket', formatMoney(avg), granularityLabel(resolveGranularity(state.currentGranularity, state.currentPeriod, customers, orders))),
+    ].join('');
+}
+
+function renderCustomerSummary({ allCustomers, customers, orders }) {
+    const target = document.getElementById('CustomerSummaryCards');
+    if (!target) return;
+
+    const rows = buildCustomerPeriodRows(allCustomers, customers, orders);
+    const top = [...rows].sort((a, b) => b.periodSpent - a.periodSpent)[0];
+    const repeat = Array.from(groupOrdersByCustomer(orders).values()).filter((items) => items.length > 1).length;
+
+    target.innerHTML = [
+        buildSummaryCard('Nuevos', customers.length, 'Registrados'),
+        buildSummaryCard('Compradores', groupOrdersByCustomer(orders).size, `${repeat} recurrentes`),
+        buildSummaryCard('Top', top ? top.nombre : '-', top ? formatMoney(top.periodSpent) : 'S/. 0.00'),
+    ].join('');
+}
+
+function renderOrderSummary({ customers, orders }) {
+    const target = document.getElementById('OrderSummaryCards');
+    const totalAmount = document.getElementById('OrderTotalAmount');
+    const averageAmount = document.getElementById('OrderAverageAmount');
+    const itemsSold = document.getElementById('OrderItemsSold');
+    const uniqueCustomers = document.getElementById('OrderUniqueCustomers');
+    if (!target || !totalAmount || !averageAmount || !itemsSold || !uniqueCustomers) return;
+
+    const total = sumOrderTotals(orders);
+    const items = sumOrderItems(orders);
+    const states = countOrdersByStatus(orders);
+    const topState = Object.entries(states).sort((a, b) => b[1] - a[1])[0];
+
+    totalAmount.textContent = formatMoney(total);
+    averageAmount.textContent = formatMoney(orders.length ? total / orders.length : 0);
+    itemsSold.textContent = String(items);
+    uniqueCustomers.textContent = String(new Set(orders.map((item) => item.customerId).filter(Boolean)).size);
+
+    target.innerHTML = [
+        buildSummaryCard('Pedidos', orders.length, `${customers.length} clientes`),
+        buildSummaryCard('Estado', topState ? topState[0] : '-', topState ? `${topState[1]} registros` : 'Sin datos'),
+        buildSummaryCard('Por unidad', formatMoney(items ? total / items : 0), 'Promedio'),
+    ].join('');
+}
+
+function renderCustomersTable({ allCustomers, customers, orders }) {
     const rows = document.getElementById('CustomerTableRows');
     const empty = document.getElementById('CustomerEmpty');
     const count = document.getElementById('CustomerTableCount');
     const title = document.getElementById('CustomerTableTitle');
+    if (!rows || !empty || !count || !title) return;
 
-    if (!rows || !empty || !count || !title) {
-        return;
-    }
+    const data = buildCustomerPeriodRows(allCustomers, customers, orders)
+        .sort((a, b) => (b.periodSpent - a.periodSpent) || (b.date - a.date))
+        .slice(0, 15);
 
-    title.textContent = `Clientes por ${periodLabels[currentPeriod]}`;
-    count.textContent = `${items.length} registro(s)`;
+    title.textContent = `Clientes por ${periodLabels[state.currentPeriod]}`;
+    count.textContent = `${data.length} registros`;
 
-    if (!items.length) {
+    if (!data.length) {
         rows.innerHTML = '';
         empty.classList.remove('hidden');
         return;
     }
 
     empty.classList.add('hidden');
-    rows.innerHTML = items
-        .sort((a, b) => b.date - a.date)
-        .slice(0, 12)
-        .map((item) => `
-            <tr>
-                <td><strong>${escapeHtml(item.nombre)}</strong></td>
-                <td>${escapeHtml(item.correo || '-')}</td>
-                <td>${formatDateTime(item.date)}</td>
-            </tr>
-        `)
-        .join('');
+    rows.innerHTML = data.map((item) => `
+        <tr>
+            <td><strong>${escapeHtml(item.nombre)}</strong></td>
+            <td>${escapeHtml(item.correo || '-')}</td>
+            <td>${item.periodOrders}</td>
+            <td>${formatMoney(item.periodSpent)}</td>
+            <td>${formatDateTime(item.date)}</td>
+        </tr>
+    `).join('');
 }
 
-function renderOrdersTable(items) {
+function renderOrdersTable({ orders }) {
     const rows = document.getElementById('OrderTableRows');
     const empty = document.getElementById('OrderEmpty');
     const count = document.getElementById('OrderTableCount');
     const title = document.getElementById('OrderTableTitle');
-    const totalAmount = document.getElementById('OrderTotalAmount');
-    const averageAmount = document.getElementById('OrderAverageAmount');
+    if (!rows || !empty || !count || !title) return;
 
-    if (!rows || !empty || !count || !title || !totalAmount || !averageAmount) {
-        return;
-    }
+    const data = [...orders].sort((a, b) => b.date - a.date).slice(0, 15);
+    title.textContent = `Pedidos por ${periodLabels[state.currentPeriod]}`;
+    count.textContent = `${data.length} registros`;
 
-    title.textContent = `Compras por ${periodLabels[currentPeriod]}`;
-    count.textContent = `${items.length} registro(s)`;
-
-    const total = sumOrderTotals(items);
-    totalAmount.textContent = formatMoney(total);
-    averageAmount.textContent = formatMoney(items.length ? total / items.length : 0);
-
-    if (!items.length) {
+    if (!data.length) {
         rows.innerHTML = '';
         empty.classList.remove('hidden');
         return;
     }
 
     empty.classList.add('hidden');
-    rows.innerHTML = items
-        .sort((a, b) => b.date - a.date)
-        .slice(0, 12)
-        .map((item) => `
-            <tr>
-                <td><strong>${escapeHtml(item.codigo || '-')}</strong></td>
-                <td>${escapeHtml(item.totalText)}</td>
-                <td>${escapeHtml(item.estadoPedido || '-')}</td>
-                <td>${formatDateTime(item.date)}</td>
-            </tr>
-        `)
-        .join('');
+    rows.innerHTML = data.map((item) => `
+        <tr>
+            <td><strong>${escapeHtml(item.codigo)}</strong></td>
+            <td>${escapeHtml(item.customerName)}</td>
+            <td>${formatMoney(item.totalValue)}</td>
+            <td>${escapeHtml(item.estadoPedido)}</td>
+            <td>${item.itemsCount}</td>
+            <td>${formatDateTime(item.date)}</td>
+        </tr>
+    `).join('');
+}
+
+function renderMainChart(dataset) {
+    const target = document.getElementById('TimelineChart');
+    const title = document.getElementById('TimelineChartTitle');
+    const heading = document.getElementById('TimelineChartHeading');
+    const caption = document.getElementById('TimelineChartCaption');
+    const description = document.getElementById('TimelineDescription');
+    const legend = document.getElementById('TimelineLegend');
+    if (!target || !title || !heading || !caption || !description || !legend) return;
+
+    const series = buildMainSeries(dataset);
+    title.textContent = scopeLabels[state.currentTimelineScope];
+    heading.textContent = `${scopeLabels[state.currentTimelineScope]} por ${granularityLabel(dataset.granularity).toLowerCase()}`;
+    caption.textContent = `${series.length} puntos`;
+    description.textContent = `Periodo: ${periodLabels[state.currentPeriod]}`;
+    legend.innerHTML = buildLegend([{ label: scopeLabels[state.currentTimelineScope], value: sumSeries(series, state.currentTimelineScope === 'revenue') }]);
+
+    const allZero = series.every((point) => point.value === 0);
+
+    if (state.currentTimelineScope === 'revenue') {
+        renderColumnChart(target, series, formatMoney);
+        return;
+    }
+
+    renderLineChart(target, series, formatInteger);
+}
+
+function renderTopCustomersChart({ allCustomers, customers, orders }) {
+    const target = document.getElementById('TopCustomersChart');
+    const title = document.getElementById('TopCustomersChartTitle');
+    const caption = document.getElementById('TopCustomersChartCaption');
+    if (!target || !title || !caption) return;
+
+    const rows = buildCustomerPeriodRows(allCustomers, customers, orders)
+        .sort((a, b) => b.periodSpent - a.periodSpent)
+        .slice(0, 5)
+        .map((item) => ({ label: item.nombre, value: item.periodSpent }));
+
+    title.textContent = 'Por gasto';
+    caption.textContent = `${rows.length} clientes`;
+    renderHorizontalBarChart(target, ensureCategoryRows(rows, ['Sin datos']), formatMoney);
+}
+
+function renderStatusChart({ orders }) {
+    const target = document.getElementById('StatusChart');
+    const title = document.getElementById('StatusChartTitle');
+    const caption = document.getElementById('StatusChartCaption');
+    if (!target || !title || !caption) return;
+
+    const rows = Object.entries(countOrdersByStatus(orders))
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([label, value]) => ({ label, value }));
+
+    title.textContent = 'Distribución';
+    caption.textContent = `${rows.length} estados`;
+    renderHorizontalBarChart(target, ensureCategoryRows(rows, ['Sin datos']), formatInteger);
+}
+
+function renderCustomerChart(dataset) {
+    const target = document.getElementById('CustomerChart');
+    const title = document.getElementById('CustomerChartTitle');
+    const caption = document.getElementById('CustomerChartCaption');
+    if (!target || !title || !caption) return;
+
+    const series = ensureTimeSeries(
+        aggregateSeries(dataset.customers, dataset.granularity, (item) => item.date, () => 1),
+        dataset.granularity,
+        state.currentPeriod,
+    );
+
+    title.textContent = `Altas por ${granularityLabel(dataset.granularity).toLowerCase()}`;
+    caption.textContent = `${series.length} puntos`;
+    renderLineChart(target, series, formatInteger, true);
+}
+
+function renderOrderChart(dataset) {
+    const target = document.getElementById('OrderChart');
+    const title = document.getElementById('OrderChartTitle');
+    const caption = document.getElementById('OrderChartCaption');
+    if (!target || !title || !caption) return;
+
+    const series = ensureTimeSeries(
+        aggregateSeries(dataset.orders, dataset.granularity, (item) => item.date, (item) => item.totalValue),
+        dataset.granularity,
+        state.currentPeriod,
+    );
+
+    title.textContent = `Facturación por ${granularityLabel(dataset.granularity).toLowerCase()}`;
+    caption.textContent = `${series.length} puntos`;
+    renderColumnChart(target, series, formatMoney, true);
+}
+
+function applyViewMode() {
+    document.querySelectorAll('.stats-admin-view-panel').forEach((panel) => {
+        const type = panel.dataset.panelType;
+        const visible = state.currentView === 'both'
+            || (state.currentView === 'charts' && type === 'chart')
+            || (state.currentView === 'tables' && type === 'table');
+        panel.classList.toggle('hidden', !visible);
+    });
 }
 
 function normalizeCustomers(items) {
     return items
         .map((item) => ({
-            ...item,
+            id: item.id,
+            nombre: item.nombre || 'Cliente sin nombre',
+            correo: item.correo || '',
+            alias: item.alias || '',
             date: parseDate(item.creado_en),
+            latestOrderDate: parseDate(item.ultimo_pedido_en),
         }))
         .filter((item) => item.date instanceof Date && !Number.isNaN(item.date.getTime()));
 }
 
 function normalizeOrders(items) {
     return items
-        .map((item) => {
-            const date = parseOrderDate(item);
-            const totalValue = parseMoney(item.total);
-
-            return {
-                ...item,
-                date,
-                totalValue,
-                totalText: item.total || formatMoney(totalValue),
-            };
-        })
+        .map((item) => ({
+            id: item.id,
+            codigo: item.codigo || `PED-${item.id}`,
+            customerId: item.cliente_id,
+            customerName: item.cliente_nombre || 'Cliente sin nombre',
+            customerEmail: item.cliente_correo || '',
+            estadoPedido: item.estado_pedido || 'Pendiente',
+            totalValue: Number(item.total || 0),
+            itemsCount: Number(item.items_count || 0),
+            date: parseDate(item.creado_en),
+        }))
         .filter((item) => item.date instanceof Date && !Number.isNaN(item.date.getTime()));
 }
 
 function filterByPeriod(items, period) {
-    if (period === 'all') {
-        return [...items];
-    }
-
+    if (period === 'all') return [...items];
     const now = new Date();
     const start = getPeriodStart(now, period);
-
     return items.filter((item) => item.date >= start && item.date <= now);
 }
 
 function getPeriodStart(now, period) {
     const date = new Date(now);
-
     if (period === 'day') {
         date.setHours(0, 0, 0, 0);
         return date;
     }
-
     if (period === 'week') {
         const day = date.getDay();
         const diff = day === 0 ? 6 : day - 1;
@@ -205,42 +429,319 @@ function getPeriodStart(now, period) {
         date.setHours(0, 0, 0, 0);
         return date;
     }
-
-    if (period === 'month') {
-        return new Date(date.getFullYear(), date.getMonth(), 1);
-    }
-
+    if (period === 'month') return new Date(date.getFullYear(), date.getMonth(), 1);
     return new Date(date.getFullYear(), 0, 1);
 }
 
-function getOrders() {
-    try {
-        const orders = JSON.parse(localStorage.getItem(orderStorageKey) || '[]');
-        return Array.isArray(orders) ? orders : [];
-    } catch {
-        return [];
-    }
+function resolveGranularity(selectedGranularity, period, customers, orders) {
+    if (selectedGranularity !== 'auto') return selectedGranularity;
+    if (period === 'day') return 'hour';
+    if (period === 'week' || period === 'month') return 'day';
+    if (period === 'year') return 'month';
+
+    const allDates = [...customers.map((item) => item.date), ...orders.map((item) => item.date)].sort((a, b) => a - b);
+    if (!allDates.length) return 'month';
+    const earliest = allDates[0];
+    const latest = allDates[allDates.length - 1];
+    const monthsSpan = (latest.getFullYear() - earliest.getFullYear()) * 12 + (latest.getMonth() - earliest.getMonth());
+    return monthsSpan >= 24 ? 'year' : 'month';
 }
 
-function parseOrderDate(order) {
-    if (order.createdAtIso) {
-        return parseDate(order.createdAtIso);
-    }
+function granularityLabel(granularity) {
+    return { hour: 'Hora', day: 'Día', month: 'Mes', year: 'Año' }[granularity] || 'Periodo';
+}
 
-    if (typeof order.fecha === 'string') {
-        const parsed = new Date(order.fecha);
-        if (!Number.isNaN(parsed.getTime())) {
-            return parsed;
+function buildMainSeries({ customers, orders, granularity }) {
+    if (state.currentTimelineScope === 'customers') {
+        return ensureTimeSeries(aggregateSeries(customers, granularity, (item) => item.date, () => 1), granularity, state.currentPeriod);
+    }
+    if (state.currentTimelineScope === 'orders') {
+        return ensureTimeSeries(aggregateSeries(orders, granularity, (item) => item.date, () => 1), granularity, state.currentPeriod);
+    }
+    return ensureTimeSeries(aggregateSeries(orders, granularity, (item) => item.date, (item) => item.totalValue), granularity, state.currentPeriod);
+}
+
+function aggregateSeries(items, granularity, dateAccessor, valueAccessor) {
+    const buckets = new Map();
+
+    items.forEach((item) => {
+        const date = dateAccessor(item);
+        const key = formatBucketKey(date, granularity);
+        const current = buckets.get(key) || {
+            key,
+            label: formatBucketLabel(date, granularity),
+            value: 0,
+            date: normalizeBucketDate(date, granularity),
+        };
+
+        current.value += Number(valueAccessor(item) || 0);
+        buckets.set(key, current);
+    });
+
+    return Array.from(buckets.values()).sort((a, b) => a.date - b.date);
+}
+
+function ensureTimeSeries(series, granularity, period) {
+    if (series.length) return series;
+    return buildEmptyTimeSeries(granularity, period);
+}
+
+function buildEmptyTimeSeries(granularity, period) {
+    const now = new Date();
+    const count = period === 'day' ? 6 : period === 'week' ? 7 : period === 'month' ? 6 : period === 'year' ? 12 : 6;
+    const items = [];
+
+    for (let index = count - 1; index >= 0; index -= 1) {
+        const date = new Date(now);
+        if (granularity === 'hour') {
+            date.setHours(now.getHours() - index, 0, 0, 0);
+        } else if (granularity === 'day') {
+            date.setDate(now.getDate() - index);
+            date.setHours(0, 0, 0, 0);
+        } else if (granularity === 'month') {
+            date.setMonth(now.getMonth() - index, 1);
+            date.setHours(0, 0, 0, 0);
+        } else {
+            date.setFullYear(now.getFullYear() - index, 0, 1);
+            date.setHours(0, 0, 0, 0);
         }
 
-        const localeMatch = order.fecha.match(/(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s+(\d{1,2}):(\d{2}):?(\d{2})?/);
-        if (localeMatch) {
-            const [, day, month, year, hour, minute, second = '0'] = localeMatch;
-            return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
-        }
+        items.push({
+            key: formatBucketKey(date, granularity),
+            label: formatBucketLabel(date, granularity),
+            value: 0,
+            date,
+        });
     }
 
-    return null;
+    return items;
+}
+
+function ensureCategoryRows(rows, fallbackLabels) {
+    if (rows.length) return rows;
+    return fallbackLabels.map((label) => ({ label, value: 0 }));
+}
+
+function formatBucketKey(date, granularity) {
+    if (granularity === 'hour') return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`;
+    if (granularity === 'day') return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    if (granularity === 'month') return `${date.getFullYear()}-${date.getMonth()}`;
+    return `${date.getFullYear()}`;
+}
+
+function normalizeBucketDate(date, granularity) {
+    if (granularity === 'hour') return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours());
+    if (granularity === 'day') return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    if (granularity === 'month') return new Date(date.getFullYear(), date.getMonth(), 1);
+    return new Date(date.getFullYear(), 0, 1);
+}
+
+function formatBucketLabel(date, granularity) {
+    if (granularity === 'hour') return new Intl.DateTimeFormat('es-PE', { hour: 'numeric' }).format(date);
+    if (granularity === 'day') return new Intl.DateTimeFormat('es-PE', { day: '2-digit', month: 'short' }).format(date);
+    if (granularity === 'month') return new Intl.DateTimeFormat('es-PE', { month: 'short', year: 'numeric' }).format(date);
+    return String(date.getFullYear());
+}
+
+function buildCustomerPeriodRows(allCustomers, periodCustomers, periodOrders) {
+    const relevantIds = new Set([
+        ...periodCustomers.map((customer) => customer.id),
+        ...periodOrders.map((order) => order.customerId).filter(Boolean),
+    ]);
+
+    const ordersByCustomer = groupOrdersByCustomer(periodOrders);
+
+    return allCustomers
+        .map((customer) => {
+            const orders = ordersByCustomer.get(customer.id) || [];
+            return {
+                ...customer,
+                periodOrders: orders.length,
+                periodSpent: orders.reduce((sum, item) => sum + item.totalValue, 0),
+            };
+        })
+        .filter((customer) => relevantIds.has(customer.id));
+}
+
+function groupOrdersByCustomer(orders) {
+    return orders.reduce((map, order) => {
+        if (!order.customerId) return map;
+        const items = map.get(order.customerId) || [];
+        items.push(order);
+        map.set(order.customerId, items);
+        return map;
+    }, new Map());
+}
+
+function countOrdersByStatus(orders) {
+    return orders.reduce((acc, order) => {
+        acc[order.estadoPedido] = (acc[order.estadoPedido] || 0) + 1;
+        return acc;
+    }, {});
+}
+
+function sumOrderTotals(items) {
+    return items.reduce((sum, item) => sum + (item.totalValue || 0), 0);
+}
+
+function sumOrderItems(items) {
+    return items.reduce((sum, item) => sum + (item.itemsCount || 0), 0);
+}
+
+function sumSeries(series, money = false) {
+    const value = series.reduce((sum, item) => sum + item.value, 0);
+    return money ? formatMoney(value) : formatInteger(value);
+}
+
+function buildSummaryCard(label, value, note) {
+    return `
+        <article class="stats-admin-summary-card">
+            <em>${escapeHtml(label)}</em>
+            <strong>${escapeHtml(String(value))}</strong>
+            <span>${escapeHtml(note)}</span>
+        </article>
+    `;
+}
+
+function buildLegend(items) {
+    return items.map((item) => `
+        <span class="stats-admin-legend-item">
+            <span class="stats-admin-legend-dot"></span>
+            ${escapeHtml(item.label)}: ${escapeHtml(String(item.value))}
+        </span>
+    `).join('');
+}
+
+function renderColumnChart(target, series, valueFormatter, includeZeroClass = false) {
+    const width = 820;
+    const height = 300;
+    const margin = { top: 20, right: 12, bottom: 52, left: 58 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+    const max = Math.max(...series.map((item) => item.value), 0);
+    const safeMax = max > 0 ? max : 1;
+    const barWidth = Math.max((chartWidth / series.length) * 0.56, 18);
+    const gap = chartWidth / series.length;
+
+    const bars = series.map((item, index) => {
+        const x = margin.left + (gap * index) + ((gap - barWidth) / 2);
+        const valueHeight = (item.value / safeMax) * chartHeight;
+        const y = margin.top + chartHeight - valueHeight;
+        return `
+            <g>
+                <rect class="${item.value === 0 && includeZeroClass ? 'stats-chart-zero' : 'stats-chart-bar'}" x="${x}" y="${y}" width="${barWidth}" height="${Math.max(valueHeight, 2)}" rx="4"></rect>
+                <text class="stats-chart-label" x="${x + (barWidth / 2)}" y="${height - 18}" text-anchor="middle">${escapeHtml(item.label)}</text>
+            </g>
+        `;
+    }).join('');
+
+    target.innerHTML = buildAxisChartShell({
+        width,
+        height,
+        margin,
+        max: safeMax,
+        content: bars,
+    });
+}
+
+function renderLineChart(target, series, valueFormatter, includeZeroClass = false) {
+    const width = 820;
+    const height = 300;
+    const margin = { top: 20, right: 12, bottom: 52, left: 58 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+    const max = Math.max(...series.map((item) => item.value), 0);
+    const safeMax = max > 0 ? max : 1;
+    const gap = series.length > 1 ? chartWidth / (series.length - 1) : chartWidth / 2;
+
+    const points = series.map((item, index) => {
+        const x = margin.left + (series.length > 1 ? gap * index : chartWidth / 2);
+        const y = margin.top + chartHeight - ((item.value / safeMax) * chartHeight);
+        return { ...item, x, y };
+    });
+
+    const line = points.map((point) => `${point.x},${point.y}`).join(' ');
+    const area = `M ${margin.left} ${margin.top + chartHeight} ` + points.map((point) => `L ${point.x} ${point.y}`).join(' ') + ` L ${margin.left + chartWidth} ${margin.top + chartHeight} Z`;
+
+    const content = `
+        <path class="stats-chart-area" d="${area}"></path>
+        <polyline class="stats-chart-line" points="${line}"></polyline>
+        ${points.map((point) => `
+            <g>
+                <circle class="${point.value === 0 && includeZeroClass ? 'stats-chart-zero' : 'stats-chart-point'}" cx="${point.x}" cy="${point.y}" r="4.5"></circle>
+                <text class="stats-chart-label" x="${point.x}" y="${height - 18}" text-anchor="middle">${escapeHtml(point.label)}</text>
+            </g>
+        `).join('')}
+    `;
+
+    target.innerHTML = buildAxisChartShell({
+        width,
+        height,
+        margin,
+        max: safeMax,
+        content,
+    });
+}
+
+function renderHorizontalBarChart(target, rows, valueFormatter) {
+    const width = 520;
+    const height = Math.max(210, rows.length * 44 + 36);
+    const margin = { top: 16, right: 18, bottom: 16, left: 130 };
+    const chartWidth = width - margin.left - margin.right;
+    const rowHeight = (height - margin.top - margin.bottom) / rows.length;
+    const max = Math.max(...rows.map((item) => item.value), 0);
+    const safeMax = max > 0 ? max : 1;
+
+    const content = rows.map((item, index) => {
+        const y = margin.top + (rowHeight * index) + 8;
+        const barHeight = Math.max(rowHeight - 18, 12);
+        const valueWidth = (item.value / safeMax) * chartWidth;
+
+        return `
+            <g>
+                <text class="stats-chart-label" x="${margin.left - 10}" y="${y + (barHeight / 2) + 4}" text-anchor="end">${escapeHtml(trimLabel(item.label, 20))}</text>
+                <rect x="${margin.left}" y="${y}" width="${chartWidth}" height="${barHeight}" rx="5" fill="#eff6ff"></rect>
+                <rect class="${item.value === 0 ? 'stats-chart-zero' : 'stats-chart-bar-soft'}" x="${margin.left}" y="${y}" width="${Math.max(valueWidth, 2)}" height="${barHeight}" rx="5"></rect>
+                <text class="stats-chart-value" x="${margin.left + Math.min(valueWidth + 8, chartWidth - 4)}" y="${y + (barHeight / 2) + 4}">${escapeHtml(valueFormatter(item.value))}</text>
+            </g>
+        `;
+    }).join('');
+
+    target.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" class="stats-admin-chart-svg" role="img" aria-label="Grafico">
+            ${content}
+        </svg>
+    `;
+}
+
+function buildAxisChartShell({ width, height, margin, max, content }) {
+    const ySteps = 4;
+    const rows = Array.from({ length: ySteps + 1 }, (_, index) => {
+        const value = (max / ySteps) * (ySteps - index);
+        const y = margin.top + (((height - margin.top - margin.bottom) / ySteps) * index);
+        return `
+            <g class="stats-chart-grid">
+                <line x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}"></line>
+                <text class="stats-chart-label" x="${margin.left - 8}" y="${y + 4}" text-anchor="end">${escapeHtml(formatCompactNumber(value))}</text>
+            </g>
+        `;
+    }).join('');
+
+    return `
+        <svg viewBox="0 0 ${width} ${height}" class="stats-admin-chart-svg" role="img" aria-label="Grafico">
+            ${rows}
+            <g class="stats-chart-axis">
+                <line x1="${margin.left}" y1="${height - margin.bottom}" x2="${width - margin.right}" y2="${height - margin.bottom}"></line>
+                <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height - margin.bottom}"></line>
+            </g>
+            ${content}
+        </svg>
+    `;
+}
+
+
+function trimLabel(value, maxLength) {
+    return String(value).length > maxLength ? `${String(value).slice(0, maxLength - 1)}…` : String(value);
 }
 
 function parseDate(value) {
@@ -248,18 +749,20 @@ function parseDate(value) {
     return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-function parseMoney(value) {
-    const normalized = String(value || '0').replace(/[^\d.,-]/g, '').replace(',', '.');
-    const amount = Number.parseFloat(normalized);
-    return Number.isFinite(amount) ? amount : 0;
-}
-
-function sumOrderTotals(items) {
-    return items.reduce((sum, item) => sum + (item.totalValue || 0), 0);
-}
-
 function formatMoney(value) {
     return `S/. ${Number(value || 0).toFixed(2)}`;
+}
+
+function formatMoneyNumber(value) {
+    return Number(value || 0).toFixed(2);
+}
+
+function formatInteger(value) {
+    return String(Math.round(Number(value || 0)));
+}
+
+function formatCompactNumber(value) {
+    return Number(value || 0).toLocaleString('es-PE', { maximumFractionDigits: value >= 10 ? 0 : 1 });
 }
 
 function formatDateTime(date) {

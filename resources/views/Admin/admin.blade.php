@@ -30,14 +30,13 @@
     <a href="{{ route('logout') }}" class="admin-mobile-logout">Cerrar sesión</a>
 </aside>
 
-<section class="admin-dashboard-shell">
-    <header class="admin-hero">
-        <div>
-            <p class="admin-hero-kicker">panel admin</p>
-            <h1 class="admin-hero-title">Gestiona productos, categorías y marcas.</h1>
-            <p class="admin-hero-copy">Todo el panel reunido en una vista simple y más fácil de leer.</p>
+<section class="admin-page-shell admin-dashboard-shell">
+    <header class="admin-page-hero admin-hero">
+        <div class="admin-page-hero-copy">
+            <p class="admin-page-kicker admin-hero-kicker">panel admin</p>
+            <h1 class="admin-page-title admin-hero-title">Panel administrativo</h1>
         </div>
-        <div class="admin-summary">
+        <div class="admin-page-stats admin-summary">
             <span>{{ $Productos->count() }} productos</span>
             <span>{{ $TodasLasCategorias->count() }} categorías</span>
             <span>{{ $Marcas->count() }} marcas</span>
