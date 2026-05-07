@@ -32,6 +32,9 @@ Homestead.json
 /storage/framework/cache/*
 /storage/framework/sessions/*
 /storage/framework/views/*
+/storage/app/public/*
+!/storage/app/public/productos/
+!/storage/app/public/productos/**
 /bootstrap/cache/*.php
 
 .env.backup
