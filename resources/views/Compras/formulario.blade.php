@@ -244,7 +244,7 @@ asset('img/cards/amex.png'),
         </div>
 
         <aside class="lg:col-span-4 lg:sticky lg:top-28">
-            <section class="bg-[#0f172a] rounded-[2.5rem] p-8 shadow-2xl shadow-slate-900/50 text-white relative overflow-hidden border border-white/5">
+            <section class="bg-[#0f172a] rounded-[2.5rem] p-8 shadow-2xl shadow-slate-900/50 text-white relative overflow-hidden border border-white/5 lg:w-[calc(100%+6.75rem)]">
                 <div class="flex justify-between items-center mb-6 relative">
                     <div>
                         <p class="text-[10px] font-black uppercase tracking-[0.3em] text-blue-500 mb-1">Pedido</p>
