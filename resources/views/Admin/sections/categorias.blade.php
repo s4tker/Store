@@ -76,10 +76,10 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-3">
                             <button
                                 type="button"
-                                class="admin-button"
+                                class="admin-action-link"
                                 data-edit-category="{{ $categoria->Id }}"
                                 data-category-name="{{ $categoria->Nombre }}"
                                 data-category-type="principal"
@@ -87,7 +87,7 @@
                             >
                                 Editar
                             </button>
-                            <button type="button" class="admin-button-danger" data-delete-url="{{ route('admin.categorias.destroy', $categoria->Id) }}" data-delete-label="categoría {{ $categoria->Nombre }}">
+                            <button type="button" class="admin-action-danger" data-delete-url="{{ route('admin.categorias.destroy', $categoria->Id) }}" data-delete-label="categoría {{ $categoria->Nombre }}">
                                 Borrar
                             </button>
                         </div>
@@ -101,10 +101,10 @@
                                         <p class="truncate text-sm font-medium text-slate-700">{{ $subcategoria->Nombre }}</p>
                                     </div>
 
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-3">
                                         <button
                                             type="button"
-                                            class="admin-button px-3"
+                                            class="admin-action-link"
                                             data-edit-category="{{ $subcategoria->Id }}"
                                             data-category-name="{{ $subcategoria->Nombre }}"
                                             data-category-type="subcategoria"
@@ -112,7 +112,7 @@
                                         >
                                             Editar
                                         </button>
-                                        <button type="button" class="admin-button-danger px-3" data-delete-url="{{ route('admin.categorias.destroy', $subcategoria->Id) }}" data-delete-label="subcategoría {{ $subcategoria->Nombre }}">
+                                        <button type="button" class="admin-action-danger" data-delete-url="{{ route('admin.categorias.destroy', $subcategoria->Id) }}" data-delete-label="subcategoría {{ $subcategoria->Nombre }}">
                                             Borrar
                                         </button>
                                     </div>

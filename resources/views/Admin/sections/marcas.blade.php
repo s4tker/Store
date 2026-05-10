@@ -40,30 +40,30 @@
             <button type="button" class="admin-button" data-toggle-target="BrandListPanel" data-toggle-label-show="Ver marcas" data-toggle-label-hide="Ocultar marcas">Ocultar marcas</button>
         </div>
 
-        <div id="BrandListPanel" class="mt-6 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+        <div id="BrandListPanel" class="mt-6 grid gap-3 sm:grid-cols-2">
             @forelse($Marcas as $marca)
                 <article class="rounded-[1.2rem] border border-slate-200/80 bg-slate-50/80 p-3.5 transition hover:border-slate-300 hover:bg-white">
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex min-w-0 items-center gap-3">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div class="flex min-w-0 flex-1 items-center gap-3">
                             <x-admin.icon tone="emerald" size="sm">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7.5 7.5h.01M5 3h6.76a2 2 0 0 1 1.41.59l6.24 6.24a2 2 0 0 1 0 2.82l-6.76 6.76a2 2 0 0 1-2.82 0l-6-6A2 2 0 0 1 3 11.99V5a2 2 0 0 1 2-2z"/>
                                 </svg>
                             </x-admin.icon>
-                            <p class="truncate text-sm font-semibold text-slate-900">{{ $marca->Nombre }}</p>
+                            <p class="break-words text-sm font-semibold leading-5 text-slate-900">{{ $marca->Nombre }}</p>
                         </div>
 
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-3 sm:shrink-0">
                             <button
                                 type="button"
-                                class="admin-button px-3"
+                                class="admin-action-link"
                                 data-edit-brand="{{ $marca->Id }}"
                                 data-brand-name="{{ $marca->Nombre }}"
                                 title="Editar"
                             >
                                 Editar
                             </button>
-                            <button type="button" class="admin-button-danger px-3" data-delete-url="{{ route('admin.marcas.destroy', $marca->Id) }}" data-delete-label="marca {{ $marca->Nombre }}" title="Borrar">
+                            <button type="button" class="admin-action-danger" data-delete-url="{{ route('admin.marcas.destroy', $marca->Id) }}" data-delete-label="marca {{ $marca->Nombre }}" title="Borrar">
                                 Borrar
                             </button>
                         </div>

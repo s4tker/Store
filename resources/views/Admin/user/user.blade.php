@@ -151,11 +151,11 @@
                                         </div>
                                     </button>
 
-                                    <div class="flex items-center gap-2">
-                                        <button type="button" class="admin-button" data-load-user="{{ $usuario['id'] }}">Editar</button>
+                                    <div class="flex items-center gap-3">
+                                        <button type="button" class="admin-action-link" data-load-user="{{ $usuario['id'] }}">Editar</button>
                                         <button
                                             type="button"
-                                            class="admin-button-danger"
+                                            class="admin-action-danger"
                                             data-delete-url="{{ route('admin.usuarios.destroy', $usuario['id']) }}"
                                             data-delete-label="usuario {{ $usuario['correo'] }}"
                                         >

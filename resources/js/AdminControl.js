@@ -953,7 +953,9 @@ function initDeleteButtons() {
             const label = button.dataset.deleteLabel || 'registro';
             const section = button.dataset.deleteSection || '';
 
-            if (!window.confirm(`¿Eliminar ${label}?`)) {
+            const confirmed = await confirmAdminAction(`Eliminar ${label}`);
+
+            if (!confirmed) {
                 return;
             }
 
@@ -989,6 +991,54 @@ function initDeleteButtons() {
                 showToast(error.message || 'Error inesperado.', true);
             }
         });
+    });
+}
+
+function confirmAdminAction(label) {
+    return new Promise((resolve) => {
+        const existingBackdrop = document.getElementById('AdminConfirmBackdrop');
+        const existingDialog = document.getElementById('AdminConfirmDialog');
+
+        existingBackdrop?.remove();
+        existingDialog?.remove();
+
+        const backdrop = document.createElement('div');
+        backdrop.id = 'AdminConfirmBackdrop';
+        backdrop.className = 'admin-confirm-backdrop';
+
+        const dialog = document.createElement('div');
+        dialog.id = 'AdminConfirmDialog';
+        dialog.className = 'admin-confirm';
+        dialog.innerHTML = `
+            <p class="admin-confirm-title">Confirmar</p>
+            <p class="admin-confirm-copy">${escapeHtml(label)}</p>
+            <div class="admin-confirm-actions">
+                <button type="button" class="admin-confirm-cancel">Cancelar</button>
+                <button type="button" class="admin-confirm-accept">Borrar</button>
+            </div>
+        `;
+
+        const close = (result) => {
+            backdrop.remove();
+            dialog.remove();
+            document.body.classList.remove('overflow-hidden');
+            resolve(result);
+        };
+
+        backdrop.addEventListener('click', () => close(false));
+        dialog.querySelector('.admin-confirm-cancel')?.addEventListener('click', () => close(false));
+        dialog.querySelector('.admin-confirm-accept')?.addEventListener('click', () => close(true));
+
+        document.addEventListener('keydown', function onKeydown(event) {
+            if (event.key === 'Escape') {
+                document.removeEventListener('keydown', onKeydown);
+                close(false);
+            }
+        }, { once: true });
+
+        document.body.appendChild(backdrop);
+        document.body.appendChild(dialog);
+        document.body.classList.add('overflow-hidden');
     });
 }
 
