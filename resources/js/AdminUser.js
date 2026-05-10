@@ -69,9 +69,9 @@ function loadUserIntoForm(user) {
 
     passwordInput.value = '';
     passwordInput.required = false;
-    passwordInput.placeholder = 'escribe una nueva contraseña si deseas cambiarla';
+    passwordInput.placeholder = 'Nueva contraseña';
 
-    document.getElementById('UserPasswordHelp').textContent = 'La contraseña actual no se muestra. Solo escribe una nueva si deseas reemplazarla.';
+    document.getElementById('UserPasswordHelp').textContent = '';
     document.getElementById('UserFormEyebrow').textContent = 'usuario seleccionado';
     document.getElementById('UserFormTitle').textContent = `Editar ${user.correo}`;
     document.getElementById('BtnSubmitUser').textContent = 'Guardar cambios';
@@ -97,10 +97,10 @@ function resetAdminUserForm() {
     document.getElementById('UserFormEyebrow').textContent = 'panel de acceso';
     document.getElementById('UserFormTitle').textContent = 'Registrar usuario';
     document.getElementById('BtnSubmitUser').textContent = 'Registrar usuario';
-    document.getElementById('UserPasswordHelp').textContent = 'Es obligatoria al crear una cuenta nueva.';
+    document.getElementById('UserPasswordHelp').textContent = '';
 
     passwordInput.required = true;
-    passwordInput.placeholder = 'mínimo 6 caracteres';
+    passwordInput.placeholder = 'Min. 6 caracteres';
     highlightActiveUser(null);
 }
 

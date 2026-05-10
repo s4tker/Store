@@ -1,319 +1,271 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Estadísticas | ElectroShop')
 
 @section('styles')
     @vite(['resources/css/admin.css', 'resources/css/StatsAdmin.css'])
-    <style>
-        /* Specific overwrites for charts to inherit tailwind sizing nicely */
-        .stats-admin-chart-stage { min-height: 300px; width: 100%; }
-        .stats-admin-chart-stage-large { min-height: 400px; }
-        
-        /* ApexCharts customization to look more like the tailwind UI */
-        .apexcharts-tooltip { @apply rounded-xl shadow-lg border-slate-100 bg-white/90 backdrop-blur !important; }
-        .apexcharts-tooltip-title { @apply bg-slate-50 border-b border-slate-100 font-bold text-slate-700 font-sans text-xs uppercase tracking-widest px-3 py-2 !important; }
-        .apexcharts-tooltip-text { @apply font-medium text-slate-600 font-sans text-sm !important; }
-        .apexcharts-menu { @apply rounded-xl shadow-lg border-slate-100 bg-white p-1 !important; }
-        .apexcharts-menu-item { @apply rounded-lg font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-colors text-xs px-3 py-2 !important; }
-        
-        /* Stats specific classes used by JS */
-        .stats-admin-chip.is-active { @apply bg-white text-blue-600 shadow-sm; }
-        .stats-admin-metric-card { @apply bg-white border border-slate-200 rounded-2xl p-4 flex flex-col justify-between; }
-        .stats-admin-metric-card .metric-label { @apply text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block; }
-        .stats-admin-metric-card .metric-value { @apply text-2xl font-black text-slate-900 leading-none; }
-        .stats-admin-metric-card .metric-trend { @apply text-xs font-bold mt-2 flex items-center gap-1; }
-        .stats-admin-metric-card .metric-trend.is-positive { @apply text-emerald-500; }
-        .stats-admin-metric-card .metric-trend.is-negative { @apply text-red-500; }
-        .stats-admin-metric-card .metric-trend.is-neutral { @apply text-slate-400; }
-    </style>
 @endsection
 
 @section('content')
-<div class="min-h-screen bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900 pb-12">
-    <header class="bg-white border-b border-slate-200 px-6 py-8 md:px-12 md:py-10 mb-8 shadow-sm">
-        <div class="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors mb-4 gap-2">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Volver al dashboard
-                </a>
-                <p class="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-1">Estadísticas</p>
-                <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight uppercase italic leading-none">Reportes del <span class="text-slate-400">panel</span></h1>
-                <p class="mt-3 text-sm font-medium text-slate-500 max-w-md">Visualiza clientes, pedidos y facturación con paneles consistentes y lectura más clara.</p>
-                <div class="flex gap-2 mt-4">
-                    <span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-indigo-100">gráficos + tablas</span>
-                    <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100">exportación csv</span>
+<div class="admin-page -mx-4 md:-mx-10">
+    <div class="admin-shell px-4 py-6 md:px-6 lg:px-8">
+        <div class="space-y-6 pb-8">
+            <section class="admin-surface p-6 md:p-8">
+                <div class="flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
+                    <div class="max-w-3xl">
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-slate-700">
+                            <span class="h-px w-8 bg-slate-300"></span>
+                            Panel admin
+                        </a>
+                        <p class="admin-card-kicker mt-5">Estadísticas</p>
+                        <h1 class="admin-title mt-3">Reportes visuales para clientes, pedidos e ingresos.</h1>
+                        <p class="admin-copy mt-4">La lectura se apoya en la estructura real de usuarios, pedidos y detalle de compra definida en la base de datos.</p>
+                    </div>
+
+                    <div class="grid w-full max-w-xl gap-3 sm:grid-cols-2">
+                        <x-admin.stat-card label="Clientes" :value="count($ClientesStats)" caption="Registros analizados" tone="indigo">
+                            <x-slot:icon>
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 19a4 4 0 0 0-8 0m8 0h3v1H5v-1h3m8 0a3 3 0 0 0-8 0M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
+                                </svg>
+                            </x-slot:icon>
+                        </x-admin.stat-card>
+
+                        <x-admin.stat-card label="Pedidos" :value="count($PedidosStats)" caption="Movimientos evaluados" tone="amber">
+                            <x-slot:icon>
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 5.75A1.75 1.75 0 0 1 6.75 4h10.5A1.75 1.75 0 0 1 19 5.75v12.5A1.75 1.75 0 0 1 17.25 20H6.75A1.75 1.75 0 0 1 5 18.25zM8 8h8M8 12h8M8 16h5"/>
+                                </svg>
+                            </x-slot:icon>
+                        </x-admin.stat-card>
+                    </div>
                 </div>
-            </div>
-            <div class="flex gap-2">
-                <span class="bg-blue-50 text-blue-600 border border-blue-100 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex flex-col items-center"><span class="text-lg leading-none">{{ count($ClientesStats) }}</span> clientes</span>
-                <span class="bg-amber-50 text-amber-600 border border-amber-100 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex flex-col items-center"><span class="text-lg leading-none">{{ count($PedidosStats) }}</span> pedidos</span>
-            </div>
+            </section>
+
+            <section class="admin-panel sticky top-4 z-20 p-5">
+                <div class="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+                    <div class="grid gap-4 md:grid-cols-3">
+                        <div>
+                            <p class="admin-label mb-3">Periodo</p>
+                            <div class="flex flex-wrap gap-2" id="StatsPeriodFilters">
+                                <button type="button" class="stats-admin-chip is-active" data-period="day">Día</button>
+                                <button type="button" class="stats-admin-chip" data-period="week">Semana</button>
+                                <button type="button" class="stats-admin-chip" data-period="month">Mes</button>
+                                <button type="button" class="stats-admin-chip" data-period="year">Año</button>
+                                <button type="button" class="stats-admin-chip" data-period="all">Todo</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="admin-label mb-3">Agrupar</p>
+                            <div class="flex flex-wrap gap-2" id="StatsGranularityFilters">
+                                <button type="button" class="stats-admin-chip is-active" data-granularity="auto">Auto</button>
+                                <button type="button" class="stats-admin-chip" data-granularity="day">Día</button>
+                                <button type="button" class="stats-admin-chip" data-granularity="month">Mes</button>
+                                <button type="button" class="stats-admin-chip" data-granularity="year">Año</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="admin-label mb-3">Vista</p>
+                            <div class="flex flex-wrap gap-2" id="StatsViewFilters">
+                                <button type="button" class="stats-admin-chip is-active" data-view="both">Todo</button>
+                                <button type="button" class="stats-admin-chip" data-view="charts">Gráficos</button>
+                                <button type="button" class="stats-admin-chip" data-view="tables">Tablas</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 xl:justify-end">
+                        <button type="button" class="stats-admin-button" id="ExportSummaryBtn">Resumen</button>
+                        <button type="button" class="stats-admin-button" id="ExportCustomersBtn">Clientes</button>
+                        <button type="button" class="stats-admin-button" id="ExportOrdersBtn">Pedidos</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-stat-grid" id="GeneralSummaryCards"></section>
+
+            <section class="grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,0.78fr)] stats-admin-view-panel" data-panel-type="chart">
+                <article class="admin-panel p-6 md:p-7">
+                    <div class="flex flex-col gap-4 border-b border-slate-100 pb-6 lg:flex-row lg:items-start lg:justify-between">
+                        <div>
+                            <p class="admin-card-kicker">Serie principal</p>
+                            <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950" id="TimelineChartTitle">Ventas</h2>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <div class="hidden flex-wrap gap-2 sm:flex" id="TimelineScopeFilters">
+                                <button type="button" class="stats-admin-chip is-active" data-scope="revenue">Ventas</button>
+                                <button type="button" class="stats-admin-chip" data-scope="orders">Pedidos</button>
+                                <button type="button" class="stats-admin-chip" data-scope="customers">Clientes</button>
+                            </div>
+                            <button type="button" class="stats-admin-toggle" data-toggle-panel="MainChartPanel" aria-expanded="true" aria-label="Ocultar gráfico principal">Ocultar</button>
+                        </div>
+                    </div>
+
+                    <div class="stats-admin-panel-body pt-6" id="MainChartPanel">
+                        <div class="stats-admin-chart-head">
+                            <strong id="TimelineChartHeading">Serie</strong>
+                            <span id="TimelineChartCaption">0 puntos</span>
+                        </div>
+                        <div class="stats-admin-chart-stage stats-admin-chart-stage-large" id="TimelineChart"></div>
+                        <div class="stats-admin-chart-footer">
+                            <span id="TimelineDescription">Datos reales de la base.</span>
+                            <div class="stats-admin-chart-legend" id="TimelineLegend"></div>
+                        </div>
+                    </div>
+                </article>
+
+                <div class="grid gap-6">
+                    <article class="admin-panel p-6">
+                        <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
+                            <div>
+                                <p class="admin-card-kicker">Clientes</p>
+                                <h2 class="mt-2 text-xl font-semibold tracking-tight text-slate-950">Top clientes</h2>
+                            </div>
+                            <button type="button" class="stats-admin-toggle" data-toggle-panel="TopCustomersPanel" aria-expanded="true" aria-label="Ocultar top clientes">Ocultar</button>
+                        </div>
+
+                        <div class="stats-admin-panel-body pt-5" id="TopCustomersPanel">
+                            <div class="stats-admin-chart-head">
+                                <strong id="TopCustomersChartTitle">Por gasto</strong>
+                                <span id="TopCustomersChartCaption">0 clientes</span>
+                            </div>
+                            <div class="stats-admin-chart-stage" id="TopCustomersChart"></div>
+                        </div>
+                    </article>
+
+                    <article class="admin-panel p-6">
+                        <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
+                            <div>
+                                <p class="admin-card-kicker">Pedidos</p>
+                                <h2 class="mt-2 text-xl font-semibold tracking-tight text-slate-950">Estados</h2>
+                            </div>
+                            <button type="button" class="stats-admin-toggle" data-toggle-panel="StatusPanel" aria-expanded="true" aria-label="Ocultar estados">Ocultar</button>
+                        </div>
+
+                        <div class="stats-admin-panel-body pt-5" id="StatusPanel">
+                            <div class="stats-admin-chart-head">
+                                <strong id="StatusChartTitle">Distribución</strong>
+                                <span id="StatusChartCaption">0 estados</span>
+                            </div>
+                            <div class="stats-admin-chart-stage" id="StatusChart"></div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="grid gap-6 xl:grid-cols-2">
+                <article class="admin-panel p-6 md:p-7">
+                    <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-6">
+                        <div>
+                            <p class="admin-card-kicker">Clientes</p>
+                            <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Registros</h2>
+                        </div>
+                        <button type="button" class="stats-admin-toggle" data-toggle-panel="CustomersPanel" aria-expanded="true" aria-label="Ocultar clientes">Ocultar</button>
+                    </div>
+
+                    <div class="stats-admin-panel-body pt-6" id="CustomersPanel">
+                        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" id="CustomerSummaryCards"></div>
+
+                        <div class="stats-admin-view-panel mt-6 border-t border-slate-100 pt-6" data-panel-type="chart">
+                            <div class="stats-admin-chart-head">
+                                <strong id="CustomerChartTitle">Altas</strong>
+                                <span id="CustomerChartCaption">0 puntos</span>
+                            </div>
+                            <div class="stats-admin-chart-stage" id="CustomerChart"></div>
+                        </div>
+
+                        <div class="stats-admin-view-panel mt-6 border-t border-slate-100 pt-6" data-panel-type="table">
+                            <div class="stats-admin-chart-head">
+                                <strong id="CustomerTableTitle">Clientes del periodo</strong>
+                                <span id="CustomerTableCount">0 registros</span>
+                            </div>
+                            <div class="admin-table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Cliente</th>
+                                            <th>Correo</th>
+                                            <th class="text-center">Pedidos</th>
+                                            <th class="text-right">Gastado</th>
+                                            <th class="text-right">Registro</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="CustomerTableRows"></tbody>
+                                </table>
+                            </div>
+                            <div class="admin-empty mt-4 hidden" id="CustomerEmpty" aria-hidden="true"></div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="admin-panel p-6 md:p-7">
+                    <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-6">
+                        <div>
+                            <p class="admin-card-kicker">Ventas</p>
+                            <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Facturación</h2>
+                        </div>
+                        <button type="button" class="stats-admin-toggle" data-toggle-panel="OrdersPanel" aria-expanded="true" aria-label="Ocultar ventas">Ocultar</button>
+                    </div>
+
+                    <div class="stats-admin-panel-body pt-6" id="OrdersPanel">
+                        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" id="OrderSummaryCards"></div>
+
+                        <div class="mt-6 grid gap-4 rounded-[1.5rem] border border-slate-200/70 bg-slate-50/70 p-4 sm:grid-cols-2 xl:grid-cols-4">
+                            <div>
+                                <p class="admin-card-kicker">Total vendido</p>
+                                <strong class="mt-2 block text-lg font-semibold text-slate-900" id="OrderTotalAmount">S/. 0.00</strong>
+                            </div>
+                            <div>
+                                <p class="admin-card-kicker">Ticket promedio</p>
+                                <strong class="mt-2 block text-lg font-semibold text-slate-900" id="OrderAverageAmount">S/. 0.00</strong>
+                            </div>
+                            <div>
+                                <p class="admin-card-kicker">Unidades</p>
+                                <strong class="mt-2 block text-lg font-semibold text-slate-900" id="OrderItemsSold">0</strong>
+                            </div>
+                            <div>
+                                <p class="admin-card-kicker">Clientes</p>
+                                <strong class="mt-2 block text-lg font-semibold text-slate-900" id="OrderUniqueCustomers">0</strong>
+                            </div>
+                        </div>
+
+                        <div class="stats-admin-view-panel mt-6 border-t border-slate-100 pt-6" data-panel-type="chart">
+                            <div class="stats-admin-chart-head">
+                                <strong id="OrderChartTitle">Facturación</strong>
+                                <span id="OrderChartCaption">0 puntos</span>
+                            </div>
+                            <div class="stats-admin-chart-stage" id="OrderChart"></div>
+                        </div>
+
+                        <div class="stats-admin-view-panel mt-6 border-t border-slate-100 pt-6" data-panel-type="table">
+                            <div class="stats-admin-chart-head">
+                                <strong id="OrderTableTitle">Pedidos del periodo</strong>
+                                <span id="OrderTableCount">0 registros</span>
+                            </div>
+                            <div class="admin-table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Cliente</th>
+                                            <th class="text-right">Total</th>
+                                            <th class="text-center">Estado</th>
+                                            <th class="text-center">Items</th>
+                                            <th class="text-right">Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="OrderTableRows"></tbody>
+                                </table>
+                            </div>
+                            <div class="admin-empty mt-4 hidden" id="OrderEmpty" aria-hidden="true"></div>
+                        </div>
+                    </div>
+                </article>
+            </section>
         </div>
-    </header>
-
-    <div class="max-w-[1600px] mx-auto px-4 md:px-8 space-y-8">
-        
-        <!-- Toolbar -->
-        <section class="bg-white rounded-3xl border border-slate-100 p-4 lg:p-6 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 sticky top-6 z-20">
-            <div class="flex flex-wrap items-center gap-6 lg:gap-8">
-                <!-- Period -->
-                <div class="flex flex-col gap-2">
-                    <span class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Periodo</span>
-                    <div class="flex bg-slate-50 p-1 rounded-xl border border-slate-200" id="StatsPeriodFilters">
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all is-active" data-period="day">Día</button>
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all" data-period="week">Semana</button>
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all" data-period="month">Mes</button>
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all" data-period="year">Año</button>
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all" data-period="all">Todo</button>
-                    </div>
-                </div>
-
-                <!-- Granularity -->
-                <div class="flex flex-col gap-2">
-                    <span class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Agrupar</span>
-                    <div class="flex bg-slate-50 p-1 rounded-xl border border-slate-200" id="StatsGranularityFilters">
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all is-active" data-granularity="auto">Auto</button>
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all" data-granularity="day">Día</button>
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all" data-granularity="month">Mes</button>
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all" data-granularity="year">Año</button>
-                    </div>
-                </div>
-
-                <!-- View -->
-                <div class="flex flex-col gap-2">
-                    <span class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Vista</span>
-                    <div class="flex bg-slate-50 p-1 rounded-xl border border-slate-200" id="StatsViewFilters">
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all is-active" data-view="both">Todo</button>
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all" data-view="charts">Gráficos</button>
-                        <button type="button" class="stats-admin-chip px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition-all" data-view="tables">Tablas</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Export Actions -->
-            <div class="flex flex-wrap lg:flex-nowrap gap-2 self-stretch lg:self-end mt-4 lg:mt-0 pt-4 lg:pt-0 border-t border-slate-100 lg:border-t-0">
-                <button type="button" class="flex-1 lg:flex-none bg-slate-50 hover:bg-slate-100 text-slate-600 px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors border border-slate-200 flex items-center justify-center gap-2" id="ExportSummaryBtn">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Resumen
-                </button>
-                <button type="button" class="flex-1 lg:flex-none bg-slate-50 hover:bg-slate-100 text-slate-600 px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors border border-slate-200 flex items-center justify-center gap-2" id="ExportCustomersBtn">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Clientes
-                </button>
-                <button type="button" class="flex-1 lg:flex-none bg-slate-50 hover:bg-slate-100 text-slate-600 px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors border border-slate-200 flex items-center justify-center gap-2" id="ExportOrdersBtn">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Pedidos
-                </button>
-            </div>
-        </section>
-
-        <!-- Dynamic KPIs Header -->
-        <section class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4" id="GeneralSummaryCards"></section>
-
-        <!-- Main Dashboard Area -->
-        <section class="grid xl:grid-cols-3 gap-8 stats-admin-view-panel" data-panel-type="chart">
-            <!-- Timeline Chart -->
-            <article class="xl:col-span-2 bg-white rounded-3xl border border-slate-100 p-6 shadow-sm flex flex-col">
-                <div class="flex items-start justify-between gap-4 mb-6">
-                    <div>
-                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-1">Gráfico principal</p>
-                        <h2 class="text-xl font-black text-slate-900 tracking-tight" id="TimelineChartTitle">Ventas</h2>
-                    </div>
-
-                    <div class="flex items-center gap-3">
-                        <div class="flex bg-slate-50 p-1 rounded-xl border border-slate-200 hidden sm:flex" id="TimelineScopeFilters">
-                            <button type="button" class="stats-admin-chip px-3 py-1 rounded-lg text-[10px] uppercase tracking-wider font-bold text-slate-500 hover:text-slate-900 transition-all is-active" data-scope="revenue">Ventas</button>
-                            <button type="button" class="stats-admin-chip px-3 py-1 rounded-lg text-[10px] uppercase tracking-wider font-bold text-slate-500 hover:text-slate-900 transition-all" data-scope="orders">Pedidos</button>
-                            <button type="button" class="stats-admin-chip px-3 py-1 rounded-lg text-[10px] uppercase tracking-wider font-bold text-slate-500 hover:text-slate-900 transition-all" data-scope="customers">Clientes</button>
-                        </div>
-                        <button type="button" class="text-slate-400 hover:text-slate-900 transition-colors" data-toggle-panel="MainChartPanel" aria-expanded="true" aria-label="Ocultar gráfico principal">
-                            <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex-1 overflow-hidden transition-all duration-300 origin-top" id="MainChartPanel">
-                    <div class="h-full flex flex-col">
-                        <div class="flex justify-between items-end mb-4 px-2">
-                            <strong class="text-sm font-black text-slate-800" id="TimelineChartHeading">Serie</strong>
-                            <span class="text-xs font-medium text-slate-400" id="TimelineChartCaption">0 puntos</span>
-                        </div>
-                        <div class="flex-1 min-h-[400px] w-full" id="TimelineChart"></div>
-                        <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
-                            <span class="text-xs font-medium text-slate-400" id="TimelineDescription">Datos reales de la base.</span>
-                            <div class="flex flex-wrap gap-4 text-xs font-bold text-slate-600" id="TimelineLegend"></div>
-                        </div>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Secondary Charts Sidebar -->
-            <div class="xl:col-span-1 flex flex-col gap-8">
-                <!-- Top Customers -->
-                <article class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm flex-1">
-                    <div class="flex items-start justify-between gap-4 mb-6">
-                        <div>
-                            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-1">Clientes</p>
-                            <h2 class="text-lg font-black text-slate-900 tracking-tight">Top clientes</h2>
-                        </div>
-                        <button type="button" class="text-slate-400 hover:text-slate-900 transition-colors" data-toggle-panel="TopCustomersPanel" aria-expanded="true" aria-label="Ocultar top clientes">
-                            <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                    </div>
-
-                    <div class="overflow-hidden transition-all duration-300 origin-top" id="TopCustomersPanel">
-                        <div>
-                            <div class="flex justify-between items-end mb-4 px-2">
-                                <strong class="text-sm font-black text-slate-800" id="TopCustomersChartTitle">Por gasto</strong>
-                                <span class="text-xs font-medium text-slate-400" id="TopCustomersChartCaption">0 clientes</span>
-                            </div>
-                            <div class="min-h-[250px] w-full" id="TopCustomersChart"></div>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- Order Statuses -->
-                <article class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm flex-1">
-                    <div class="flex items-start justify-between gap-4 mb-6">
-                        <div>
-                            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-1">Pedidos</p>
-                            <h2 class="text-lg font-black text-slate-900 tracking-tight">Estados</h2>
-                        </div>
-                        <button type="button" class="text-slate-400 hover:text-slate-900 transition-colors" data-toggle-panel="StatusPanel" aria-expanded="true" aria-label="Ocultar estados">
-                            <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                    </div>
-
-                    <div class="overflow-hidden transition-all duration-300 origin-top" id="StatusPanel">
-                        <div>
-                            <div class="flex justify-between items-end mb-4 px-2">
-                                <strong class="text-sm font-black text-slate-800" id="StatusChartTitle">Distribución</strong>
-                                <span class="text-xs font-medium text-slate-400" id="StatusChartCaption">0 estados</span>
-                            </div>
-                            <div class="min-h-[250px] w-full flex justify-center" id="StatusChart"></div>
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!-- Detailed Grids Area -->
-        <section class="grid xl:grid-cols-2 gap-8">
-            <!-- Customers Detail -->
-            <article class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
-                <div class="flex items-start justify-between gap-4 mb-6">
-                    <div>
-                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-1">Clientes</p>
-                        <h2 class="text-xl font-black text-slate-900 tracking-tight">Registros</h2>
-                    </div>
-                    <button type="button" class="text-slate-400 hover:text-slate-900 transition-colors" data-toggle-panel="CustomersPanel" aria-expanded="true" aria-label="Ocultar clientes">
-                        <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                </div>
-
-                <div class="overflow-hidden transition-all duration-300 origin-top" id="CustomersPanel">
-                    <div class="grid grid-cols-2 gap-4 mb-8" id="CustomerSummaryCards"></div>
-
-                    <div class="stats-admin-view-panel mb-8" data-panel-type="chart">
-                        <div class="flex justify-between items-end mb-4 px-2 border-t border-slate-100 pt-6">
-                            <strong class="text-sm font-black text-slate-800" id="CustomerChartTitle">Altas</strong>
-                            <span class="text-xs font-medium text-slate-400" id="CustomerChartCaption">0 puntos</span>
-                        </div>
-                        <div class="min-h-[250px] w-full" id="CustomerChart"></div>
-                    </div>
-
-                    <div class="stats-admin-view-panel" data-panel-type="table">
-                        <div class="flex justify-between items-end mb-4 px-2 border-t border-slate-100 pt-6">
-                            <strong class="text-sm font-black text-slate-800" id="CustomerTableTitle">Clientes del periodo</strong>
-                            <span class="text-xs font-medium text-slate-400" id="CustomerTableCount">0 registros</span>
-                        </div>
-                        <div class="overflow-x-auto rounded-2xl border border-slate-100">
-                            <table class="w-full text-left border-collapse">
-                                <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-200">
-                                    <tr>
-                                        <th class="px-4 py-3 whitespace-nowrap">Cliente</th>
-                                        <th class="px-4 py-3 whitespace-nowrap">Correo</th>
-                                        <th class="px-4 py-3 whitespace-nowrap text-center">Pedidos</th>
-                                        <th class="px-4 py-3 whitespace-nowrap text-right">Gastado</th>
-                                        <th class="px-4 py-3 whitespace-nowrap text-right">Registro</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700 bg-white" id="CustomerTableRows"></tbody>
-                            </table>
-                        </div>
-                        <div class="bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-6 text-center text-sm font-medium hidden mt-4" id="CustomerEmpty" aria-hidden="true"></div>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Orders Detail -->
-            <article class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
-                <div class="flex items-start justify-between gap-4 mb-6">
-                    <div>
-                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-1">Ventas</p>
-                        <h2 class="text-xl font-black text-slate-900 tracking-tight">Facturación</h2>
-                    </div>
-                    <button type="button" class="text-slate-400 hover:text-slate-900 transition-colors" data-toggle-panel="OrdersPanel" aria-expanded="true" aria-label="Ocultar ventas">
-                        <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                </div>
-
-                <div class="overflow-hidden transition-all duration-300 origin-top" id="OrdersPanel">
-                    <div class="grid grid-cols-2 gap-4 mb-8" id="OrderSummaryCards"></div>
-
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 border-t border-slate-100 pt-6">
-                        <div>
-                            <span class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Total vendido</span>
-                            <strong class="text-lg font-black text-slate-900" id="OrderTotalAmount">S/. 0.00</strong>
-                        </div>
-                        <div>
-                            <span class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Ticket promedio</span>
-                            <strong class="text-lg font-black text-slate-900" id="OrderAverageAmount">S/. 0.00</strong>
-                        </div>
-                        <div>
-                            <span class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Unidades</span>
-                            <strong class="text-lg font-black text-slate-900" id="OrderItemsSold">0</strong>
-                        </div>
-                        <div>
-                            <span class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Clientes comp.</span>
-                            <strong class="text-lg font-black text-slate-900" id="OrderUniqueCustomers">0</strong>
-                        </div>
-                    </div>
-
-                    <div class="stats-admin-view-panel mb-8" data-panel-type="chart">
-                        <div class="flex justify-between items-end mb-4 px-2 border-t border-slate-100 pt-6">
-                            <strong class="text-sm font-black text-slate-800" id="OrderChartTitle">Facturación</strong>
-                            <span class="text-xs font-medium text-slate-400" id="OrderChartCaption">0 puntos</span>
-                        </div>
-                        <div class="min-h-[250px] w-full" id="OrderChart"></div>
-                    </div>
-
-                    <div class="stats-admin-view-panel" data-panel-type="table">
-                        <div class="flex justify-between items-end mb-4 px-2 border-t border-slate-100 pt-6">
-                            <strong class="text-sm font-black text-slate-800" id="OrderTableTitle">Pedidos del periodo</strong>
-                            <span class="text-xs font-medium text-slate-400" id="OrderTableCount">0 registros</span>
-                        </div>
-                        <div class="overflow-x-auto rounded-2xl border border-slate-100">
-                            <table class="w-full text-left border-collapse">
-                                <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-200">
-                                    <tr>
-                                        <th class="px-4 py-3 whitespace-nowrap">Código</th>
-                                        <th class="px-4 py-3 whitespace-nowrap">Cliente</th>
-                                        <th class="px-4 py-3 whitespace-nowrap text-right">Total</th>
-                                        <th class="px-4 py-3 whitespace-nowrap text-center">Estado</th>
-                                        <th class="px-4 py-3 whitespace-nowrap text-center">Items</th>
-                                        <th class="px-4 py-3 whitespace-nowrap text-right">Fecha</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700 bg-white" id="OrderTableRows"></tbody>
-                            </table>
-                        </div>
-                        <div class="bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-6 text-center text-sm font-medium hidden mt-4" id="OrderEmpty" aria-hidden="true"></div>
-                    </div>
-                </div>
-            </article>
-        </section>
     </div>
 </div>
 
@@ -323,30 +275,4 @@
 
 @section('scripts')
     @vite(['resources/js/StatsAdmin.js'])
-    <script>
-        // Inline patch for the dynamic toggle panel animation
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggles = document.querySelectorAll('[data-toggle-panel]');
-            toggles.forEach(toggle => {
-                toggle.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-toggle-panel');
-                    const panel = document.getElementById(targetId);
-                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                    const icon = this.querySelector('svg');
-                    
-                    if(isExpanded) {
-                        this.setAttribute('aria-expanded', 'false');
-                        panel.style.maxHeight = '0px';
-                        panel.style.opacity = '0';
-                        if(icon) icon.classList.add('rotate-180');
-                    } else {
-                        this.setAttribute('aria-expanded', 'true');
-                        panel.style.maxHeight = '2000px';
-                        panel.style.opacity = '1';
-                        if(icon) icon.classList.remove('rotate-180');
-                    }
-                });
-            });
-        });
-    </script>
 @endsection

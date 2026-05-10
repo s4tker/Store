@@ -331,7 +331,7 @@ function initProductEditor() {
         renderNewImagesPreview(fileInput.files || []);
 
         if (!fileInput.files?.length) {
-            fileName.textContent = 'Puedes seleccionar varias imágenes a la vez.';
+            fileName.textContent = 'Sin archivos seleccionados.';
             return;
         }
 
@@ -481,7 +481,7 @@ function resetProductForm() {
         subcategorySelect.innerHTML = '<option value="">Sin subcategorías</option>';
     }
 
-    fileName.textContent = 'Puedes seleccionar varias imágenes a la vez.';
+    fileName.textContent = 'Sin archivos seleccionados.';
 
     clearRemovedImages();
     clearNewImages();
@@ -605,7 +605,7 @@ function clearNewImages() {
     }
 
     if (fileName) {
-        fileName.textContent = 'Puedes seleccionar varias imágenes a la vez.';
+        fileName.textContent = 'Sin archivos seleccionados.';
     }
 
     renderNewImagesPreview([]);

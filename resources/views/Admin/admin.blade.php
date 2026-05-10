@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Panel Admin | ElectroShop')
 
@@ -7,187 +7,193 @@
 @endsection
 
 @section('content')
-<div class="flex min-h-screen bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900">
-    
-    <!-- Mobile Overlay -->
-    <div id="AdminNavOverlay" class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity lg:hidden" onclick="ToggleAdminNav(false)"></div>
-    
-    <!-- Sidebar / Drawer -->
-    <aside id="AdminNavDrawer" class="fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 lg:relative lg:translate-x-0 lg:w-64 flex flex-col border-r border-slate-100">
-        <!-- Header -->
-        <div class="flex items-center justify-between p-6 border-b border-slate-100">
-            <a href="{{ route('home') }}" class="flex items-center gap-4 group">
-                <div class="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black overflow-hidden group-hover:scale-105 group-hover:bg-blue-600 transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <div>
-                    <p class="text-sm font-black text-slate-900 uppercase tracking-tight">ElectroShop</p>
-                    <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Admin Panel</span>
-                </div>
-            </a>
-            <button type="button" class="lg:hidden text-slate-400 hover:text-slate-900 text-2xl font-black transition-colors" onclick="ToggleAdminNav(false)" aria-label="Cerrar menú">&times;</button>
-        </div>
+<div class="admin-page -mx-4 md:-mx-10">
+    <div class="flex min-h-screen">
+        <div id="AdminNavOverlay" class="fixed inset-0 z-40 hidden bg-slate-950/30 backdrop-blur-sm lg:hidden" onclick="ToggleAdminNav(false)"></div>
 
-        <!-- Links -->
-        <nav class="flex-1 overflow-y-auto p-4 space-y-1 admin-mobile-links">
-            <p class="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Menú Principal</p>
-            
-            <a href="{{ route('admin.productos.index') }}" class="admin-mobile-link-anchor flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50/50 font-bold text-xs uppercase tracking-wider transition-all">
-                <svg class="w-5 h-5 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                Productos
-            </a>
-            
-            <button type="button" class="admin-mobile-link active w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider transition-all [&.active]:bg-blue-50 [&.active]:text-blue-600 [&:not(.active)]:text-slate-500 [&:not(.active):hover]:text-blue-600 [&:not(.active):hover]:bg-blue-50/50" data-section="categorias">
-                <svg class="w-5 h-5 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                Categorías
-            </button>
-            
-            <button type="button" class="admin-mobile-link w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider transition-all [&.active]:bg-blue-50 [&.active]:text-blue-600 [&:not(.active)]:text-slate-500 [&:not(.active):hover]:text-blue-600 [&:not(.active):hover]:bg-blue-50/50" data-section="marcas">
-                <svg class="w-5 h-5 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                Marcas
-            </button>
-            
-            <div class="pt-4 pb-2">
-                <p class="px-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Sistema</p>
-            </div>
-
-            <a href="{{ route('admin.usuarios.index') }}" class="admin-mobile-link-anchor flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50/50 font-bold text-xs uppercase tracking-wider transition-all">
-                <svg class="w-5 h-5 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                Gestión usuarios
-            </a>
-            
-            <a href="{{ route('admin.estadisticas.index') }}" class="admin-mobile-link-anchor flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50/50 font-bold text-xs uppercase tracking-wider transition-all">
-                <svg class="w-5 h-5 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                Estadísticas
-            </a>
-        </nav>
-        
-        <!-- Footer -->
-        <div class="p-4 border-t border-slate-100">
-            <a href="{{ route('logout') }}" class="flex items-center justify-center gap-2 w-full bg-slate-50 hover:bg-red-50 text-slate-500 hover:text-red-600 px-4 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border border-slate-200 hover:border-red-200 shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                Cerrar sesión
-            </a>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col min-w-0">
-        
-        <!-- Mobile Header -->
-        <div class="lg:hidden flex items-center justify-between p-4 bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-30">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <div class="font-black text-xs uppercase tracking-widest text-slate-900">Admin</div>
-            </div>
-            <button type="button" class="text-slate-500 hover:text-slate-900 bg-slate-50 p-2 rounded-xl transition-colors" onclick="ToggleAdminNav(true)">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            </button>
-        </div>
-
-        <main class="flex-1 p-5 lg:p-10 w-full space-y-6 lg:space-y-8 max-w-[1600px] mx-auto">
-            
-            <!-- Hero Header -->
-            <header class="flex flex-col xl:flex-row xl:items-end justify-between gap-6 bg-white p-8 lg:p-10 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
-                <!-- Decorative background elements -->
-                <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-50 group-hover:bg-blue-100 transition-colors duration-700"></div>
-                <div class="absolute right-40 -bottom-20 w-48 h-48 bg-slate-50 rounded-full blur-3xl opacity-50"></div>
-                
-                <div class="relative z-10">
-                    <p class="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-2">Panel de Control</p>
-                    <h1 class="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight uppercase italic leading-none">
-                        Gestión <span class="text-slate-400">Admin</span>
-                    </h1>
-                    <p class="mt-4 text-slate-500 font-medium max-w-md">
-                        Controla el inventario, revisa las estadísticas y administra el catálogo de tu tienda desde un solo lugar.
-                    </p>
-                </div>
-                
-                <div class="flex flex-wrap gap-3 relative z-10">
-                    <div class="bg-white text-slate-700 px-5 py-3 rounded-2xl flex items-center gap-3 border border-slate-200 shadow-sm font-bold text-xs">
-                        <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                        </span>
+        <aside id="AdminNavDrawer" class="admin-mobile-drawer fixed inset-y-0 left-0 z-50 flex w-[19rem] flex-col border-r border-white/60 bg-[#f7f9fc] p-4 lg:relative lg:translate-x-0">
+            <div class="admin-surface flex h-full flex-col p-4">
+                <div class="flex items-center justify-between gap-3 border-b border-slate-200/70 pb-5">
+                    <a href="{{ route('home') }}" class="flex items-center gap-3">
+                        <x-admin.icon tone="slate" size="md">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7.5 12 4l8 3.5M5 9.5V16a2 2 0 0 0 1.27 1.86l4.98 1.98a2 2 0 0 0 1.5 0l4.98-1.98A2 2 0 0 0 19 16V9.5M12 12l7-2.5M12 12 5 9.5M12 12v7.5"/>
+                            </svg>
+                        </x-admin.icon>
                         <div>
-                            <p class="text-[10px] uppercase tracking-widest text-slate-400 font-black mb-0.5">Productos</p>
-                            <p class="text-sm font-black">{{ $Productos->count() }}</p>
+                            <p class="text-sm font-semibold text-slate-900">ElectroShop</p>
+                            <p class="text-xs tracking-[0.24em] text-slate-400 uppercase">Admin</p>
                         </div>
-                    </div>
-                    
-                    <div class="bg-white text-slate-700 px-5 py-3 rounded-2xl flex items-center gap-3 border border-slate-200 shadow-sm font-bold text-xs">
-                        <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                        </span>
-                        <div>
-                            <p class="text-[10px] uppercase tracking-widest text-slate-400 font-black mb-0.5">Categorías</p>
-                            <p class="text-sm font-black">{{ $TodasLasCategorias->count() }}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white text-slate-700 px-5 py-3 rounded-2xl flex items-center gap-3 border border-slate-200 shadow-sm font-bold text-xs">
-                        <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                        </span>
-                        <div>
-                            <p class="text-[10px] uppercase tracking-widest text-slate-400 font-black mb-0.5">Marcas</p>
-                            <p class="text-sm font-black">{{ $Marcas->count() }}</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Navigation Tabs (Sticky Mobile, Static Desktop) -->
-            <div class="sticky top-[65px] lg:static z-20 bg-slate-50/90 backdrop-blur-md pb-4 pt-2 -mx-5 px-5 lg:mx-0 lg:px-0">
-                <nav class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-                    <a href="{{ route('admin.productos.index') }}" class="admin-nav-tab-link shrink-0 bg-white hover:bg-slate-100 text-slate-600 hover:text-blue-600 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border border-slate-200 shadow-sm">
-                        Productos
                     </a>
-                    <button type="button" class="admin-nav-tab shrink-0 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border shadow-sm outline-none [&.active]:bg-slate-900 [&.active]:text-white [&.active]:border-slate-900 [&:not(.active)]:bg-white [&:not(.active)]:text-slate-600 [&:not(.active)]:border-slate-200 [&:not(.active):hover]:text-blue-600 [&:not(.active):hover]:bg-slate-100 active" data-section="categorias">
-                        Categorías
+
+                    <button type="button" class="rounded-full p-2 text-slate-400 transition hover:bg-white hover:text-slate-700 lg:hidden" onclick="ToggleAdminNav(false)" aria-label="Cerrar menú">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 6l12 12M18 6 6 18"/>
+                        </svg>
                     </button>
-                    <button type="button" class="admin-nav-tab shrink-0 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border shadow-sm outline-none [&.active]:bg-slate-900 [&.active]:text-white [&.active]:border-slate-900 [&:not(.active)]:bg-white [&:not(.active)]:text-slate-600 [&:not(.active)]:border-slate-200 [&:not(.active):hover]:text-blue-600 [&:not(.active):hover]:bg-slate-100" data-section="marcas">
-                        Marcas
-                    </button>
-                    <a href="{{ route('admin.usuarios.index') }}" class="admin-nav-tab-link shrink-0 bg-white hover:bg-slate-100 text-slate-600 hover:text-blue-600 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border border-slate-200 shadow-sm">
-                        Gestión usuarios
+                </div>
+
+                <div class="mt-6 rounded-[1.6rem] bg-white/80 p-4">
+                    <p class="text-xs text-slate-500">Resumen</p>
+                    <div class="mt-4 space-y-3">
+                        <div class="flex items-center justify-between rounded-[1.2rem] bg-slate-50 px-4 py-3">
+                            <span class="text-sm text-slate-500">Productos</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ $Productos->count() }}</span>
+                        </div>
+                        <div class="flex items-center justify-between rounded-[1.2rem] bg-slate-50 px-4 py-3">
+                            <span class="text-sm text-slate-500">Categorías</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ $TodasLasCategorias->count() }}</span>
+                        </div>
+                        <div class="flex items-center justify-between rounded-[1.2rem] bg-slate-50 px-4 py-3">
+                            <span class="text-sm text-slate-500">Marcas</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ $Marcas->count() }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="mt-6 flex-1 space-y-2 overflow-y-auto">
+                    <a href="{{ route('admin.productos.index') }}" class="admin-sidebar-link">
+                        <x-admin.icon tone="blue" size="sm">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7 12 3 4 7m16 0-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+                            </svg>
+                        </x-admin.icon>
+                        <span>Productos</span>
                     </a>
-                    <a href="{{ route('admin.estadisticas.index') }}" class="admin-nav-tab-link shrink-0 bg-white hover:bg-slate-100 text-slate-600 hover:text-blue-600 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border border-slate-200 shadow-sm">
-                        Estadísticas
+
+                    <button type="button" class="admin-sidebar-button active" data-section="categorias">
+                        <x-admin.icon tone="violet" size="sm">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6.75A1.75 1.75 0 0 1 5.75 5h4.5A1.75 1.75 0 0 1 12 6.75v4.5A1.75 1.75 0 0 1 10.25 13h-4.5A1.75 1.75 0 0 1 4 11.25zm8 0A1.75 1.75 0 0 1 13.75 5h4.5A1.75 1.75 0 0 1 20 6.75v4.5A1.75 1.75 0 0 1 18.25 13h-4.5A1.75 1.75 0 0 1 12 11.25zm-8 8A1.75 1.75 0 0 1 5.75 13h4.5A1.75 1.75 0 0 1 12 14.75v4.5A1.75 1.75 0 0 1 10.25 21h-4.5A1.75 1.75 0 0 1 4 19.25zm8 0A1.75 1.75 0 0 1 13.75 13h4.5A1.75 1.75 0 0 1 20 14.75v4.5A1.75 1.75 0 0 1 18.25 21h-4.5A1.75 1.75 0 0 1 12 19.25z"/>
+                            </svg>
+                        </x-admin.icon>
+                        <span>Categorías</span>
+                    </button>
+
+                    <button type="button" class="admin-sidebar-button" data-section="marcas">
+                        <x-admin.icon tone="emerald" size="sm">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7.5 7.5h.01M5 3h6.76a2 2 0 0 1 1.41.59l6.24 6.24a2 2 0 0 1 0 2.82l-6.76 6.76a2 2 0 0 1-2.82 0l-6-6A2 2 0 0 1 3 11.99V5a2 2 0 0 1 2-2z"/>
+                            </svg>
+                        </x-admin.icon>
+                        <span>Marcas</span>
+                    </button>
+
+                    <a href="{{ route('admin.usuarios.index') }}" class="admin-sidebar-link">
+                        <x-admin.icon tone="indigo" size="sm">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 19a4 4 0 0 0-8 0m11 0a3 3 0 0 0-3-3m3 3v1H5v-1m14 0a3 3 0 0 0-3-3m-8 3a3 3 0 0 0-3-3m3 3v1m0-10a4 4 0 1 0 8 0 4 4 0 0 0-8 0zm11 1a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                            </svg>
+                        </x-admin.icon>
+                        <span>Usuarios</span>
+                    </a>
+
+                    <a href="{{ route('admin.estadisticas.index') }}" class="admin-sidebar-link">
+                        <x-admin.icon tone="amber" size="sm">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 19h16M7 16V9m5 7V5m5 11v-4"/>
+                            </svg>
+                        </x-admin.icon>
+                        <span>Estadísticas</span>
                     </a>
                 </nav>
+
+                <div class="mt-6 border-t border-slate-200/70 pt-5">
+                    <a href="{{ route('logout') }}" class="admin-button-danger w-full">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 16l4-4m0 0-4-4m4 4H9m4 8v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Cerrar sesión
+                    </a>
+                </div>
             </div>
+        </aside>
 
-            <!-- Content Sections Container -->
-            <section class="admin-sections space-y-6">
-                <!-- Categorías -->
-                <div class="admin-section bg-white p-6 lg:p-8 rounded-[2rem] border border-slate-100 shadow-sm" id="section-categorias">
-                    @include('Admin.sections.categorias')
+        <div class="min-w-0 flex-1">
+            <div class="admin-shell px-4 py-4 md:px-6 lg:px-8">
+                <div class="mb-4 flex items-center justify-between rounded-[1.75rem] border border-white/70 bg-white/70 px-4 py-3 backdrop-blur lg:hidden">
+                    <div class="flex items-center gap-3">
+                        <x-admin.icon tone="slate" size="sm">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7.5 12 4l8 3.5M5 9.5V16a2 2 0 0 0 1.27 1.86l4.98 1.98a2 2 0 0 0 1.5 0l4.98-1.98A2 2 0 0 0 19 16V9.5"/>
+                            </svg>
+                        </x-admin.icon>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-900">Panel Admin</p>
+                            <p class="text-xs text-slate-400">ElectroShop</p>
+                        </div>
+                    </div>
+
+                    <button type="button" class="rounded-full border border-slate-200 bg-white p-2 text-slate-600" onclick="ToggleAdminNav(true)" aria-label="Abrir menú">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16"/>
+                        </svg>
+                    </button>
                 </div>
 
-                <!-- Marcas -->
-                <div class="admin-section bg-white p-6 lg:p-8 rounded-[2rem] border border-slate-100 shadow-sm hidden" id="section-marcas">
-                    @include('Admin.sections.marcas')
-                </div>
-            </section>
+                <main class="space-y-6 pb-8">
+                    <section class="admin-surface p-6 md:p-8">
+                        <div class="flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
+                            <div class="max-w-3xl">
+                                <p class="admin-card-kicker">Panel principal</p>
+                                <h1 class="admin-title mt-3">Gestión administrativa con vista limpia y enfocada.</h1>
+                                <p class="admin-copy mt-4">Inventario, categorías, marcas, usuarios y analítica en una interfaz ligera, ordenada y rápida de recorrer.</p>
+                            </div>
 
-        </main>
+                            <div class="grid w-full max-w-xl gap-3 sm:grid-cols-3">
+                                <x-admin.stat-card label="Productos" :value="$Productos->count()" caption="Catálogo activo" tone="blue">
+                                    <x-slot:icon>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7 12 3 4 7m16 0-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+                                        </svg>
+                                    </x-slot:icon>
+                                </x-admin.stat-card>
+
+                                <x-admin.stat-card label="Categorías" :value="$TodasLasCategorias->count()" caption="Árbol comercial" tone="violet">
+                                    <x-slot:icon>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6.75A1.75 1.75 0 0 1 5.75 5h4.5A1.75 1.75 0 0 1 12 6.75v4.5A1.75 1.75 0 0 1 10.25 13h-4.5A1.75 1.75 0 0 1 4 11.25zm8 8A1.75 1.75 0 0 1 13.75 13h4.5A1.75 1.75 0 0 1 20 14.75v4.5A1.75 1.75 0 0 1 18.25 21h-4.5A1.75 1.75 0 0 1 12 19.25zm0-12A1.75 1.75 0 0 1 13.75 5h4.5A1.75 1.75 0 0 1 20 6.75v4.5A1.75 1.75 0 0 1 18.25 13h-4.5A1.75 1.75 0 0 1 12 11.25z"/>
+                                        </svg>
+                                    </x-slot:icon>
+                                </x-admin.stat-card>
+
+                                <x-admin.stat-card label="Marcas" :value="$Marcas->count()" caption="Partners" tone="emerald">
+                                    <x-slot:icon>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7.5 7.5h.01M5 3h6.76a2 2 0 0 1 1.41.59l6.24 6.24a2 2 0 0 1 0 2.82l-6.76 6.76a2 2 0 0 1-2.82 0l-6-6A2 2 0 0 1 3 11.99V5a2 2 0 0 1 2-2z"/>
+                                        </svg>
+                                    </x-slot:icon>
+                                </x-admin.stat-card>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="sticky top-4 z-20 rounded-[1.5rem] border border-white/80 bg-white/75 p-2 backdrop-blur">
+                        <nav class="no-scrollbar flex gap-2 overflow-x-auto">
+                            <a href="{{ route('admin.productos.index') }}" class="admin-tab shrink-0">Productos</a>
+                            <button type="button" class="admin-tab active shrink-0 bg-slate-900 text-white hover:border-slate-900 hover:bg-slate-900 hover:text-white" data-section="categorias">Categorías</button>
+                            <button type="button" class="admin-tab shrink-0" data-section="marcas">Marcas</button>
+                            <a href="{{ route('admin.usuarios.index') }}" class="admin-tab shrink-0">Usuarios</a>
+                            <a href="{{ route('admin.estadisticas.index') }}" class="admin-tab shrink-0">Estadísticas</a>
+                        </nav>
+                    </div>
+
+                    <section class="space-y-6">
+                        <div class="admin-section" id="section-categorias">
+                            @include('Admin.sections.categorias')
+                        </div>
+
+                        <div class="admin-section hidden" id="section-marcas">
+                            @include('Admin.sections.marcas')
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
     </div>
 </div>
 
 <div id="Toast" class="fixed bottom-6 right-6 z-[9999]"></div>
-
-<style>
-/* Utilities para ocultar barra de scroll en los tabs de navegación */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-.no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-}
-</style>
 @endsection
 
 @section('scripts')
