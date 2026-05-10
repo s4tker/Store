@@ -131,17 +131,16 @@
                     </button>
                 </div>
 
-                <main class="space-y-6 pb-8">
-                    <section class="admin-surface p-6 md:p-8">
-                        <div class="flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
-                            <div class="max-w-3xl">
-                                <p class="admin-card-kicker">Panel principal</p>
-                                <h1 class="admin-title mt-3">Gestión administrativa con vista limpia y enfocada.</h1>
-                                <p class="admin-copy mt-4">Inventario, categorías, marcas, usuarios y analítica en una interfaz ligera, ordenada y rápida de recorrer.</p>
+                <main class="space-y-5 pb-8">
+                    <section class="admin-surface p-4 md:p-5">
+                        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                            <div class="min-w-0">
+                                <p class="admin-card-kicker">Panel</p>
+                                <h1 class="admin-title mt-2">Administración</h1>
                             </div>
 
                             <div class="grid w-full max-w-xl gap-3 sm:grid-cols-3">
-                                <x-admin.stat-card label="Productos" :value="$Productos->count()" caption="Catálogo activo" tone="blue">
+                                <x-admin.stat-card label="Productos" :value="$Productos->count()" tone="blue">
                                     <x-slot:icon>
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7 12 3 4 7m16 0-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
@@ -149,7 +148,7 @@
                                     </x-slot:icon>
                                 </x-admin.stat-card>
 
-                                <x-admin.stat-card label="Categorías" :value="$TodasLasCategorias->count()" caption="Árbol comercial" tone="violet">
+                                <x-admin.stat-card label="Categorías" :value="$TodasLasCategorias->count()" tone="violet">
                                     <x-slot:icon>
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6.75A1.75 1.75 0 0 1 5.75 5h4.5A1.75 1.75 0 0 1 12 6.75v4.5A1.75 1.75 0 0 1 10.25 13h-4.5A1.75 1.75 0 0 1 4 11.25zm8 8A1.75 1.75 0 0 1 13.75 13h4.5A1.75 1.75 0 0 1 20 14.75v4.5A1.75 1.75 0 0 1 18.25 21h-4.5A1.75 1.75 0 0 1 12 19.25zm0-12A1.75 1.75 0 0 1 13.75 5h4.5A1.75 1.75 0 0 1 20 6.75v4.5A1.75 1.75 0 0 1 18.25 13h-4.5A1.75 1.75 0 0 1 12 11.25z"/>
@@ -157,7 +156,7 @@
                                     </x-slot:icon>
                                 </x-admin.stat-card>
 
-                                <x-admin.stat-card label="Marcas" :value="$Marcas->count()" caption="Partners" tone="emerald">
+                                <x-admin.stat-card label="Marcas" :value="$Marcas->count()" tone="emerald">
                                     <x-slot:icon>
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7.5 7.5h.01M5 3h6.76a2 2 0 0 1 1.41.59l6.24 6.24a2 2 0 0 1 0 2.82l-6.76 6.76a2 2 0 0 1-2.82 0l-6-6A2 2 0 0 1 3 11.99V5a2 2 0 0 1 2-2z"/>

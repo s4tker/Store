@@ -9,21 +9,19 @@
 @section('content')
 <div class="admin-page -mx-4 md:-mx-10">
     <div class="admin-shell px-4 py-6 md:px-6 lg:px-8">
-        <div class="space-y-6 pb-8">
-            <section class="admin-surface p-6 md:p-8">
-                <div class="flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
-                    <div class="max-w-3xl">
+        <div class="space-y-5 pb-8">
+            <section class="admin-surface p-4 md:p-5">
+                <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                    <div class="min-w-0">
                         <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-slate-700">
                             <span class="h-px w-8 bg-slate-300"></span>
                             Panel admin
                         </a>
-                        <p class="admin-card-kicker mt-5">Estadísticas</p>
-                        <h1 class="admin-title mt-3">Reportes visuales para clientes, pedidos e ingresos.</h1>
-                        <p class="admin-copy mt-4">La lectura se apoya en la estructura real de usuarios, pedidos y detalle de compra definida en la base de datos.</p>
+                        <h1 class="admin-title mt-3">Estadísticas</h1>
                     </div>
 
                     <div class="grid w-full max-w-xl gap-3 sm:grid-cols-2">
-                        <x-admin.stat-card label="Clientes" :value="count($ClientesStats)" caption="Registros analizados" tone="indigo">
+                        <x-admin.stat-card label="Clientes" :value="count($ClientesStats)" tone="indigo">
                             <x-slot:icon>
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 19a4 4 0 0 0-8 0m8 0h3v1H5v-1h3m8 0a3 3 0 0 0-8 0M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
@@ -31,7 +29,7 @@
                             </x-slot:icon>
                         </x-admin.stat-card>
 
-                        <x-admin.stat-card label="Pedidos" :value="count($PedidosStats)" caption="Movimientos evaluados" tone="amber">
+                        <x-admin.stat-card label="Pedidos" :value="count($PedidosStats)" tone="amber">
                             <x-slot:icon>
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 5.75A1.75 1.75 0 0 1 6.75 4h10.5A1.75 1.75 0 0 1 19 5.75v12.5A1.75 1.75 0 0 1 17.25 20H6.75A1.75 1.75 0 0 1 5 18.25zM8 8h8M8 12h8M8 16h5"/>

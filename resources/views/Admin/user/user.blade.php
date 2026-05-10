@@ -9,21 +9,19 @@
 @section('content')
 <div class="admin-page -mx-4 md:-mx-10">
     <div class="admin-shell px-4 py-6 md:px-6 lg:px-8">
-        <div class="space-y-6 pb-8">
-            <section class="admin-surface p-6 md:p-8">
-                <div class="flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
-                    <div class="max-w-3xl">
+        <div class="space-y-5 pb-8">
+            <section class="admin-surface p-4 md:p-5">
+                <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                    <div class="min-w-0">
                         <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-slate-700">
                             <span class="h-px w-8 bg-slate-300"></span>
                             Panel admin
                         </a>
-                        <p class="admin-card-kicker mt-5">Usuarios</p>
-                        <h1 class="admin-title mt-3">Gestión de accesos con edición rápida y listado limpio.</h1>
-                        <p class="admin-copy mt-4">La organización respeta la estructura de usuarios, roles y relaciones administrativas registradas en la base.</p>
+                        <h1 class="admin-title mt-3">Usuarios</h1>
                     </div>
 
                     <div class="grid w-full max-w-xl gap-3 sm:grid-cols-2">
-                        <x-admin.stat-card label="Admins" :value="count($UsuariosAdmin)" caption="Con acceso al panel" tone="indigo">
+                        <x-admin.stat-card label="Admins" :value="count($UsuariosAdmin)" tone="indigo">
                             <x-slot:icon>
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 19a4 4 0 0 0-8 0m8 0h3v1H5v-1h3m8 0a3 3 0 0 0-8 0M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
@@ -31,7 +29,7 @@
                             </x-slot:icon>
                         </x-admin.stat-card>
 
-                        <x-admin.stat-card label="Usuarios" :value="count($UsuariosBusqueda)" caption="Base disponible" tone="slate">
+                        <x-admin.stat-card label="Usuarios" :value="count($UsuariosBusqueda)" tone="slate">
                             <x-slot:icon>
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 20a5 5 0 0 1 10 0m-9-9a4 4 0 1 1 8 0 4 4 0 0 1-8 0z"/>

@@ -1,5 +1,5 @@
-<section class="admin-panel overflow-hidden p-4 md:p-5">
-    <div class="rounded-[1.6rem] bg-slate-50/80 p-3">
+<section class="admin-panel overflow-hidden p-3.5 md:p-4">
+    <div class="rounded-[1.35rem] bg-slate-50/80 p-2.5">
         <div class="no-scrollbar flex gap-2 overflow-x-auto" id="ProductRootCategories">
             @foreach($Categorias as $cat)
                 <button
@@ -15,16 +15,16 @@
     </div>
 </section>
 
-<div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)]">
-    <section class="admin-panel p-6 md:p-7">
-        <div class="flex flex-col gap-5 border-b border-slate-100 pb-6 sm:flex-row sm:items-start sm:justify-between">
+<div class="mt-5 grid gap-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.18fr)]">
+    <section class="admin-panel p-5 md:p-6">
+        <div class="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
                 <p class="admin-card-kicker" id="ProductFormEyebrow">Productos</p>
-                <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950" id="ProductFormTitle">Registrar producto</h2>
+                <h2 class="mt-1.5 text-lg font-semibold tracking-tight text-slate-950" id="ProductFormTitle">Registrar producto</h2>
             </div>
 
             <div class="flex items-center gap-3">
-                <div class="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-500 [&.is-positive]:border-emerald-200 [&.is-positive]:bg-emerald-50 [&.is-positive]:text-emerald-600" id="TxtDescuento">0% desc.</div>
+                <div class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-medium text-slate-500 [&.is-positive]:border-emerald-200 [&.is-positive]:bg-emerald-50 [&.is-positive]:text-emerald-600" id="TxtDescuento">0% desc.</div>
                 <button type="button" class="admin-button" id="BtnResetProductForm">Nuevo</button>
             </div>
         </div>
@@ -34,7 +34,7 @@
             action="{{ route('admin.productos.store') }}"
             method="POST"
             enctype="multipart/form-data"
-            class="mt-8 grid grid-cols-2 gap-5"
+            class="mt-6 grid grid-cols-2 gap-4"
             data-store-url="{{ route('admin.productos.store') }}"
             data-update-base="{{ url('/admin/productos') }}"
         >
@@ -64,7 +64,7 @@
                 <input type="number" min="0" max="32767" name="Stock" id="ProductStock" class="admin-input" placeholder="0">
             </div>
 
-            <div class="col-span-2 grid gap-5 md:grid-cols-3">
+            <div class="col-span-2 grid gap-4 md:grid-cols-3">
                 <div>
                     <label class="admin-label" for="InpPrecio">Precio normal</label>
                     <input type="number" step="0.01" min="0.10" name="Precio" id="InpPrecio" required class="admin-input" placeholder="0.00">
@@ -98,43 +98,43 @@
 
             <div class="col-span-2">
                 <label class="admin-label" for="ProductDescription">Descripción</label>
-                <textarea name="Descripcion" id="ProductDescription" rows="4" class="admin-textarea resize-y" placeholder="Descripción breve"></textarea>
+                <textarea name="Descripcion" id="ProductDescription" rows="3" class="admin-textarea resize-y" placeholder="Descripción"></textarea>
             </div>
 
-            <div class="admin-panel-soft col-span-2 p-5">
+            <div class="admin-panel-soft col-span-2 p-4">
                 <div class="flex items-center justify-between gap-3">
                     <label class="admin-label mb-0" for="ProductImages">Galería</label>
                     <span class="text-xs text-slate-400" id="FileName">Sin archivos seleccionados.</span>
                 </div>
 
-                <label class="mt-4 flex h-36 w-full cursor-pointer flex-col items-center justify-center rounded-[1.35rem] border border-dashed border-slate-300 bg-white text-center transition hover:border-blue-200 hover:bg-blue-50/40" for="ProductImages">
+                <label class="mt-3 flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-[1.15rem] border border-dashed border-slate-300 bg-white text-center transition hover:border-blue-200 hover:bg-blue-50/40" for="ProductImages">
                     <x-admin.icon tone="blue" size="sm">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 16V7m0 0-3 3m3-3 3 3M5 16.5A3.5 3.5 0 0 0 8.5 20h7A3.5 3.5 0 0 0 19 16.5"/>
                         </svg>
                     </x-admin.icon>
-                    <p class="mt-4 text-sm font-medium text-slate-700">Subir imágenes</p>
+                    <p class="mt-3 text-sm font-medium text-slate-700">Subir imágenes</p>
                     <input type="file" name="Imagenes[]" id="ProductImages" accept="image/*" multiple class="hidden">
                 </label>
 
-                <div class="mt-5 grid gap-5 lg:grid-cols-2">
+                <div class="mt-4 grid gap-4 lg:grid-cols-2">
                     <div>
                         <p class="admin-label">Actuales</p>
                         <div class="grid grid-cols-2 gap-3" id="ExistingImagesGrid">
-                            <div class="col-span-2 rounded-[1rem] border border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-400">Sin imágenes.</div>
+                            <div class="col-span-2 rounded-[1rem] border border-slate-200 bg-white px-4 py-5 text-center text-xs text-slate-400">Sin imágenes.</div>
                         </div>
                     </div>
 
                     <div>
                         <p class="admin-label">Nuevas</p>
                         <div class="grid grid-cols-2 gap-3" id="NewImagesPreview">
-                            <div class="col-span-2 rounded-[1rem] border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-400">Vista previa.</div>
+                            <div class="col-span-2 rounded-[1rem] border border-dashed border-slate-200 bg-white px-4 py-5 text-center text-xs text-slate-400">Vista previa.</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="admin-panel-soft col-span-2 p-5">
+            <div class="admin-panel-soft col-span-2 p-4">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <p class="admin-label mb-0">Atributos</p>
@@ -143,8 +143,8 @@
                     <button type="button" class="admin-button" id="BtnAddAttribute">Añadir campo</button>
                 </div>
 
-                <div class="mt-4 flex flex-wrap gap-2" id="ProductPresetAttributes"></div>
-                <div id="ContainerAtributos" class="mt-4 space-y-3"></div>
+                <div class="mt-3 flex flex-wrap gap-2" id="ProductPresetAttributes"></div>
+                <div id="ContainerAtributos" class="mt-3 space-y-3"></div>
             </div>
 
             <div class="col-span-2 flex flex-col gap-3 pt-2 sm:flex-row">
@@ -154,18 +154,18 @@
         </form>
     </section>
 
-    <section class="admin-panel p-6 md:p-7">
-        <div class="flex flex-col gap-5 border-b border-slate-100 pb-6 sm:flex-row sm:items-start sm:justify-between">
+    <section class="admin-panel p-5 md:p-6">
+        <div class="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
                 <p class="admin-card-kicker">Catálogo</p>
-                <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Productos registrados</h2>
+                <h2 class="mt-1.5 text-lg font-semibold tracking-tight text-slate-950">Productos</h2>
             </div>
 
             <button type="button" class="admin-button" data-toggle-target="ProductListPanel" data-toggle-label-show="Ver catálogo" data-toggle-label-hide="Ocultar catálogo">Ocultar catálogo</button>
         </div>
 
-        <div id="ProductListPanel" class="mt-8">
-            <div class="admin-panel-soft mb-6 p-4">
+        <div id="ProductListPanel" class="mt-6">
+            <div class="admin-panel-soft mb-5 p-3.5">
                 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <div class="sm:col-span-2 xl:col-span-4">
                         <label class="admin-label" for="ProductSearch">Buscar producto</label>
@@ -199,7 +199,7 @@
                 </div>
             </div>
 
-            <div class="grid gap-4 md:grid-cols-2" id="ProductCatalog">
+            <div class="grid gap-3.5 md:grid-cols-2" id="ProductCatalog">
                 @forelse($Productos as $producto)
                     @php
                         $firstVariant = $producto->variantes->sortBy('Id')->first();
@@ -216,30 +216,30 @@
                         data-product-root-category-id="{{ $producto->categoria?->ParentId ?: $producto->categoria?->Id }}"
                         data-product-sku="{{ \Illuminate\Support\Str::lower($firstVariant?->Sku ?? '') }}"
                     >
-                        <button type="button" class="flex items-start gap-4 text-left" data-load-product="{{ $producto->Id }}">
-                            <div class="h-24 w-24 overflow-hidden rounded-[1.2rem] bg-slate-100">
+                        <button type="button" class="flex items-start gap-3 text-left" data-load-product="{{ $producto->Id }}">
+                            <div class="h-20 w-20 overflow-hidden rounded-[1rem] bg-slate-100">
                                 <img src="{{ $producto->image_url }}" alt="{{ $producto->Nombre }}" class="h-full w-full object-cover">
                             </div>
 
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="min-w-0">
-                                        <h3 class="truncate text-base font-semibold text-slate-950">{{ $producto->Nombre }}</h3>
-                                        <p class="mt-1 truncate text-sm text-slate-500">{{ $producto->marca?->Nombre ?? 'Sin marca' }}</p>
+                                        <h3 class="truncate text-sm font-semibold text-slate-950">{{ $producto->Nombre }}</h3>
+                                        <p class="mt-1 truncate text-xs text-slate-500">{{ $producto->marca?->Nombre ?? 'Sin marca' }}</p>
                                     </div>
-                                    <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600">{{ $producto->imagenes->count() }} img</span>
+                                    <span class="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-600">{{ $producto->imagenes->count() }} img</span>
                                 </div>
 
-                                <p class="mt-3 text-sm text-slate-500">{{ $categoryLabel }}</p>
+                                <p class="mt-2 text-xs text-slate-500">{{ $categoryLabel }}</p>
 
-                                <div class="mt-4 flex items-center justify-between gap-3">
-                                    <span class="text-lg font-semibold text-slate-900">S/. {{ number_format($producto->display_price, 2) }}</span>
-                                    <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">{{ $firstVariant?->Sku ?? 'Sin SKU' }}</span>
+                                <div class="mt-3 flex items-center justify-between gap-3">
+                                    <span class="text-base font-semibold text-slate-900">S/. {{ number_format($producto->display_price, 2) }}</span>
+                                    <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] text-slate-500">{{ $firstVariant?->Sku ?? 'Sin SKU' }}</span>
                                 </div>
                             </div>
                         </button>
 
-                        <div class="mt-5 flex items-center gap-2 border-t border-slate-100 pt-4">
+                        <div class="mt-4 flex items-center gap-2 border-t border-slate-100 pt-3.5">
                             <button type="button" class="admin-button flex-1" data-load-product="{{ $producto->Id }}">Editar</button>
                             <button type="button" class="admin-button-danger" data-delete-url="{{ route('admin.productos.destroy', $producto->Id) }}" data-delete-label="producto {{ $producto->Nombre }}">Borrar</button>
                         </div>

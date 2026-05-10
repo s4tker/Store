@@ -1,9 +1,9 @@
-<div class="grid gap-6 xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)]">
-    <section class="admin-panel p-6 md:p-7">
+<div class="grid gap-5 xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)]">
+    <section class="admin-panel p-5 md:p-6">
         <div class="flex items-start justify-between gap-4">
             <div>
                 <p class="admin-card-kicker" id="BrandFormEyebrow">Marcas</p>
-                <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950" id="BrandFormTitle">Nueva marca</h2>
+                <h2 class="mt-1.5 text-lg font-semibold tracking-tight text-slate-950" id="BrandFormTitle">Nueva marca</h2>
             </div>
 
             <button type="button" class="admin-button" id="BtnResetBrandForm">Nueva</button>
@@ -13,7 +13,7 @@
             id="FormAddMarca"
             action="{{ route('admin.marcas.store') }}"
             method="POST"
-            class="mt-8 space-y-5"
+            class="mt-6 space-y-4"
             data-store-url="{{ route('admin.marcas.store') }}"
             data-update-base="{{ url('/admin/marcas') }}"
         >
@@ -30,19 +30,19 @@
         </form>
     </section>
 
-    <section class="admin-panel p-6 md:p-7">
+    <section class="admin-panel p-5 md:p-6">
         <div class="flex items-start justify-between gap-4">
             <div>
                 <p class="admin-card-kicker">Listado</p>
-                <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Marcas registradas</h2>
+                <h2 class="mt-1.5 text-lg font-semibold tracking-tight text-slate-950">Marcas</h2>
             </div>
 
             <button type="button" class="admin-button" data-toggle-target="BrandListPanel" data-toggle-label-show="Ver marcas" data-toggle-label-hide="Ocultar marcas">Ocultar marcas</button>
         </div>
 
-        <div id="BrandListPanel" class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div id="BrandListPanel" class="mt-6 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
             @forelse($Marcas as $marca)
-                <article class="rounded-[1.35rem] border border-slate-200/80 bg-slate-50/80 p-4 transition hover:border-slate-300 hover:bg-white">
+                <article class="rounded-[1.2rem] border border-slate-200/80 bg-slate-50/80 p-3.5 transition hover:border-slate-300 hover:bg-white">
                     <div class="flex items-start justify-between gap-3">
                         <div class="flex min-w-0 items-center gap-3">
                             <x-admin.icon tone="emerald" size="sm">

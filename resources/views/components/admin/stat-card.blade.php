@@ -6,10 +6,10 @@
 ])
 
 <article {{ $attributes->class('admin-stat-card') }}>
-    <div class="flex items-start justify-between gap-4">
+    <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
             <p class="admin-card-kicker">{{ $label }}</p>
-            <p class="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{{ $value }}</p>
+            <p class="mt-2 text-xl font-semibold tracking-tight text-slate-900 md:text-[1.35rem]">{{ $value }}</p>
         </div>
 
         @isset($icon)
@@ -20,6 +20,6 @@
     </div>
 
     @if($caption)
-        <p class="mt-4 text-sm text-slate-500">{{ $caption }}</p>
+        <p class="mt-2 text-xs text-slate-500">{{ $caption }}</p>
     @endif
 </article>

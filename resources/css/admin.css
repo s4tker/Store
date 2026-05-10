@@ -21,12 +21,12 @@
 }
 
 .admin-shell {
-    width: min(100%, 96rem);
+    width: min(100%, 90rem);
     margin-inline: auto;
 }
 
 .admin-surface {
-    @apply rounded-[2rem] border;
+    @apply rounded-[1.6rem] border;
     background: var(--admin-surface);
     border-color: var(--admin-border);
     box-shadow: var(--admin-shadow);
@@ -34,28 +34,24 @@
 }
 
 .admin-panel {
-    @apply rounded-[1.75rem] border bg-white;
+    @apply rounded-[1.45rem] border bg-white;
     border-color: var(--admin-border);
     box-shadow: var(--admin-shadow);
 }
 
 .admin-panel-soft {
-    @apply rounded-[1.5rem] border;
+    @apply rounded-[1.2rem] border;
     background: rgba(248, 250, 252, 0.92);
     border-color: rgba(148, 163, 184, 0.16);
 }
 
 .admin-card-kicker {
-    @apply text-[11px] font-semibold uppercase tracking-[0.24em];
+    @apply text-[10px] font-medium uppercase tracking-[0.22em];
     color: var(--admin-muted-soft);
 }
 
 .admin-title {
-    @apply text-3xl md:text-[2.6rem] font-semibold tracking-tight text-slate-950;
-}
-
-.admin-copy {
-    @apply text-sm md:text-[15px] leading-6 text-slate-500;
+    @apply text-[1.35rem] md:text-[1.6rem] font-semibold tracking-tight text-slate-950;
 }
 
 .admin-stat-grid {
@@ -63,7 +59,7 @@
 }
 
 .admin-stat-card {
-    @apply rounded-[1.5rem] border p-5;
+    @apply rounded-[1.2rem] border p-4;
     background: rgba(255, 255, 255, 0.96);
     border-color: var(--admin-border);
     box-shadow: 0 12px 28px -24px rgba(15, 23, 42, 0.3);
@@ -74,7 +70,7 @@
 .admin-button-danger,
 .admin-chip,
 .admin-tab {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[11px] font-semibold tracking-[0.18em] uppercase transition-all;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-3.5 py-2 text-[10px] font-medium tracking-[0.16em] uppercase transition-all;
 }
 
 .admin-button,
@@ -110,7 +106,7 @@
 .admin-input,
 .admin-select,
 .admin-textarea {
-    @apply w-full rounded-[1.15rem] border bg-slate-50/90 px-4 py-3 text-sm text-slate-900 outline-none transition-all;
+    @apply w-full rounded-[1rem] border bg-slate-50/90 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-all;
     border-color: rgba(148, 163, 184, 0.22);
 }
 
@@ -126,11 +122,11 @@
 }
 
 .admin-label {
-    @apply mb-2 block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500;
+    @apply mb-1.5 block text-[10px] font-medium uppercase tracking-[0.16em] text-slate-500;
 }
 
 .admin-empty {
-    @apply rounded-[1.5rem] border border-dashed border-slate-300/80 bg-slate-50/80 px-6 py-10 text-center text-sm text-slate-500;
+    @apply rounded-[1.2rem] border border-dashed border-slate-300/80 bg-slate-50/80 px-5 py-8 text-center text-sm text-slate-500;
 }
 
 .admin-table-wrap {
@@ -139,16 +135,16 @@
 }
 
 .admin-table {
-    @apply min-w-full text-left text-sm text-slate-600;
+    @apply min-w-full text-left text-[13px] text-slate-600;
 }
 
 .admin-table thead {
-    @apply bg-slate-50/90 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500;
+    @apply bg-slate-50/90 text-[10px] font-medium uppercase tracking-[0.16em] text-slate-500;
 }
 
 .admin-table th,
 .admin-table td {
-    @apply px-4 py-3.5;
+    @apply px-3.5 py-3;
 }
 
 .admin-table tbody tr {
@@ -160,7 +156,7 @@
 }
 
 .admin-list-card {
-    @apply rounded-[1.35rem] border bg-white p-4 transition-all;
+    @apply rounded-[1.15rem] border bg-white p-3.5 transition-all;
     border-color: var(--admin-border);
 }
 
@@ -172,7 +168,7 @@
 
 .admin-sidebar-link,
 .admin-sidebar-button {
-    @apply flex w-full items-center gap-3 rounded-[1.25rem] px-4 py-3 text-sm font-medium text-slate-500 transition-all;
+    @apply flex w-full items-center gap-3 rounded-[1rem] px-3.5 py-2.5 text-[13px] font-medium text-slate-500 transition-all;
 }
 
 .admin-sidebar-link:hover,
@@ -200,7 +196,7 @@
 }
 
 .admin-attribute-preset {
-    @apply inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition-colors;
+    @apply inline-flex items-center rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-600 transition-colors;
 }
 
 .admin-attribute-preset:hover {
@@ -212,7 +208,7 @@
 }
 
 .attribute-row input {
-    @apply w-full rounded-[1.15rem] border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all;
+    @apply w-full rounded-[1rem] border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-all;
 }
 
 .attribute-row input:focus {
@@ -220,7 +216,7 @@
 }
 
 .attribute-row .attribute-remove {
-    @apply shrink-0 rounded-full border border-rose-100 bg-rose-50 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-600 transition-all;
+    @apply shrink-0 rounded-full border border-rose-100 bg-rose-50 px-3.5 py-2 text-[10px] font-medium uppercase tracking-[0.16em] text-rose-600 transition-all;
 }
 
 .attribute-row .attribute-remove:hover {
@@ -232,7 +228,7 @@
 }
 
 .image-card img {
-    @apply h-24 w-full object-cover;
+    @apply h-20 w-full object-cover;
 }
 
 .image-card .image-card-footer {
@@ -250,6 +246,19 @@
 .admin-toast {
     @apply fixed bottom-6 right-6 z-[9999] rounded-full border bg-white px-4 py-3 text-sm text-slate-700 shadow-lg;
     border-color: var(--admin-border-strong);
+}
+
+.admin-input[type="number"],
+.admin-select[type="number"],
+.admin-textarea[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.admin-input[type="number"]::-webkit-outer-spin-button,
+.admin-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .user-admin-item.is-active {
