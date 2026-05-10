@@ -7,11 +7,15 @@
 
 .stats-admin-chip:hover,
 .stats-admin-chip.is-active {
-    @apply border-blue-200 bg-blue-50 text-blue-700;
+    @apply text-white;
+    background: #0F172A;
+    border-color: #0F172A;
 }
 
 .stats-admin-button:hover {
-    @apply border-violet-200 bg-violet-50 text-violet-700;
+    @apply text-slate-900;
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.1);
 }
 
 .stats-admin-toggle {
@@ -34,23 +38,23 @@
 #GeneralSummaryCards .stats-admin-summary-card:nth-child(1),
 #CustomerSummaryCards .stats-admin-summary-card:nth-child(1),
 #OrderSummaryCards .stats-admin-summary-card:nth-child(1) {
-    @apply border-sky-100 bg-sky-50/60;
+    @apply border-slate-200 bg-white;
 }
 
 #GeneralSummaryCards .stats-admin-summary-card:nth-child(2),
 #CustomerSummaryCards .stats-admin-summary-card:nth-child(2),
 #OrderSummaryCards .stats-admin-summary-card:nth-child(2) {
-    @apply border-emerald-100 bg-emerald-50/60;
+    @apply border-slate-200 bg-white;
 }
 
 #GeneralSummaryCards .stats-admin-summary-card:nth-child(3),
 #CustomerSummaryCards .stats-admin-summary-card:nth-child(3),
 #OrderSummaryCards .stats-admin-summary-card:nth-child(3) {
-    @apply border-violet-100 bg-violet-50/60;
+    @apply border-slate-200 bg-white;
 }
 
 #GeneralSummaryCards .stats-admin-summary-card:nth-child(4) {
-    @apply border-amber-100 bg-amber-50/60;
+    @apply border-slate-200 bg-white;
 }
 
 .stats-admin-summary-card em {
@@ -126,27 +130,27 @@
 }
 
 .stats-chart-bar {
-    fill: #7dd3fc;
+    fill: #0f172a;
 }
 
 .stats-chart-bar-soft {
-    fill: #c4b5fd;
+    fill: #94a3b8;
 }
 
 .stats-chart-line {
     fill: none;
-    stroke: #34d399;
+    stroke: #0f172a;
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
 
 .stats-chart-area {
-    fill: rgba(52, 211, 153, 0.14);
+    fill: rgba(15, 23, 42, 0.1);
 }
 
 .stats-chart-point {
-    fill: #34d399;
+    fill: #0f172a;
 }
 
 .stats-chart-zero {

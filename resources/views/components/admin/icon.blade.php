@@ -17,7 +17,7 @@
     $sizes = [
         'sm' => 'h-9 w-9 rounded-full',
         'md' => 'h-11 w-11 rounded-full',
-        'lg' => 'h-14 w-14 rounded-[1.25rem]',
+        'lg' => 'h-14 w-14 rounded-full',
     ];
 @endphp
 

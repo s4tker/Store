@@ -51,7 +51,7 @@
 
                 <nav class="mt-5 flex-1 space-y-1.5 overflow-y-auto">
                     <a href="{{ route('admin.productos.index') }}" class="admin-sidebar-link">
-                        <x-admin.icon tone="blue" size="sm" class="admin-sidebar-icon bg-sky-400/12 text-sky-200 ring-0">
+                        <x-admin.icon tone="blue" size="sm" class="admin-sidebar-icon bg-slate-800 text-sky-300 ring-0">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7 12 3 4 7m16 0-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
                             </svg>
@@ -60,7 +60,7 @@
                     </a>
 
                     <button type="button" class="admin-sidebar-button active" data-section="categorias">
-                        <x-admin.icon tone="violet" size="sm" class="admin-sidebar-icon bg-violet-400/12 text-violet-200 ring-0">
+                        <x-admin.icon tone="violet" size="sm" class="admin-sidebar-icon bg-slate-800 text-violet-300 ring-0">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6.75A1.75 1.75 0 0 1 5.75 5h4.5A1.75 1.75 0 0 1 12 6.75v4.5A1.75 1.75 0 0 1 10.25 13h-4.5A1.75 1.75 0 0 1 4 11.25zm8 0A1.75 1.75 0 0 1 13.75 5h4.5A1.75 1.75 0 0 1 20 6.75v4.5A1.75 1.75 0 0 1 18.25 13h-4.5A1.75 1.75 0 0 1 12 11.25zm-8 8A1.75 1.75 0 0 1 5.75 13h4.5A1.75 1.75 0 0 1 12 14.75v4.5A1.75 1.75 0 0 1 10.25 21h-4.5A1.75 1.75 0 0 1 4 19.25zm8 0A1.75 1.75 0 0 1 13.75 13h4.5A1.75 1.75 0 0 1 20 14.75v4.5A1.75 1.75 0 0 1 18.25 21h-4.5A1.75 1.75 0 0 1 12 19.25z"/>
                             </svg>
@@ -69,7 +69,7 @@
                     </button>
 
                     <button type="button" class="admin-sidebar-button" data-section="marcas">
-                        <x-admin.icon tone="emerald" size="sm" class="admin-sidebar-icon bg-emerald-400/12 text-emerald-200 ring-0">
+                        <x-admin.icon tone="emerald" size="sm" class="admin-sidebar-icon bg-slate-800 text-emerald-300 ring-0">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7.5 7.5h.01M5 3h6.76a2 2 0 0 1 1.41.59l6.24 6.24a2 2 0 0 1 0 2.82l-6.76 6.76a2 2 0 0 1-2.82 0l-6-6A2 2 0 0 1 3 11.99V5a2 2 0 0 1 2-2z"/>
                             </svg>
@@ -78,7 +78,7 @@
                     </button>
 
                     <a href="{{ route('admin.usuarios.index') }}" class="admin-sidebar-link">
-                        <x-admin.icon tone="indigo" size="sm" class="admin-sidebar-icon bg-cyan-400/12 text-cyan-200 ring-0">
+                        <x-admin.icon tone="indigo" size="sm" class="admin-sidebar-icon bg-slate-800 text-cyan-300 ring-0">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 19a4 4 0 0 0-8 0m11 0a3 3 0 0 0-3-3m3 3v1H5v-1m14 0a3 3 0 0 0-3-3m-8 3a3 3 0 0 0-3-3m3 3v1m0-10a4 4 0 1 0 8 0 4 4 0 0 0-8 0zm11 1a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
                             </svg>
@@ -87,7 +87,7 @@
                     </a>
 
                     <a href="{{ route('admin.estadisticas.index') }}" class="admin-sidebar-link">
-                        <x-admin.icon tone="amber" size="sm" class="admin-sidebar-icon bg-fuchsia-400/12 text-fuchsia-200 ring-0">
+                        <x-admin.icon tone="amber" size="sm" class="admin-sidebar-icon bg-slate-800 text-amber-300 ring-0">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 19h16M7 16V9m5 7V5m5 11v-4"/>
                             </svg>

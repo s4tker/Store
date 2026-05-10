@@ -1,22 +1,25 @@
 @reference "tailwindcss";
 
 :root {
-    --admin-bg: #f4f7fb;
-    --admin-surface: rgba(255, 255, 255, 0.92);
+    --admin-bg: #eef3f8;
+    --admin-surface: rgba(255, 255, 255, 0.94);
     --admin-surface-strong: #ffffff;
-    --admin-border: rgba(148, 163, 184, 0.18);
-    --admin-border-strong: rgba(148, 163, 184, 0.28);
+    --admin-border: rgba(15, 23, 42, 0.08);
+    --admin-border-strong: rgba(15, 23, 42, 0.18);
     --admin-ink: #0f172a;
     --admin-muted: #64748b;
     --admin-muted-soft: #94a3b8;
-    --admin-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.28);
+    --admin-shadow: 0 20px 42px -30px rgba(15, 23, 42, 0.24);
+    --admin-accent: #0f172a;
+    --admin-accent-soft: #e2e8f0;
 }
 
 .admin-page {
     min-height: 100vh;
     background:
-        radial-gradient(circle at top left, rgba(191, 219, 254, 0.45), transparent 26rem),
-        radial-gradient(circle at bottom right, rgba(196, 181, 253, 0.24), transparent 22rem),
+        radial-gradient(circle at top left, rgba(15, 23, 42, 0.05), transparent 24rem),
+        radial-gradient(circle at top right, rgba(226, 232, 240, 0.85), transparent 24rem),
+        radial-gradient(circle at bottom right, rgba(226, 232, 240, 0.55), transparent 18rem),
         var(--admin-bg);
 }
 
@@ -60,7 +63,7 @@
 
 .admin-stat-card {
     @apply rounded-[1.1rem] border p-3.5;
-    background: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.98);
     border-color: var(--admin-border);
     box-shadow: 0 12px 28px -24px rgba(15, 23, 42, 0.3);
 }
@@ -87,20 +90,25 @@
 .admin-button:hover,
 .admin-chip:hover,
 .admin-tab:hover {
-    @apply text-slate-900 border-slate-300;
+    @apply text-slate-900;
+    border-color: rgba(15, 23, 42, 0.16);
+    background: rgba(255, 255, 255, 0.98);
 }
 
 .admin-tab.active {
-    @apply border-violet-200 bg-violet-50 text-violet-700;
+    @apply text-white;
+    background: #0F172A;
+    border-color: #0F172A;
 }
 
 .admin-button-primary {
-    @apply bg-slate-900 text-white shadow-sm;
+    @apply text-white shadow-sm;
+    background: #0F172A;
     box-shadow: 0 12px 24px -18px rgba(15, 23, 42, 0.75);
 }
 
 .admin-button-primary:hover {
-    @apply bg-slate-800;
+    background: #162237;
 }
 
 .admin-button-danger {
@@ -126,7 +134,9 @@
 .admin-input:focus,
 .admin-select:focus,
 .admin-textarea:focus {
-    @apply border-blue-300 bg-white ring-4 ring-blue-100/70;
+    @apply bg-white ring-4;
+    border-color: rgba(15, 23, 42, 0.2);
+    --tw-ring-color: rgba(15, 23, 42, 0.08);
 }
 
 .admin-label {
@@ -170,15 +180,13 @@
 
 .admin-list-card:hover,
 .admin-list-card.is-active {
-    @apply border-slate-300;
-    box-shadow: 0 16px 30px -26px rgba(37, 99, 235, 0.42);
+    border-color: rgba(15, 23, 42, 0.16);
+    box-shadow: 0 16px 30px -26px rgba(15, 23, 42, 0.26);
 }
 
 .admin-sidebar-shell {
-    background:
-        linear-gradient(180deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 1)),
-        #0F172A;
-    border-color: rgba(148, 163, 184, 0.14);
+    background: #0F172A;
+    border-color: rgba(148, 163, 184, 0.1);
 }
 
 .admin-sidebar-link,
@@ -190,8 +198,8 @@
 .admin-sidebar-button:hover,
 .admin-sidebar-button.active {
     @apply text-white;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(139, 92, 246, 0.22));
-    box-shadow: inset 0 0 0 1px rgba(191, 219, 254, 0.12);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(226, 232, 240, 0.05);
 }
 
 .admin-sidebar-link.is-current {
@@ -201,8 +209,7 @@
 .admin-sidebar-link:hover .admin-sidebar-icon,
 .admin-sidebar-button:hover .admin-sidebar-icon,
 .admin-sidebar-button.active .admin-sidebar-icon {
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.06) !important;
 }
 
 .admin-sidebar-label {
@@ -210,7 +217,7 @@
 }
 
 .admin-sidebar-icon {
-    @apply h-10 w-10 shrink-0 rounded-[1rem] ml-1;
+    @apply h-10 w-10 shrink-0 rounded-full ml-1;
 }
 
 .admin-sidebar-brand-icon {
@@ -247,7 +254,9 @@
 }
 
 .admin-attribute-preset:hover {
-    @apply border-blue-200 bg-blue-50 text-blue-600;
+    @apply text-slate-900;
+    border-color: rgba(15, 23, 42, 0.14);
+    background: rgba(226, 232, 240, 0.55);
 }
 
 .attribute-row {
@@ -259,7 +268,9 @@
 }
 
 .attribute-row input:focus {
-    @apply border-blue-300 ring-4 ring-blue-100/70;
+    border-color: rgba(15, 23, 42, 0.2);
+    --tw-ring-color: rgba(15, 23, 42, 0.08);
+    @apply ring-4;
 }
 
 .attribute-row .attribute-remove {
