@@ -3,31 +3,23 @@
 :root {
     --admin-bg: #f8fafc;
     --admin-surface: #ffffff;
-    --admin-surface-soft: rgba(248, 250, 252, 0.6);
+    --admin-surface-soft: rgba(248, 250, 252, 0.8);
     --admin-border: #e2e8f0;
-    --admin-border-soft: rgba(226, 232, 240, 0.4);
+    --admin-border-soft: rgba(226, 232, 240, 0.5);
     --admin-border-strong: #cbd5e1;
     --admin-ink: #0f172a;
     --admin-muted: #64748b;
     --admin-muted-soft: #94a3b8;
-    --admin-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
-    --admin-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+    
+    /* Sombras más suaves y modernas */
+    --admin-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+    --admin-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.02);
     --admin-shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.06), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
-    --admin-shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.01);
+    --admin-shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
+    
     --admin-accent: #0f172a;
     --admin-accent-hover: #1e293b;
-    
-    --brand-blue-soft: #eff6ff;
-    --brand-blue-border: #bfdbfe;
-    --brand-blue-text: #1d4ed8;
-    
-    --brand-violet-soft: #f5f3ff;
-    --brand-violet-border: #ddd6fe;
-    --brand-violet-text: #6d28d9;
-    
-    --brand-green-soft: #f0fdf4;
-    --brand-green-border: #bbf7d0;
-    --brand-green-text: #15803d;
+    --admin-accent-ring: rgba(15, 23, 42, 0.15);
 }
 
 body {
@@ -38,11 +30,6 @@ body {
 .admin-page {
     min-height: 100vh;
     background-color: var(--admin-bg);
-    background-image:
-        radial-gradient(at 0% 0%, rgba(224, 242, 254, 0.4) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(237, 233, 254, 0.4) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(220, 252, 231, 0.4) 0px, transparent 50%);
-    background-attachment: fixed;
 }
 
 .admin-shell {
@@ -51,13 +38,13 @@ body {
 }
 
 .admin-surface {
-    @apply rounded-3xl border bg-white/95 backdrop-blur-xl p-5 md:p-6 lg:p-8;
+    @apply rounded-[2rem] border bg-white/90 backdrop-blur-2xl p-5 md:p-6 lg:p-8;
     border-color: var(--admin-border);
     box-shadow: var(--admin-shadow-sm);
 }
 
 .admin-panel {
-    @apply rounded-3xl border bg-white;
+    @apply rounded-[2rem] border bg-white;
     border-color: var(--admin-border);
     box-shadow: var(--admin-shadow-sm);
 }
@@ -69,7 +56,7 @@ body {
 }
 
 .admin-card-kicker {
-    @apply text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1 block;
+    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1 block;
 }
 
 .admin-title {
@@ -81,7 +68,7 @@ body {
 }
 
 .admin-stat-card {
-    @apply relative overflow-hidden rounded-[1.5rem] border bg-white p-5 transition-all duration-300 hover:-translate-y-0.5;
+    @apply relative overflow-hidden rounded-[1.5rem] border bg-white p-5 transition-all duration-300;
     border-color: var(--admin-border);
     box-shadow: var(--admin-shadow-sm);
 }
@@ -89,10 +76,15 @@ body {
 .admin-stat-card:hover {
     box-shadow: var(--admin-shadow-md);
     border-color: var(--admin-border-strong);
+    transform: translateY(-2px);
 }
 
 .admin-stat-icon {
-    @apply h-12 w-12 shrink-0 rounded-[1rem] flex items-center justify-center bg-slate-50 border border-slate-100 text-slate-600;
+    @apply h-12 w-12 shrink-0 rounded-[1rem] flex items-center justify-center border border-slate-100 bg-slate-50 text-slate-600 transition-colors duration-300;
+}
+
+.admin-stat-card:hover .admin-stat-icon {
+    @apply bg-slate-100 text-slate-800 border-slate-200;
 }
 
 .admin-button,
@@ -100,28 +92,28 @@ body {
 .admin-button-danger,
 .admin-chip,
 .admin-tab {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 outline-none focus:ring-2 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 outline-none;
 }
 
 .admin-button,
 .admin-chip {
     @apply border bg-white text-slate-700 shadow-sm;
-    border-color: var(--admin-border-strong);
-    focus:ring-slate-200;
+    border-color: #e2e8f0;
 }
 
 .admin-button:hover,
 .admin-chip:hover {
-    @apply bg-slate-50 text-slate-900 border-slate-400;
+    @apply bg-slate-50 text-slate-900 border-slate-300;
+    box-shadow: var(--admin-shadow);
 }
 
 .admin-tab {
-    @apply border bg-white/60 text-slate-600 rounded-xl px-4 py-2.5 text-sm font-semibold backdrop-blur-md;
+    @apply border bg-transparent text-slate-500 rounded-xl px-4 py-2 text-sm font-semibold;
     border-color: transparent;
 }
 
 .admin-tab:hover {
-    @apply bg-slate-100/80 text-slate-900;
+    @apply bg-slate-200/50 text-slate-900;
 }
 
 .admin-tab.active, .admin-tab.is-active {
@@ -131,23 +123,24 @@ body {
 }
 
 .admin-button-primary {
-    @apply text-white shadow-md border border-transparent;
+    @apply text-white border border-transparent;
     background-color: var(--admin-accent);
-    focus:ring-slate-400;
+    box-shadow: 0 4px 10px -2px rgba(15, 23, 42, 0.4);
 }
 
 .admin-button-primary:hover {
     background-color: var(--admin-accent-hover);
-    box-shadow: var(--admin-shadow-lg);
+    box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.45);
+    transform: translateY(-1px);
 }
 
 .admin-button-danger {
     @apply border border-rose-200 bg-white text-rose-600 shadow-sm;
-    focus:ring-rose-200;
 }
 
 .admin-button-danger:hover {
     @apply bg-rose-50 border-rose-300 text-rose-700;
+    box-shadow: var(--admin-shadow);
 }
 
 .admin-input,
@@ -166,7 +159,8 @@ body {
 .admin-input:focus,
 .admin-select:focus,
 .admin-textarea:focus {
-    @apply ring-4 ring-slate-100 border-slate-900 bg-white;
+    @apply bg-white border-slate-900;
+    box-shadow: 0 0 0 4px var(--admin-accent-ring);
 }
 
 .admin-input:disabled,
@@ -193,7 +187,7 @@ body {
 }
 
 .admin-table thead {
-    @apply bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider;
+    @apply bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider;
 }
 
 .admin-table th,
@@ -228,23 +222,23 @@ body {
 .admin-sidebar-shell {
     background-color: var(--admin-accent);
     border-color: rgba(255, 255, 255, 0.05);
-    box-shadow: var(--admin-shadow-lg);
-    @apply rounded-[1.5rem];
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.5);
+    @apply rounded-[1.75rem];
 }
 
 .admin-sidebar-link,
 .admin-sidebar-button {
-    @apply flex w-full items-center gap-3.5 rounded-xl px-4 py-3 text-sm font-medium text-slate-400 transition-all duration-200;
+    @apply flex w-full items-center gap-3.5 rounded-xl px-4 py-3 text-sm font-medium text-slate-300/80 transition-all duration-200 outline-none;
 }
 
 .admin-sidebar-link:hover,
 .admin-sidebar-button:hover,
 .admin-sidebar-button.active {
-    @apply text-white bg-white/5;
+    @apply text-white bg-white/10;
 }
 
 .admin-sidebar-link.is-current {
-    @apply bg-white/10 text-white shadow-inner;
+    @apply bg-white/10 text-white;
 }
 
 .admin-sidebar-label {
@@ -252,18 +246,18 @@ body {
 }
 
 .admin-sidebar-icon {
-    @apply h-9 w-9 shrink-0 rounded-lg flex items-center justify-center bg-transparent transition-colors duration-200 text-slate-500;
+    @apply h-9 w-9 shrink-0 rounded-lg flex items-center justify-center bg-transparent transition-colors duration-200 text-slate-400;
 }
 
 .admin-sidebar-link:hover .admin-sidebar-icon,
 .admin-sidebar-button:hover .admin-sidebar-icon,
 .admin-sidebar-button.active .admin-sidebar-icon,
 .admin-sidebar-link.is-current .admin-sidebar-icon {
-    @apply bg-white/10 text-white;
+    @apply bg-white/15 text-white;
 }
 
 .admin-sidebar-brand-icon {
-    @apply rounded-xl bg-white/10 text-white flex items-center justify-center h-10 w-10;
+    @apply rounded-xl flex items-center justify-center h-10 w-10 transition-colors duration-300;
 }
 
 @media (min-width: 1024px) {
@@ -277,6 +271,7 @@ body {
     @apply h-2 w-2 rounded-full bg-current opacity-80;
 }
 
+/* El drawer móvil usa transición nativa. No cambiar padding/margin/width para no afectar el JS de toggle */
 .admin-mobile-drawer {
     transform: translateX(-100%);
     transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -287,11 +282,12 @@ body {
 }
 
 .admin-attribute-preset {
-    @apply inline-flex items-center rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors shadow-sm;
+    @apply inline-flex items-center rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition-all shadow-sm;
 }
 
 .admin-attribute-preset:hover {
     @apply text-slate-900 border-slate-300 bg-slate-50;
+    box-shadow: var(--admin-shadow);
 }
 
 .attribute-row {
@@ -299,11 +295,16 @@ body {
 }
 
 .attribute-row input {
-    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 outline-none transition-all focus:ring-4 focus:ring-slate-100 focus:border-slate-900;
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 outline-none transition-all;
+}
+
+.attribute-row input:focus {
+    @apply border-slate-900;
+    box-shadow: 0 0 0 4px var(--admin-accent-ring);
 }
 
 .attribute-row .attribute-remove {
-    @apply shrink-0 rounded-xl border border-rose-200 bg-white px-4 py-2 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 hover:border-rose-300 shadow-sm focus:ring-2 focus:ring-rose-100 outline-none;
+    @apply shrink-0 rounded-xl border border-rose-200 bg-white px-4 py-2 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 hover:border-rose-300 shadow-sm outline-none;
 }
 
 .image-card {
@@ -359,11 +360,11 @@ body {
 }
 
 .admin-confirm-cancel {
-    @apply inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 focus:ring-2 focus:ring-slate-100 outline-none;
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 outline-none;
 }
 
 .admin-confirm-accept {
-    @apply inline-flex items-center justify-center rounded-xl border border-transparent bg-rose-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-rose-700 shadow-md focus:ring-4 focus:ring-rose-100 outline-none;
+    @apply inline-flex items-center justify-center rounded-xl border border-transparent bg-rose-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-rose-700 shadow-md outline-none;
 }
 
 .admin-input[type="number"],
@@ -383,7 +384,8 @@ body {
     @apply rounded-2xl border border-slate-200 bg-white p-5 transition-all duration-300 hover:border-slate-300 hover:shadow-sm;
 }
 .user-admin-item.is-active {
-    @apply border-slate-900 bg-slate-50 shadow-md ring-1 ring-slate-900;
+    @apply border-slate-900 bg-slate-50 shadow-md;
+    box-shadow: 0 0 0 2px var(--admin-accent-ring);
 }
 
 .user-admin-toast {
