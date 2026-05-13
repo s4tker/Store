@@ -145,6 +145,9 @@ asset('img/cards/amex.png'),
                         <a href="{{ route('account') }}" class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition-colors hover:bg-blue-600">
                             Cambiar direccion
                         </a>
+                        <a href="{{ route('account') }}" class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition-colors hover:bg-blue-600">
+                            agregar nueva direccion
+                        </a>
                     </div>
                     @else
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
