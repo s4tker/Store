@@ -383,8 +383,8 @@ function RenderPaymentModalContent(Method) {
                             <svg class="w-4 h-4 text-slate-300 cursor-help" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                         </div>
                     </div>
-                    <input name="TarjetaCvv" type="password" inputmode="numeric" maxlength="4" 
-                    placeholder="••••" 
+                    <input name="TarjetaCvv" type="password" inputmode="numeric" maxlength="3" 
+                    placeholder="•••" 
                     class="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl py-3 px-5 text-center text-base font-black tracking-[0.2em] text-slate-900 outline-none transition-all focus:bg-white focus:border-slate-900" 
                     data-card-field="cvv">
                 </div>
@@ -612,7 +612,7 @@ function FormatCardField(Input) {
     }
 
     if (Input.dataset.cardField === "cvv") {
-        Input.value = Raw.slice(0, 4);
+        Input.value = Raw.slice(0, 3);
     }
 }
 
@@ -622,7 +622,7 @@ function ValidateCardField(Input) {
     const IsValid =
         (Field === "number" && Raw.length === 16) ||
         (Field === "expiry" && IsValidExpiry(Raw)) ||
-        (Field === "cvv" && Raw.length >= 3 && Raw.length <= 4);
+        (Field === "cvv" && Raw.length === 3);
 
     Input.classList.toggle("border-emerald-300", IsValid);
     Input.classList.toggle("border-red-300", Raw.length > 0 && !IsValid);

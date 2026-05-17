@@ -14,7 +14,7 @@
                 <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                     <div class="min-w-0">
                         <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-slate-700">
-                            <span class="h-px w-8 bg-slate-300"></span>
+                            <svg class="h-4 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 32 16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 3 3 8l5 5M4 8h25"/></svg>
                             Panel admin
                         </a>
                         <h1 class="admin-title mt-3">Estadísticas</h1>
@@ -84,21 +84,21 @@
 
             <section class="admin-stat-grid" id="GeneralSummaryCards"></section>
 
-            <section class="grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,0.78fr)] stats-admin-view-panel" data-panel-type="chart">
+            <section class="stats-admin-reflow-grid grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,0.78fr)] stats-admin-view-panel" data-panel-type="chart">
                 <article class="admin-panel p-6 md:p-7">
-                    <div class="flex flex-col gap-4 border-b border-slate-100 pb-6 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="stats-admin-panel-head flex flex-col gap-4 border-b border-slate-100 pb-6 lg:flex-row lg:items-start lg:justify-between">
                         <div>
                             <p class="admin-card-kicker">Serie principal</p>
                             <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950" id="TimelineChartTitle">Ventas</h2>
                         </div>
 
-                        <div class="flex items-center gap-3">
-                            <div class="hidden flex-wrap gap-2 sm:flex" id="TimelineScopeFilters">
+                        <div class="flex flex-col gap-3 sm:items-end">
+                            <div class="flex flex-wrap justify-start gap-2 sm:justify-end" id="TimelineScopeFilters">
                                 <button type="button" class="stats-admin-chip is-active" data-scope="revenue">Ventas</button>
                                 <button type="button" class="stats-admin-chip" data-scope="orders">Pedidos</button>
                                 <button type="button" class="stats-admin-chip" data-scope="customers">Clientes</button>
                             </div>
-                            <button type="button" class="stats-admin-toggle" data-toggle-panel="MainChartPanel" aria-expanded="true" aria-label="Ocultar gráfico principal">Ocultar</button>
+                            <button type="button" class="stats-admin-toggle self-start sm:self-end" data-toggle-panel="MainChartPanel" aria-expanded="true" aria-label="Ocultar gráfico principal">Ocultar</button>
                         </div>
                     </div>
 
@@ -115,9 +115,9 @@
                     </div>
                 </article>
 
-                <div class="grid gap-6">
+                <div class="stats-admin-reflow-grid grid gap-6">
                     <article class="admin-panel p-6">
-                        <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
+                        <div class="stats-admin-panel-head flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
                             <div>
                                 <p class="admin-card-kicker">Clientes</p>
                                 <h2 class="mt-2 text-xl font-semibold tracking-tight text-slate-950">Top clientes</h2>
@@ -130,12 +130,12 @@
                                 <strong id="TopCustomersChartTitle">Por gasto</strong>
                                 <span id="TopCustomersChartCaption">0 clientes</span>
                             </div>
-                            <div class="stats-admin-chart-stage" id="TopCustomersChart"></div>
+                            <div class="stats-admin-chart-stage stats-admin-compact-stage" id="TopCustomersChart"></div>
                         </div>
                     </article>
 
                     <article class="admin-panel p-6">
-                        <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
+                        <div class="stats-admin-panel-head flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
                             <div>
                                 <p class="admin-card-kicker">Pedidos</p>
                                 <h2 class="mt-2 text-xl font-semibold tracking-tight text-slate-950">Estados</h2>
@@ -148,15 +148,15 @@
                                 <strong id="StatusChartTitle">Distribución</strong>
                                 <span id="StatusChartCaption">0 estados</span>
                             </div>
-                            <div class="stats-admin-chart-stage" id="StatusChart"></div>
+                            <div class="stats-admin-chart-stage stats-admin-compact-stage" id="StatusChart"></div>
                         </div>
                     </article>
                 </div>
             </section>
 
-            <section class="grid gap-6 xl:grid-cols-2">
+            <section class="stats-admin-reflow-grid grid gap-6 xl:grid-cols-2">
                 <article class="admin-panel p-6 md:p-7">
-                    <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-6">
+                    <div class="stats-admin-panel-head flex items-start justify-between gap-4 border-b border-slate-100 pb-6">
                         <div>
                             <p class="admin-card-kicker">Clientes</p>
                             <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Registros</h2>
@@ -180,7 +180,7 @@
                                 <strong id="CustomerTableTitle">Clientes del periodo</strong>
                                 <span id="CustomerTableCount">0 registros</span>
                             </div>
-                            <div class="admin-table-wrap">
+                            <div class="admin-table-wrap stats-admin-table-scroll stats-admin-table-compact">
                                 <table class="admin-table">
                                     <thead>
                                         <tr>
@@ -200,7 +200,7 @@
                 </article>
 
                 <article class="admin-panel p-6 md:p-7">
-                    <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-6">
+                    <div class="stats-admin-panel-head flex items-start justify-between gap-4 border-b border-slate-100 pb-6">
                         <div>
                             <p class="admin-card-kicker">Ventas</p>
                             <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Facturación</h2>
@@ -243,7 +243,7 @@
                                 <strong id="OrderTableTitle">Pedidos del periodo</strong>
                                 <span id="OrderTableCount">0 registros</span>
                             </div>
-                            <div class="admin-table-wrap">
+                            <div class="admin-table-wrap stats-admin-table-scroll stats-admin-table-compact">
                                 <table class="admin-table">
                                     <thead>
                                         <tr>

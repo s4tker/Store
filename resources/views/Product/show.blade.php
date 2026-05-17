@@ -103,9 +103,30 @@
             </div>
 
             @if(!empty($Product->Descripcion))
-            <div class="mt-4 rounded-[1rem] bg-slate-50 p-3.5">
+            @php
+                $descriptionIsLong = mb_strlen($Product->Descripcion) > 260;
+            @endphp
+            <div x-data="{ expanded: false }" class="mt-4 rounded-[1rem] bg-slate-50 p-3.5">
                 <p class="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Descripción</p>
-                <p class="mt-2 text-[12px] sm:text-[13px] leading-5 text-slate-600">{{ $Product->Descripcion }}</p>
+                <div class="relative mt-2">
+                    <p
+                        class="text-[12px] sm:text-[13px] leading-5 text-slate-600 transition-all"
+                        :class="expanded ? '' : '{{ $descriptionIsLong ? 'max-h-20 overflow-hidden' : '' }}'"
+                    >{{ $Product->Descripcion }}</p>
+
+                    @if($descriptionIsLong)
+                    <div x-show="!expanded" class="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-slate-50 to-transparent"></div>
+                    @endif
+                </div>
+
+                @if($descriptionIsLong)
+                <button
+                    type="button"
+                    @click="expanded = !expanded"
+                    class="mt-2 text-[9px] font-black uppercase tracking-[0.14em] text-blue-600 transition-colors hover:text-slate-900"
+                    x-text="expanded ? 'ver menos' : 'ver más'"
+                ></button>
+                @endif
             </div>
             @endif
 

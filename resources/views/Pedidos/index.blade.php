@@ -47,7 +47,7 @@
     @else
         <div class="space-y-4">
             <!-- Header de tabla "Invisible" en móvil, visible en Desktop -->
-            <div class="hidden md:grid grid-cols-5 px-8 mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+            <div class="hidden md:grid md:grid-cols-[1.15fr_1fr_1fr_1fr_1.35fr] px-8 mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                 <div class="col-span-1">Referencia</div>
                 <div>Fecha</div>
                 <div>Estado</div>
@@ -57,12 +57,14 @@
 
             <!-- Lista de Pedidos -->
             @foreach($pedidos as $pedido)
-                <div class="group bg-white border border-slate-100 rounded-3xl p-6 md:px-8 md:py-6 transition-all hover:shadow-2xl hover:shadow-slate-200/60 hover:-translate-y-1 flex flex-col md:grid md:grid-cols-5 items-center gap-4">
+                <div class="group bg-white border border-slate-100 rounded-3xl p-6 md:px-8 md:py-6 transition-all hover:shadow-2xl hover:shadow-slate-200/60 hover:-translate-y-1 flex flex-col md:grid md:grid-cols-[1.15fr_1fr_1fr_1fr_1.35fr] items-center gap-4 md:gap-6">
                     
                     <!-- ID / Referencia -->
                     <div class="col-span-1 flex items-center gap-4 w-full md:w-auto">
                         <div class="bg-slate-900 text-white w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 group-hover:bg-blue-600 transition-colors">
-                            #{{ $pedido->Id }}
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
                         </div>
                         <div class="md:hidden">
                             <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Referencia</p>
@@ -97,17 +99,17 @@
                     </div>
 
                     <!-- Total -->
-                    <div class="w-full md:w-auto">
+                    <div class="w-full md:w-auto md:pr-4">
                         <p class="md:hidden text-[10px] font-black uppercase tracking-widest text-slate-400">Total</p>
-                        <p class="text-xl font-black text-slate-900">
+                        <p class="text-xl font-black text-slate-900 whitespace-nowrap">
                             <span class="text-[10px] text-slate-400 font-normal">S/.</span>{{ number_format($pedido->Total, 2) }}
                         </p>
                     </div>
 
                     <!-- Acciones -->
-                    <div class="flex items-center justify-end gap-2 w-full md:w-auto">
+                    <div class="flex flex-col sm:flex-row md:flex-nowrap items-stretch sm:items-center justify-end gap-2 w-full md:w-auto md:min-w-[12rem]">
                         <a href="{{ route('pedidos.show', $pedido->Id) }}" 
-                           class="flex-1 md:flex-none text-center bg-slate-100 hover:bg-slate-200 text-slate-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all">
+                           class="flex-1 md:flex-none text-center bg-slate-100 hover:bg-slate-200 text-slate-600 px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all">
                             Detalles
                         </a>
 
@@ -117,7 +119,7 @@
                                   class="flex-1 md:flex-none">
                                 @csrf
                                 <button type="submit" 
-                                        class="w-full bg-red-50 hover:bg-red-500 hover:text-white text-red-500 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border border-red-100">
+                                        class="w-full bg-red-50 hover:bg-red-500 hover:text-white text-red-500 px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border border-red-100">
                                     Cancelar
                                 </button>
                             </form>
@@ -134,3 +136,14 @@
     @endif
 </div>
 @endsection
+
+@if(session('clear_cart'))
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    localStorage.removeItem('electroshop-cart');
+    window.updateCartUI?.();
+});
+</script>
+@endsection
+@endif

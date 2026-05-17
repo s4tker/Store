@@ -125,8 +125,14 @@ function bindPanelToggles() {
             }
 
             const collapsed = panel.classList.toggle('is-collapsed');
+            const card = button.closest('.admin-panel');
+            const header = card?.querySelector('.stats-admin-panel-head');
+
+            card?.classList.toggle('stats-admin-card-collapsed', collapsed);
+            header?.classList.toggle('stats-admin-head-collapsed', collapsed);
             button.classList.toggle('is-collapsed', collapsed);
             button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+            button.textContent = collapsed ? 'Mostrar' : 'Ocultar';
         });
     });
 }
@@ -296,12 +302,7 @@ function renderMainChart(dataset) {
 
     const allZero = series.every((point) => point.value === 0);
 
-    if (state.currentTimelineScope === 'revenue') {
-        renderColumnChart(target, series, formatMoney);
-        return;
-    }
-
-    renderLineChart(target, series, formatInteger);
+    renderLineChart(target, series, state.currentTimelineScope === 'revenue' ? formatMoney : formatInteger);
 }
 
 function renderTopCustomersChart({ allCustomers, customers, orders }) {
@@ -317,7 +318,7 @@ function renderTopCustomersChart({ allCustomers, customers, orders }) {
 
     title.textContent = 'Por gasto';
     caption.textContent = `${rows.length} clientes`;
-    renderHorizontalBarChart(target, ensureCategoryRows(rows, ['Sin datos']), formatMoney);
+    renderMetricList(target, ensureCategoryRows(rows, ['Sin datos']), formatMoney, 'blue');
 }
 
 function renderStatusChart({ orders }) {
@@ -333,7 +334,35 @@ function renderStatusChart({ orders }) {
 
     title.textContent = 'Distribución';
     caption.textContent = `${rows.length} estados`;
-    renderHorizontalBarChart(target, ensureCategoryRows(rows, ['Sin datos']), formatInteger);
+    renderMetricList(target, ensureCategoryRows(rows, ['Sin datos']), formatInteger, 'amber');
+}
+
+function renderMetricList(target, rows, valueFormatter, tone = 'blue') {
+    const max = Math.max(...rows.map((item) => Number(item.value || 0)), 0);
+    const safeMax = max > 0 ? max : 1;
+
+    target.innerHTML = `
+        <div class="stats-admin-metric-list">
+            ${rows.map((item, index) => {
+                const percent = Math.max(4, (Number(item.value || 0) / safeMax) * 100);
+                const amber = tone === 'amber';
+                return `
+                    <article class="stats-admin-metric-row">
+                        <div class="stats-admin-metric-rank ${amber ? 'is-amber' : ''}">${index + 1}</div>
+                        <div class="min-w-0 flex-1">
+                            <div class="stats-admin-metric-head">
+                                <strong>${escapeHtml(trimLabel(item.label, 28))}</strong>
+                                <span>${escapeHtml(valueFormatter(item.value))}</span>
+                            </div>
+                            <div class="stats-admin-metric-track">
+                                <span class="stats-admin-metric-fill ${amber ? 'is-amber' : ''}" style="width: ${percent}%"></span>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('')}
+        </div>
+    `;
 }
 
 function renderCustomerChart(dataset) {
@@ -367,7 +396,7 @@ function renderOrderChart(dataset) {
 
     title.textContent = `Facturación por ${granularityLabel(dataset.granularity).toLowerCase()}`;
     caption.textContent = `${series.length} puntos`;
-    renderColumnChart(target, series, formatMoney, true);
+    renderLineChart(target, series, formatMoney, true);
 }
 
 function applyViewMode() {
@@ -482,14 +511,41 @@ function aggregateSeries(items, granularity, dateAccessor, valueAccessor) {
 }
 
 function ensureTimeSeries(series, granularity, period) {
-    if (series.length) return series;
-    return buildEmptyTimeSeries(granularity, period);
+    const skeleton = buildTimeSeriesSkeleton(granularity, period, series);
+    const values = new Map(series.map((item) => [item.key, item]));
+
+    return skeleton.map((item) => ({
+        ...item,
+        value: Number(values.get(item.key)?.value || 0),
+    }));
 }
 
 function buildEmptyTimeSeries(granularity, period) {
+    return buildTimeSeriesSkeleton(granularity, period, []);
+}
+
+function buildTimeSeriesSkeleton(granularity, period, series = []) {
     const now = new Date();
-    const count = period === 'day' ? 6 : period === 'week' ? 7 : period === 'month' ? 6 : period === 'year' ? 12 : 6;
+    const count = period === 'day' ? 12 : period === 'week' ? 7 : period === 'month' ? 30 : period === 'year' ? 12 : resolveHistoricalPointCount(granularity, series);
     const items = [];
+
+    if (period === 'all' && series.length) {
+        const first = normalizeBucketDate(series[0].date, granularity);
+        const last = normalizeBucketDate(series[series.length - 1].date, granularity);
+        const cursor = new Date(first);
+
+        while (cursor <= last) {
+            items.push({
+                key: formatBucketKey(cursor, granularity),
+                label: formatBucketLabel(cursor, granularity),
+                value: 0,
+                date: new Date(cursor),
+            });
+            advanceDate(cursor, granularity, 1);
+        }
+
+        return items;
+    }
 
     for (let index = count - 1; index >= 0; index -= 1) {
         const date = new Date(now);
@@ -515,6 +571,32 @@ function buildEmptyTimeSeries(granularity, period) {
     }
 
     return items;
+}
+
+function resolveHistoricalPointCount(granularity, series) {
+    if (granularity === 'year') return Math.max(series.length, 5);
+    if (granularity === 'month') return Math.max(series.length, 12);
+    if (granularity === 'day') return Math.max(series.length, 30);
+    return Math.max(series.length, 12);
+}
+
+function advanceDate(date, granularity, amount) {
+    if (granularity === 'hour') {
+        date.setHours(date.getHours() + amount);
+        return;
+    }
+
+    if (granularity === 'day') {
+        date.setDate(date.getDate() + amount);
+        return;
+    }
+
+    if (granularity === 'month') {
+        date.setMonth(date.getMonth() + amount);
+        return;
+    }
+
+    date.setFullYear(date.getFullYear() + amount);
 }
 
 function ensureCategoryRows(rows, fallbackLabels) {
@@ -615,21 +697,24 @@ function buildLegend(items) {
 function renderColumnChart(target, series, valueFormatter, includeZeroClass = false) {
     const width = 820;
     const height = 300;
-    const margin = { top: 20, right: 12, bottom: 52, left: 58 };
+    const margin = { top: 28, right: 18, bottom: 54, left: 58 };
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
     const max = Math.max(...series.map((item) => item.value), 0);
     const safeMax = max > 0 ? max : 1;
-    const barWidth = Math.max((chartWidth / series.length) * 0.56, 18);
+    const barWidth = Math.min(Math.max((chartWidth / series.length) * 0.46, 18), 44);
     const gap = chartWidth / series.length;
 
     const bars = series.map((item, index) => {
         const x = margin.left + (gap * index) + ((gap - barWidth) / 2);
         const valueHeight = (item.value / safeMax) * chartHeight;
         const y = margin.top + chartHeight - valueHeight;
+        const visibleHeight = Math.max(valueHeight, 4);
         return `
             <g>
-                <rect class="${item.value === 0 && includeZeroClass ? 'stats-chart-zero' : 'stats-chart-bar'}" x="${x}" y="${y}" width="${barWidth}" height="${Math.max(valueHeight, 2)}" rx="4"></rect>
+                <rect class="stats-chart-track" x="${x}" y="${margin.top}" width="${barWidth}" height="${chartHeight}" rx="${barWidth / 2}"></rect>
+                <rect class="${item.value === 0 && includeZeroClass ? 'stats-chart-zero' : 'stats-chart-bar'}" x="${x}" y="${margin.top + chartHeight - visibleHeight}" width="${barWidth}" height="${visibleHeight}" rx="${barWidth / 2}"></rect>
+                ${item.value > 0 ? `<text class="stats-chart-value" x="${x + (barWidth / 2)}" y="${Math.max(y - 8, 14)}" text-anchor="middle">${escapeHtml(valueFormatter(item.value))}</text>` : ''}
                 <text class="stats-chart-label" x="${x + (barWidth / 2)}" y="${height - 18}" text-anchor="middle">${escapeHtml(item.label)}</text>
             </g>
         `;
@@ -647,7 +732,7 @@ function renderColumnChart(target, series, valueFormatter, includeZeroClass = fa
 function renderLineChart(target, series, valueFormatter, includeZeroClass = false) {
     const width = 820;
     const height = 300;
-    const margin = { top: 20, right: 12, bottom: 52, left: 58 };
+    const margin = { top: 28, right: 18, bottom: 54, left: 58 };
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
     const max = Math.max(...series.map((item) => item.value), 0);
@@ -660,12 +745,12 @@ function renderLineChart(target, series, valueFormatter, includeZeroClass = fals
         return { ...item, x, y };
     });
 
-    const line = points.map((point) => `${point.x},${point.y}`).join(' ');
-    const area = `M ${margin.left} ${margin.top + chartHeight} ` + points.map((point) => `L ${point.x} ${point.y}`).join(' ') + ` L ${margin.left + chartWidth} ${margin.top + chartHeight} Z`;
+    const line = buildSmoothPath(points);
+    const area = `${line} L ${points[points.length - 1].x} ${margin.top + chartHeight} L ${points[0].x} ${margin.top + chartHeight} Z`;
 
     const content = `
         <path class="stats-chart-area" d="${area}"></path>
-        <polyline class="stats-chart-line" points="${line}"></polyline>
+        <path class="stats-chart-line" d="${line}"></path>
         ${points.map((point) => `
             <g>
                 <circle class="${point.value === 0 && includeZeroClass ? 'stats-chart-zero' : 'stats-chart-point'}" cx="${point.x}" cy="${point.y}" r="4.5"></circle>
@@ -700,8 +785,8 @@ function renderHorizontalBarChart(target, rows, valueFormatter) {
         return `
             <g>
                 <text class="stats-chart-label" x="${margin.left - 10}" y="${y + (barHeight / 2) + 4}" text-anchor="end">${escapeHtml(trimLabel(item.label, 20))}</text>
-                <rect x="${margin.left}" y="${y}" width="${chartWidth}" height="${barHeight}" rx="5" fill="#eff6ff"></rect>
-                <rect class="${item.value === 0 ? 'stats-chart-zero' : 'stats-chart-bar-soft'}" x="${margin.left}" y="${y}" width="${Math.max(valueWidth, 2)}" height="${barHeight}" rx="5"></rect>
+                <rect class="stats-chart-track" x="${margin.left}" y="${y}" width="${chartWidth}" height="${barHeight}" rx="${barHeight / 2}"></rect>
+                <rect class="${item.value === 0 ? 'stats-chart-zero' : 'stats-chart-bar-soft'}" x="${margin.left}" y="${y}" width="${Math.max(valueWidth, 3)}" height="${barHeight}" rx="${barHeight / 2}"></rect>
                 <text class="stats-chart-value" x="${margin.left + Math.min(valueWidth + 8, chartWidth - 4)}" y="${y + (barHeight / 2) + 4}">${escapeHtml(valueFormatter(item.value))}</text>
             </g>
         `;
@@ -709,6 +794,7 @@ function renderHorizontalBarChart(target, rows, valueFormatter) {
 
     target.innerHTML = `
         <svg viewBox="0 0 ${width} ${height}" class="stats-admin-chart-svg" role="img" aria-label="Grafico">
+            ${buildChartDefs()}
             ${content}
         </svg>
     `;
@@ -729,16 +815,58 @@ function buildAxisChartShell({ width, height, margin, max, content }) {
 
     return `
         <svg viewBox="0 0 ${width} ${height}" class="stats-admin-chart-svg" role="img" aria-label="Grafico">
+            ${buildChartDefs()}
             ${rows}
             <g class="stats-chart-axis">
                 <line x1="${margin.left}" y1="${height - margin.bottom}" x2="${width - margin.right}" y2="${height - margin.bottom}"></line>
-                <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height - margin.bottom}"></line>
             </g>
             ${content}
         </svg>
     `;
 }
 
+function buildChartDefs() {
+    return `
+        <defs>
+            <linearGradient id="statsBarGradient" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#0586c9"></stop>
+                <stop offset="100%" stop-color="#0586c9"></stop>
+            </linearGradient>
+            <linearGradient id="statsSoftGradient" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stop-color="#0586c9"></stop>
+                <stop offset="100%" stop-color="#35aee2"></stop>
+            </linearGradient>
+            <linearGradient id="statsLineGradient" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stop-color="#0586c9"></stop>
+                <stop offset="100%" stop-color="#0586c9"></stop>
+            </linearGradient>
+            <linearGradient id="statsAreaGradient" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#0586c9" stop-opacity="0.16"></stop>
+                <stop offset="100%" stop-color="#0586c9" stop-opacity="0.03"></stop>
+            </linearGradient>
+        </defs>
+    `;
+}
+
+function buildSmoothPath(points) {
+    if (!points.length) {
+        return '';
+    }
+
+    if (points.length === 1) {
+        return `M ${points[0].x} ${points[0].y}`;
+    }
+
+    return points.reduce((path, point, index) => {
+        if (index === 0) {
+            return `M ${point.x} ${point.y}`;
+        }
+
+        const previous = points[index - 1];
+        const controlX = previous.x + ((point.x - previous.x) / 2);
+        return `${path} C ${controlX} ${previous.y}, ${controlX} ${point.y}, ${point.x} ${point.y}`;
+    }, '');
+}
 
 function trimLabel(value, maxLength) {
     return String(value).length > maxLength ? `${String(value).slice(0, maxLength - 1)}…` : String(value);

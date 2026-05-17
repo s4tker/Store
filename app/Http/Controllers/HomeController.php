@@ -33,7 +33,7 @@ class HomeController extends Controller
             }
 
             if ($selectedSubcategory) {
-                $Query->where('CategoriaId', $selectedSubcategory);
+                $Query->orderByRaw('CASE WHEN CategoriaId = ? THEN 0 ELSE 1 END', [$selectedSubcategory]);
             } elseif ($selectedCategory) {
                 $categoryIds = Categoria::query()
                     ->where('Id', $selectedCategory)
@@ -41,7 +41,10 @@ class HomeController extends Controller
                     ->pluck('Id')
                     ->all();
 
-                $Query->whereIn('CategoriaId', $categoryIds);
+                if (! empty($categoryIds)) {
+                    $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+                    $Query->orderByRaw("CASE WHEN CategoriaId in ({$placeholders}) THEN 0 ELSE 1 END", $categoryIds);
+                }
             }
 
             $Products = $Query->orderBy('Id', 'desc')->get();
@@ -95,20 +98,26 @@ class HomeController extends Controller
 
         $rootCategoryId = $Product->categoria?->ParentId ?: $Product->categoria?->Id;
 
-        $RelatedProducts = Producto::query()
+        $relatedQuery = Producto::query()
             ->with(['marca', 'imagenes', 'variantes'])
-            ->when($rootCategoryId, function ($query) use ($rootCategoryId) {
-                $categoryIds = Categoria::query()
-                    ->where('Id', $rootCategoryId)
-                    ->orWhere('ParentId', $rootCategoryId)
-                    ->pluck('Id')
-                    ->all();
+            ->where('Id', '!=', $Product->Id);
 
-                $query->whereIn('CategoriaId', $categoryIds);
-            })
-            ->where('Id', '!=', $Product->Id)
+        if ($rootCategoryId) {
+            $categoryIds = Categoria::query()
+                ->where('Id', $rootCategoryId)
+                ->orWhere('ParentId', $rootCategoryId)
+                ->pluck('Id')
+                ->all();
+
+            if (! empty($categoryIds)) {
+                $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+                $relatedQuery->orderByRaw("CASE WHEN CategoriaId in ({$placeholders}) THEN 0 ELSE 1 END", $categoryIds);
+            }
+        }
+
+        $RelatedProducts = $relatedQuery
             ->orderByDesc('Id')
-            ->limit(8)
+            ->limit(12)
             ->get();
 
         return view('Product.show', [

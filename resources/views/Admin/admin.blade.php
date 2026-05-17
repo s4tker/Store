@@ -46,6 +46,10 @@
                             <span class="text-xs text-slate-400">Marcas</span>
                             <span class="text-sm font-semibold text-white">{{ $Marcas->count() }}</span>
                         </div>
+                        <div class="flex items-center justify-between rounded-[0.9rem] bg-white/5 px-3 py-2.5">
+                            <span class="text-xs text-slate-400">Pedidos</span>
+                            <span class="text-sm font-semibold text-white">{{ $PedidosCount ?? 0 }}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -84,6 +88,15 @@
                             </svg>
                         </x-admin.icon>
                         <span class="admin-sidebar-label">Usuarios</span>
+                    </a>
+
+                    <a href="{{ route('admin.pedidos.index') }}" class="admin-sidebar-link">
+                        <x-admin.icon tone="amber" size="sm" class="admin-sidebar-icon bg-slate-800 text-amber-300 ring-0">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6M7 4h10a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2V6a2 2 0 0 1 2-2z"/>
+                            </svg>
+                        </x-admin.icon>
+                        <span class="admin-sidebar-label">Gestión de pedidos</span>
                     </a>
 
                     <a href="{{ route('admin.estadisticas.index') }}" class="admin-sidebar-link">
@@ -171,6 +184,7 @@
                             <button type="button" class="admin-tab shrink-0" data-section="categorias">Categorías</button>
                             <button type="button" class="admin-tab shrink-0" data-section="marcas">Marcas</button>
                             <a href="{{ route('admin.usuarios.index') }}" class="admin-tab shrink-0">Usuarios</a>
+                            <a href="{{ route('admin.pedidos.index') }}" class="admin-tab shrink-0">Gestión de pedidos</a>
                             <a href="{{ route('admin.estadisticas.index') }}" class="admin-tab shrink-0">Estadísticas</a>
                         </nav>
                     </div>

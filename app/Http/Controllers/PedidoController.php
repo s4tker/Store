@@ -12,7 +12,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -52,13 +51,10 @@ class PedidoController extends Controller
                 );
             });
 
-            if ($pedido->UsuarioId !== Auth::id()) {
-                Auth::loginUsingId($pedido->UsuarioId);
-            }
-
             return redirect()
-                ->route('pedidos.show', $pedido->Id)
-                ->with('success', 'Pedido creado correctamente.');
+                ->route('pedidos.index')
+                ->with('success', 'Pedido creado correctamente.')
+                ->with('clear_cart', true);
         } catch (\Throwable $exception) {
             Log::error('Error al crear pedido', [
                 'user_id' => $usuarioAutenticado?->Id,
@@ -83,6 +79,10 @@ class PedidoController extends Controller
 
         if (! $cliente) {
             return response()->json(['found' => false]);
+        }
+
+        if (Auth::check() && (int) $cliente->Id !== (int) Auth::id()) {
+            $cliente->Correo = Auth::user()->Correo;
         }
 
         return response()->json([
@@ -134,26 +134,20 @@ class PedidoController extends Controller
     private function resolverClientePorDni(StorePedidoRequest $request, User $usuarioAutenticado): User
     {
         $dni = $request->validated('Documento');
-        $cliente = User::query()->where('Dni', $dni)->first();
-
-        if (! $cliente) {
-            $cliente = $usuarioAutenticado->Dni && $usuarioAutenticado->Dni !== $dni
-                ? new User()
-                : $usuarioAutenticado;
-        }
+        $cliente = $usuarioAutenticado;
+        $duenoDni = User::query()
+            ->where('Dni', $dni)
+            ->where('Id', '!=', $usuarioAutenticado->Id)
+            ->first();
 
         $cliente->fill([
             'Alias' => $cliente->Alias ?: $this->crearAliasCliente($request->validated('Correo'), $dni),
             'Nombre' => $request->validated('Nombre'),
             'Apellidos' => $request->validated('Apellidos'),
-            'Correo' => $this->resolverCorreoCliente($request->validated('Correo'), $cliente),
+            'Correo' => $cliente->Correo ?: $this->resolverCorreoCliente($request->validated('Correo'), $cliente),
             'Telefono' => $request->validated('Telefono'),
-            'Dni' => $dni,
+            'Dni' => $duenoDni ? $cliente->Dni : $dni,
         ]);
-
-        if (! $cliente->exists) {
-            $cliente->Password = Hash::make(Str::random(32));
-        }
 
         $cliente->save();
 
@@ -165,10 +159,24 @@ class PedidoController extends Controller
         $direccionId = $request->validated('DireccionId');
 
         if ($direccionId) {
-            return Direccion::query()
-                ->where('Id', $direccionId)
-                ->where('UsuarioId', $cliente->Id)
-                ->firstOrFail();
+            $direccion = Direccion::query()->find($direccionId);
+
+            if (! $direccion) {
+                abort(422, 'La direccion seleccionada no existe.');
+            }
+
+            if ((int) $direccion->UsuarioId === (int) $cliente->Id) {
+                return $direccion;
+            }
+
+            return Direccion::create([
+                'UsuarioId' => $cliente->Id,
+                'Pais' => $direccion->Pais ?: 'Peru',
+                'Region' => $direccion->Region,
+                'Ciudad' => $direccion->Ciudad,
+                'Direccion' => $direccion->Direccion,
+                'Referencia' => $direccion->Referencia,
+            ]);
         }
 
         if ($cliente->direcciones()->exists()) {

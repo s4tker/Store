@@ -17,12 +17,20 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 // AUTH (AJAX)
 Route::post('/auth/check', [AuthController::class, 'checkEmail'])->name('auth.check');
 Route::post('/auth/process', [AuthController::class, 'authenticate'])->name('auth.process');
+Route::get('/auth/otp', [AuthController::class, 'showOtp'])->name('auth.otp.show');
+Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])->name('auth.otp.verify');
+Route::post('/auth/otp/resend', [AuthController::class, 'resendOtp'])->name('auth.otp.resend');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/productos', [AdminController::class, 'products'])->name('admin.productos.index');
     Route::get('/admin/usuarios', [AdminController::class, 'users'])->name('admin.usuarios.index');
+    Route::get('/admin/pedidos', [AdminController::class, 'orders'])->name('admin.pedidos.index');
+    Route::get('/admin/pedidos/exportar', [AdminController::class, 'exportOrders'])->name('admin.pedidos.export');
+    Route::get('/admin/pedidos/{pedido}', [AdminController::class, 'showOrder'])->name('admin.pedidos.show');
+    Route::get('/admin/pedidos/{pedido}/exportar', [AdminController::class, 'exportOrder'])->name('admin.pedidos.export-one');
+    Route::patch('/admin/pedidos/{pedido}/estado', [AdminController::class, 'updateOrderStatus'])->name('admin.pedidos.estado');
     Route::get('/admin/estadisticas', [AdminController::class, 'statistics'])->name('admin.estadisticas.index');
     Route::post('/admin/productos/store', [AdminController::class, 'storeProduct'])->name('admin.productos.store');
     Route::put('/admin/productos/{producto}', [AdminController::class, 'updateProduct'])->name('admin.productos.update');

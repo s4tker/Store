@@ -83,9 +83,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">DNI (Documento de Identidad) *</label>
-                        <input type="text" name="Dni" value="{{ old('Dni', $user->Dni ?? '') }}" placeholder="Ej: 12345678" maxlength="15" required
+                        <input type="text" name="Dni" value="{{ old('Dni', $user->Dni ?? '') }}" placeholder="Ej: 12345678" inputmode="numeric" minlength="8" maxlength="8" pattern="\d{8}" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 8)"
                             class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-blue-500 transition-all font-bold text-slate-900 placeholder-slate-300 outline-none shadow-sm">
-                        <p class="text-[9px] text-slate-400 font-bold mt-1">Documento de identidad personal</p>
+                        <p class="text-[9px] text-slate-400 font-bold mt-1">Debe tener exactamente 8 digitos</p>
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">RUC (Registro Único de Contribuyente)</label>

@@ -32,14 +32,22 @@ class AccountController extends Controller
     {
         $user = User::findOrFail(Auth::id());
 
+        $request->merge([
+            'Dni' => preg_replace('/\D+/', '', (string) $request->input('Dni')),
+            'Telefono' => preg_replace('/\D+/', '', (string) $request->input('Telefono')),
+        ]);
+
         $request->validate([
             'Alias' => 'required|max:60',
             'Nombre' => 'required|max:60',
             'Apellidos' => 'required|max:100',
             'Correo' => 'required|email|unique:Usuarios,Correo,' . $user->Id . ',Id',
             'Telefono' => 'nullable|size:9',
-            'Dni' => 'required|max:15|unique:Usuarios,Dni,' . $user->Id . ',Id',
+            'Dni' => 'required|digits:8|unique:Usuarios,Dni,' . $user->Id . ',Id',
             'Ruc' => 'nullable|max:15|unique:Usuarios,Ruc,' . $user->Id . ',Id'
+        ], [
+            'Dni.required' => 'El DNI es obligatorio.',
+            'Dni.digits' => 'El DNI debe tener exactamente 8 digitos.',
         ]);
 
         $user->update($request->only(

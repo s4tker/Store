@@ -319,6 +319,10 @@ body {
     @apply flex items-center justify-between border-t border-slate-100 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-500;
 }
 
+.image-card .image-card-badge {
+    @apply inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700;
+}
+
 .image-card .image-card-remove {
     @apply text-rose-500 transition-colors hover:text-rose-700 p-1.5 rounded-md hover:bg-rose-100;
 }

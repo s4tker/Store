@@ -29,6 +29,7 @@ const ProductAttributePresets = {
 
 let previewUrls = [];
 let activeRootCategoryId = '';
+let selectedProductImageFiles = [];
 
 window.ToggleAdminNav = function(show) {
     const drawer = document.getElementById('AdminNavDrawer');
@@ -328,14 +329,8 @@ function initProductEditor() {
     discountInput?.addEventListener('input', () => syncPriceFields('discount'));
 
     fileInput?.addEventListener('change', () => {
-        renderNewImagesPreview(fileInput.files || []);
-
-        if (!fileInput.files?.length) {
-            fileName.textContent = 'Sin archivos seleccionados.';
-            return;
-        }
-
-        fileName.textContent = `${fileInput.files.length} imagen(es) lista(s) para subir.`;
+        addProductImageFiles(fileInput.files || []);
+        syncProductImageInput();
     });
 
     addAttributeButton?.addEventListener('click', () => addAttributeRow());
@@ -514,10 +509,11 @@ function renderExistingImages(images) {
         const card = document.createElement('article');
         card.className = 'image-card';
         card.dataset.imageId = image.id;
+        const orderLabel = Number(image.orden) === 1 ? 'Principal' : `Orden ${image.orden}`;
         card.innerHTML = `
             <img src="${image.url}" alt="Imagen del producto" class="image-card-preview">
             <div class="image-card-footer">
-                <span>Orden ${image.orden}</span>
+                <span class="${Number(image.orden) === 1 ? 'image-card-badge' : ''}">${orderLabel}</span>
                 <button type="button" class="image-card-remove">Quitar</button>
             </div>
         `;
@@ -550,16 +546,66 @@ function renderNewImagesPreview(files) {
 
         const card = document.createElement('article');
         card.className = 'image-card image-card-new';
+        const orderLabel = index === 0 ? 'Principal' : `Imagen ${index + 1}`;
         card.innerHTML = `
             <img src="${previewUrl}" alt="Vista previa ${index + 1}" class="image-card-preview">
             <div class="image-card-footer">
-                <span>${file.name}</span>
-                <span>${Math.round(file.size / 1024)} KB</span>
+                <div class="min-w-0">
+                    <span class="${index === 0 ? 'image-card-badge' : ''}">${orderLabel}</span>
+                    <span class="mt-1 block truncate text-[11px] font-medium text-slate-400">${file.name}</span>
+                </div>
+                <button type="button" class="image-card-remove" data-remove-new-image="${index}">Quitar</button>
             </div>
         `;
 
+        card.querySelector('[data-remove-new-image]')?.addEventListener('click', () => removeProductImageFile(index));
         grid.appendChild(card);
     });
+}
+
+// bloque acumular imagenes nuevas
+function addProductImageFiles(files) {
+    const currentKeys = new Set(selectedProductImageFiles.map(getProductImageFileKey));
+
+    Array.from(files).forEach((file) => {
+        const fileKey = getProductImageFileKey(file);
+
+        if (!currentKeys.has(fileKey)) {
+            selectedProductImageFiles.push(file);
+            currentKeys.add(fileKey);
+        }
+    });
+}
+
+function removeProductImageFile(index) {
+    selectedProductImageFiles.splice(index, 1);
+    syncProductImageInput();
+}
+
+function getProductImageFileKey(file) {
+    return `${file.name}-${file.size}-${file.lastModified}`;
+}
+
+function syncProductImageInput() {
+    const input = document.getElementById('ProductImages');
+    const fileName = document.getElementById('FileName');
+    const dataTransfer = new DataTransfer();
+
+    selectedProductImageFiles.forEach((file) => dataTransfer.items.add(file));
+
+    if (input) {
+        input.files = dataTransfer.files;
+    }
+
+    renderNewImagesPreview(selectedProductImageFiles);
+
+    if (!fileName) {
+        return;
+    }
+
+    fileName.textContent = selectedProductImageFiles.length
+        ? `${selectedProductImageFiles.length} imagen(es) lista(s). La imagen 1 será la principal.`
+        : 'Sin archivos seleccionados.';
 }
 
 // bloque quitar imagen
@@ -598,17 +644,13 @@ function clearRemovedImages() {
 // bloque limpiar carga
 function clearNewImages() {
     const input = document.getElementById('ProductImages');
-    const fileName = document.getElementById('FileName');
+    selectedProductImageFiles = [];
 
     if (input) {
         input.value = '';
     }
 
-    if (fileName) {
-        fileName.textContent = 'Sin archivos seleccionados.';
-    }
-
-    renderNewImagesPreview([]);
+    syncProductImageInput();
 }
 
 // bloque limpiar atributos

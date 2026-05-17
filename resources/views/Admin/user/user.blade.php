@@ -14,7 +14,7 @@
                 <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                     <div class="min-w-0">
                         <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-slate-700">
-                            <span class="h-px w-8 bg-slate-300"></span>
+                            <svg class="h-4 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 32 16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 3 3 8l5 5M4 8h25"/></svg>
                             Panel admin
                         </a>
                         <h1 class="admin-title mt-3">Usuarios</h1>

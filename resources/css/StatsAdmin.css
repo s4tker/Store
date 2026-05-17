@@ -27,34 +27,150 @@
 }
 
 .stats-admin-panel-body.is-collapsed {
-    display: none;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    border-top-width: 0 !important;
+    pointer-events: none;
+    display: block;
+}
+
+.stats-admin-panel-body {
+    transition: max-height 240ms ease, opacity 180ms ease, padding 200ms ease, margin 200ms ease;
+    max-height: 64rem;
+}
+
+.stats-admin-toggle.is-collapsed {
+    @apply border-slate-900 bg-slate-900 text-white;
+}
+
+.stats-admin-card-collapsed {
+    align-self: start;
+    padding-bottom: 1rem !important;
+}
+
+.stats-admin-reflow-grid {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.stats-admin-reflow-grid > .admin-panel,
+.stats-admin-reflow-grid > .grid,
+.stats-admin-reflow-grid > article {
+    flex: 1 1 26rem;
+    min-width: min(100%, 22rem);
+}
+
+.stats-admin-reflow-grid > .stats-admin-card-collapsed {
+    flex: 0 1 18rem;
+    min-width: min(100%, 18rem);
+}
+
+.stats-admin-reflow-grid > .grid.stats-admin-reflow-grid {
+    flex: 0.78 1 22rem;
+}
+
+.stats-admin-head-collapsed {
+    border-bottom-color: transparent !important;
+    padding-bottom: 0 !important;
+}
+
+.stats-admin-metric-list {
+    @apply space-y-3;
+    max-height: 10.5rem;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+.stats-admin-metric-row {
+    @apply flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-2.5 shadow-sm;
+}
+
+.stats-admin-metric-rank {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xs font-black text-blue-600;
+}
+
+.stats-admin-metric-rank.is-amber {
+    @apply bg-amber-50 text-amber-600;
+}
+
+.stats-admin-metric-head {
+    @apply mb-1.5 flex items-center justify-between gap-3;
+}
+
+.stats-admin-metric-head strong {
+    @apply truncate text-xs font-black text-slate-800;
+}
+
+.stats-admin-metric-head span {
+    @apply shrink-0 text-xs font-bold text-slate-500;
+}
+
+.stats-admin-metric-track {
+    @apply h-1.5 overflow-hidden rounded-full bg-slate-100;
+}
+
+.stats-admin-metric-fill {
+    @apply block h-full rounded-full;
+    background: linear-gradient(90deg, #0586c9, #35aee2);
+}
+
+.stats-admin-metric-fill.is-amber {
+    background: linear-gradient(90deg, #f59e0b, #f97316);
+}
+
+.stats-admin-table-scroll {
+    max-height: 16rem;
+    overflow-y: auto;
+}
+
+.stats-admin-table-compact .admin-table th,
+.stats-admin-table-compact .admin-table td {
+    @apply px-4 py-2.5 text-xs;
+}
+
+.stats-admin-table-compact .admin-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+#TimelineScopeFilters {
+    max-width: 100%;
+}
+
+#TimelineScopeFilters .stats-admin-chip {
+    @apply shrink-0;
 }
 
 .stats-admin-summary-card {
-    @apply rounded-[1.2rem] border border-slate-200 bg-white p-4;
-    box-shadow: 0 12px 28px -24px rgba(15, 23, 42, 0.24);
+    @apply relative overflow-hidden rounded-[1.35rem] border border-slate-200 bg-white p-4;
+    box-shadow: 0 18px 38px -28px rgba(15, 23, 42, 0.42);
 }
 
 #GeneralSummaryCards .stats-admin-summary-card:nth-child(1),
 #CustomerSummaryCards .stats-admin-summary-card:nth-child(1),
 #OrderSummaryCards .stats-admin-summary-card:nth-child(1) {
-    @apply border-slate-200 bg-white;
+    @apply border-blue-100 bg-blue-50/70;
 }
 
 #GeneralSummaryCards .stats-admin-summary-card:nth-child(2),
 #CustomerSummaryCards .stats-admin-summary-card:nth-child(2),
 #OrderSummaryCards .stats-admin-summary-card:nth-child(2) {
-    @apply border-slate-200 bg-white;
+    @apply border-emerald-100 bg-emerald-50/70;
 }
 
 #GeneralSummaryCards .stats-admin-summary-card:nth-child(3),
 #CustomerSummaryCards .stats-admin-summary-card:nth-child(3),
 #OrderSummaryCards .stats-admin-summary-card:nth-child(3) {
-    @apply border-slate-200 bg-white;
+    @apply border-amber-100 bg-amber-50/70;
 }
 
 #GeneralSummaryCards .stats-admin-summary-card:nth-child(4) {
-    @apply border-slate-200 bg-white;
+    @apply border-slate-200 bg-slate-900 text-white;
 }
 
 .stats-admin-summary-card em {
@@ -63,6 +179,12 @@
 
 .stats-admin-summary-card strong {
     @apply mt-2 block text-xl font-semibold tracking-tight text-slate-950;
+}
+
+#GeneralSummaryCards .stats-admin-summary-card:nth-child(4) strong,
+#GeneralSummaryCards .stats-admin-summary-card:nth-child(4) span,
+#GeneralSummaryCards .stats-admin-summary-card:nth-child(4) em {
+    @apply text-white;
 }
 
 .stats-admin-summary-card span {
@@ -83,12 +205,22 @@
 }
 
 .stats-admin-chart-stage {
-    @apply rounded-[1.2rem] border border-slate-200 bg-white p-3.5;
+    @apply rounded-[1.1rem] border border-slate-200 bg-white p-3.5;
     min-height: 15rem;
+    background: #ffffff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .stats-admin-chart-stage-large {
     min-height: 20rem;
+}
+
+.stats-admin-compact-stage {
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
 }
 
 .stats-admin-chart-footer {
@@ -113,8 +245,12 @@
 
 .stats-chart-grid line,
 .stats-chart-axis line {
-    stroke: #e2e8f0;
+    stroke: rgba(203, 213, 225, 0.55);
     stroke-width: 1;
+}
+
+.stats-chart-axis line {
+    stroke: rgba(203, 213, 225, 0.7);
 }
 
 .stats-chart-label {
@@ -130,29 +266,37 @@
 }
 
 .stats-chart-bar {
-    fill: #0f172a;
+    fill: url(#statsBarGradient);
 }
 
 .stats-chart-bar-soft {
-    fill: #94a3b8;
+    fill: url(#statsSoftGradient);
 }
 
 .stats-chart-line {
     fill: none;
-    stroke: #0f172a;
-    stroke-width: 3;
+    stroke: url(#statsLineGradient);
+    stroke-width: 3.2;
     stroke-linecap: round;
     stroke-linejoin: round;
+    filter: none;
 }
 
 .stats-chart-area {
-    fill: rgba(15, 23, 42, 0.1);
+    fill: url(#statsAreaGradient);
+    opacity: 0.45;
 }
 
 .stats-chart-point {
-    fill: #0f172a;
+    fill: #0586c9;
+    stroke: #ffffff;
+    stroke-width: 2.5;
 }
 
 .stats-chart-zero {
     fill: #cbd5e1;
+}
+
+.stats-chart-track {
+    fill: rgba(226, 232, 240, 0.56);
 }

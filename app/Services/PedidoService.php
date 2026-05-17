@@ -70,7 +70,7 @@ class PedidoService
                 'UsuarioId' => $usuarioId,
                 'DireccionId' => $direccionId,
                 'Total' => $total,
-                'Estado' => 'pendiente',
+                'Estado' => 'pagado',
                 'CreatedAt' => Carbon::now(),
             ]);
 

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
 {
@@ -49,6 +50,8 @@ class AdminController extends Controller
             ->orderByDesc('Id')
             ->get();
 
+        $ordersCount = Pedido::query()->count();
+
         return view('Admin.admin', [
             'Search' => '',
             'AdminNavLabel' => 'Panel Admin',
@@ -61,6 +64,7 @@ class AdminController extends Controller
             'TodasLasCategorias' => $allCategories,
             'Marcas' => $brands,
             'Productos' => $products,
+            'PedidosCount' => $ordersCount,
             'ProductosAdmin' => $this->buildProductEditorPayloads($products),
         ]);
     }
@@ -178,6 +182,227 @@ class AdminController extends Controller
             'ClientesStats' => $this->buildCustomerStatisticsPayloads($customers),
             'PedidosStats' => $this->buildOrderStatisticsPayloads($orders),
         ]);
+    }
+
+    public function orders(Request $request)
+    {
+        $filters = $this->resolveOrderFilters($request);
+        $orders = $this->buildAdminOrdersQuery($filters)
+            ->orderBy('CreatedAt')
+            ->orderBy('Id')
+            ->get();
+
+        return view('Admin.pedidos.manage', [
+            'Search' => '',
+            'AdminNavLabel' => 'Volver',
+            'AdminNavRoute' => route('admin.dashboard'),
+            'HideNavbarMobileTrigger' => true,
+            'HideNavbarSearch' => true,
+            'HideNavbarOrders' => true,
+            'HideNavbarCart' => true,
+            'PedidosAdmin' => $orders,
+            'FiltrosPedidos' => $filters,
+            'EstadosPedido' => ['todos', 'pendiente', 'pagado', 'enviado', 'entregado', 'cancelado'],
+            'PeriodosPedido' => ['todos', 'hora', 'dia', 'ayer', 'semana', 'mes', 'anio', 'personalizado'],
+        ]);
+    }
+
+    public function exportOrders(Request $request): StreamedResponse
+    {
+        $filters = $this->resolveOrderFilters($request);
+        $orders = $this->buildAdminOrdersQuery($filters)
+            ->orderBy('CreatedAt')
+            ->orderBy('Id')
+            ->get();
+
+        return $this->streamOrdersCsv(
+            $orders,
+            'pedidos_' . now()->format('Ymd_His') . '.csv'
+        );
+    }
+
+    public function exportOrder(Pedido $pedido): StreamedResponse
+    {
+        $pedido->load([
+            'usuario',
+            'direccion',
+            'detalles.variante.producto',
+        ]);
+
+        return $this->streamOrdersCsv(
+            collect([$pedido]),
+            'pedido_' . str_pad((string) $pedido->Id, 5, '0', STR_PAD_LEFT) . '.csv'
+        );
+    }
+
+    protected function buildAdminOrdersQuery(array $filters)
+    {
+        return Pedido::query()
+            ->with([
+                'usuario' => fn ($query) => $query->select(['Id', 'Alias', 'Nombre', 'Apellidos', 'Correo', 'Telefono', 'Dni']),
+                'direccion' => fn ($query) => $query->select(['Id', 'UsuarioId', 'Pais', 'Region', 'Ciudad', 'Direccion', 'Referencia']),
+                'detalles.variante.producto',
+            ])
+            ->when($filters['estado'] !== 'todos', fn ($query) => $query->whereRaw('LOWER(Estado) = ?', [$filters['estado']]))
+            ->when($filters['desde'], fn ($query) => $query->where('CreatedAt', '>=', $filters['desde']))
+            ->when($filters['hasta'], fn ($query) => $query->where('CreatedAt', '<=', $filters['hasta']));
+    }
+
+    protected function resolveOrderFilters(Request $request): array
+    {
+        $estado = mb_strtolower((string) $request->query('estado', 'todos'));
+        $periodo = mb_strtolower((string) $request->query('periodo', 'todos'));
+
+        if (! in_array($estado, ['todos', 'pendiente', 'pagado', 'enviado', 'entregado', 'cancelado'], true)) {
+            $estado = 'todos';
+        }
+
+        if (! in_array($periodo, ['todos', 'hora', 'dia', 'ayer', 'semana', 'mes', 'anio', 'personalizado'], true)) {
+            $periodo = 'todos';
+        }
+
+        $desde = null;
+        $hasta = null;
+
+        if ($periodo === 'hora') {
+            $desde = now()->subHour();
+            $hasta = now();
+        } elseif ($periodo === 'dia') {
+            $desde = now()->startOfDay();
+            $hasta = now()->endOfDay();
+        } elseif ($periodo === 'ayer') {
+            $desde = now()->subDay()->startOfDay();
+            $hasta = now()->subDay()->endOfDay();
+        } elseif ($periodo === 'semana') {
+            $desde = now()->startOfWeek();
+            $hasta = now()->endOfWeek();
+        } elseif ($periodo === 'mes') {
+            $desde = now()->startOfMonth();
+            $hasta = now()->endOfMonth();
+        } elseif ($periodo === 'anio') {
+            $desde = now()->startOfYear();
+            $hasta = now()->endOfYear();
+        } elseif ($periodo === 'personalizado') {
+            $desdeInput = $request->query('desde');
+            $hastaInput = $request->query('hasta');
+
+            try {
+                $desde = $desdeInput ? \Carbon\Carbon::parse($desdeInput) : null;
+                $hasta = $hastaInput ? \Carbon\Carbon::parse($hastaInput) : null;
+            } catch (\Throwable) {
+                $desde = null;
+                $hasta = null;
+            }
+        }
+
+        return [
+            'estado' => $estado,
+            'periodo' => $periodo,
+            'desde' => $desde,
+            'hasta' => $hasta,
+            'desde_input' => (string) $request->query('desde', ''),
+            'hasta_input' => (string) $request->query('hasta', ''),
+        ];
+    }
+
+    protected function streamOrdersCsv($orders, string $filename): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($orders) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['Pedido', 'Fecha', 'Estado', 'Cliente', 'Correo', 'DNI', 'Telefono', 'Direccion', 'Producto', 'SKU', 'Cantidad', 'Precio unitario', 'Subtotal', 'Total pedido']);
+
+            foreach ($orders as $order) {
+                $customerName = trim(collect([
+                    $order->usuario?->Nombre,
+                    $order->usuario?->Apellidos,
+                ])->filter()->implode(' ')) ?: ($order->usuario?->Alias ?: 'Cliente sin nombre');
+
+                $address = collect([
+                    $order->direccion?->Direccion,
+                    $order->direccion?->Ciudad,
+                    $order->direccion?->Region,
+                    $order->direccion?->Pais,
+                ])->filter()->implode(' / ');
+
+                if ($order->detalles->isEmpty()) {
+                    fputcsv($handle, [
+                        'PED-' . str_pad((string) $order->Id, 5, '0', STR_PAD_LEFT),
+                        optional($order->CreatedAt)->format('Y-m-d H:i:s'),
+                        $order->Estado,
+                        $customerName,
+                        $order->usuario?->Correo,
+                        $order->usuario?->Dni,
+                        $order->usuario?->Telefono,
+                        $address,
+                        '',
+                        '',
+                        0,
+                        0,
+                        0,
+                        (float) $order->Total,
+                    ]);
+                    continue;
+                }
+
+                foreach ($order->detalles as $detail) {
+                    fputcsv($handle, [
+                        'PED-' . str_pad((string) $order->Id, 5, '0', STR_PAD_LEFT),
+                        optional($order->CreatedAt)->format('Y-m-d H:i:s'),
+                        $order->Estado,
+                        $customerName,
+                        $order->usuario?->Correo,
+                        $order->usuario?->Dni,
+                        $order->usuario?->Telefono,
+                        $address,
+                        $detail->variante?->producto?->Nombre ?? 'Producto #' . $detail->VarianteId,
+                        $detail->variante?->Sku,
+                        (int) $detail->Cantidad,
+                        (float) $detail->Precio,
+                        (float) $detail->subtotal,
+                        (float) $order->Total,
+                    ]);
+                }
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    public function showOrder(Pedido $pedido)
+    {
+        $pedido->load([
+            'usuario' => fn ($query) => $query->select(['Id', 'Alias', 'Nombre', 'Apellidos', 'Correo', 'Telefono', 'Dni']),
+            'direccion' => fn ($query) => $query->select(['Id', 'UsuarioId', 'Pais', 'Region', 'Ciudad', 'Direccion', 'Referencia']),
+            'detalles.variante.producto.imagenes',
+        ]);
+
+        return view('Admin.pedidos.show', [
+            'Search' => '',
+            'AdminNavLabel' => 'Volver',
+            'AdminNavRoute' => route('admin.pedidos.index'),
+            'HideNavbarMobileTrigger' => true,
+            'HideNavbarSearch' => true,
+            'HideNavbarOrders' => true,
+            'HideNavbarCart' => true,
+            'PedidoAdmin' => $pedido,
+            'EstadosPedido' => ['pendiente', 'pagado', 'enviado', 'entregado', 'cancelado'],
+        ]);
+    }
+
+    public function updateOrderStatus(Request $request, Pedido $pedido)
+    {
+        $data = $request->validate([
+            'Estado' => ['required', Rule::in(['pendiente', 'pagado', 'enviado', 'entregado', 'cancelado'])],
+        ]);
+
+        $pedido->Estado = $data['Estado'];
+        $pedido->save();
+
+        return redirect()
+            ->route('admin.pedidos.show', $pedido->Id)
+            ->with('success', 'Estado del pedido actualizado correctamente.');
     }
 
     public function storeCategory(Request $request)
@@ -576,6 +801,7 @@ class AdminController extends Controller
         }
 
         if (empty($newImages)) {
+            $this->normalizeProductImageOrder($product);
             return;
         }
 
@@ -590,6 +816,23 @@ class AdminController extends Controller
                 'Orden' => $nextOrder + $index + 1,
             ]);
         }
+
+        $this->normalizeProductImageOrder($product);
+    }
+
+    protected function normalizeProductImageOrder(Producto $product): void
+    {
+        $product->imagenes()
+            ->get()
+            ->values()
+            ->each(function (ProductoImagenes $image, int $index) {
+                $nextOrder = $index + 1;
+
+                if ((int) $image->Orden !== $nextOrder) {
+                    $image->Orden = $nextOrder;
+                    $image->save();
+                }
+            });
     }
 
     protected function persistAttributes(int $variantId, array $names, array $values): void

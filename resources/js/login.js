@@ -136,6 +136,11 @@ window.handleAuthStep = async function() {
         });
         const Result = await Response.json();
 
+        if (Result.success && Result.requires_otp) {
+            window.location.href = Result.redirect || '/auth/otp';
+            return;
+        }
+
         if (Result.success) {
             window.location.href = Result.redirect || '/';
             return;
