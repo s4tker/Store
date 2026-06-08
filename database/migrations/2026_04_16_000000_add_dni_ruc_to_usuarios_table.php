@@ -6,13 +6,10 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('Usuarios', function (Blueprint $table) {
-            // Agregar campos si no existen
+            // agrega campos si no existen
             if (!Schema::hasColumn('Usuarios', 'Dni')) {
                 $table->string('Dni', 15)->nullable()->unique()->after('Telefono');
             }
@@ -27,9 +24,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('Usuarios', function (Blueprint $table) {

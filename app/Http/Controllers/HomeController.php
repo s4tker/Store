@@ -1,5 +1,6 @@
 <?php
 
+// este controlador atiende pantallas y acciones del sistema
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,8 +10,10 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
+// esta clase controla catalogo e inicio
 class HomeController extends Controller
 {
+    // muestra catalogo productos categorias y filtros
     public function index(Request $request)
     {
         $Search = $request->search ?? '';
@@ -61,6 +64,7 @@ class HomeController extends Controller
             'SelectedSubcategory' => $selectedSubcategory,
         ]);
     }
+    // muestra galeria precio stock y relacionados del producto
 
     public function showProduct(string $slug)
     {

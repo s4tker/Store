@@ -1,9 +1,9 @@
 import Alpine from 'alpinejs'
 
-// bloque base
+// guarda la clave del carrito en el navegador
 const CartStorageKey = 'electroshop-cart';
 
-// bloque busqueda
+// arma la busqueda del catalogo con texto y filtros
 window.Search = function() {
     const QueryText = document.getElementById('q')?.value.trim() || '';
     const Params = new URLSearchParams(window.location.search);
@@ -73,7 +73,7 @@ window.SetCategoryFilter = function(CategoryId) {
     window.ApplyCatalogFilters();
 };
 
-// bloque carrito
+// lee guarda y actualiza productos del carrito
 window.getCart = () => {
     try {
         const RawCart = JSON.parse(localStorage.getItem(CartStorageKey) || '[]');
@@ -105,12 +105,12 @@ window.updateCartUI = function() {
         TotalElement.innerText = `S/.${Total.toFixed(2)}`;
     }
 
-    const CheckoutButton = document.getElementById('BtnCheckout');
-    if (CheckoutButton) {
+    const BotonCompra = document.getElementById('BtnCompra');
+    if (BotonCompra) {
         const HasItems = Cart.length > 0;
-        CheckoutButton.disabled = !HasItems;
-        CheckoutButton.classList.toggle('opacity-60', !HasItems);
-        CheckoutButton.classList.toggle('cursor-not-allowed', !HasItems);
+        BotonCompra.disabled = !HasItems;
+        BotonCompra.classList.toggle('opacity-60', !HasItems);
+        BotonCompra.classList.toggle('cursor-not-allowed', !HasItems);
     }
 
     const ItemsContainer = document.getElementById('CartItems');
@@ -159,24 +159,24 @@ window.changeQty = (Key, Delta) => {
     window.setCart(Cart);
 };
 
-// bloque quitar
+// elimina un producto del carrito
 window.removeFromCart = (Key) => {
     window.setCart(window.getCart().filter((Item) => Item.key !== String(Key)));
 };
 
-// bloque compra
+// abre el formulario de compra si hay productos
 window.GoToCompraForm = function() {
     const Cart = window.getCart();
-    const CheckoutButton = document.getElementById('BtnCheckout');
+    const BotonCompra = document.getElementById('BtnCompra');
 
-    if (!Cart.length || !CheckoutButton?.dataset.checkoutUrl) {
+    if (!Cart.length || !BotonCompra?.dataset.checkoutUrl) {
         return;
     }
 
-    window.location.href = CheckoutButton.dataset.checkoutUrl;
+    window.location.href = BotonCompra.dataset.checkoutUrl;
 };
 
-// bloque drawer
+// abre o cierra el carrito lateral
 window.ToggleCart = function(Show) {
     const Drawer = document.getElementById('CartDrawer');
     const Overlay = document.getElementById('CartOverlay');
@@ -197,7 +197,7 @@ window.ToggleCart = function(Show) {
     document.body.classList.remove('overflow-hidden');
 };
 
-// bloque menu movil
+// abre o cierra el catalogo movil
 window.ToggleMobileCatalog = function(Show) {
     const Drawer = document.getElementById('MobileCatalogDrawer');
     const Overlay = document.getElementById('MobileCatalogOverlay');
@@ -218,7 +218,7 @@ window.ToggleMobileCatalog = function(Show) {
     document.body.classList.remove('overflow-hidden');
 };
 
-// bloque producto
+// maneja imagenes cantidad y contraseña en pantallas de producto
 window.SetMainProductImage = function(Url) {
     const Image = document.getElementById('MainProductImage');
     if (Image && Url) {
@@ -279,7 +279,7 @@ window.togglePasswordVisibility = function(InputId, EyeId) {
     EyePath.style.display = 'block';
 };
 
-// bloque agregar
+// agrega el producto actual al carrito
 window.AddCurrentProductToCart = function(Product) {
     const QtyInput = document.getElementById('ProductQty');
     const Qty = Math.max(1, parseInt(QtyInput?.value || '1', 10));
@@ -305,7 +305,7 @@ window.AddCurrentProductToCart = function(Product) {
     window.ToggleCart(true);
 };
 
-// bloque zoom
+// mueve el zoom segun la posicion del cursor
 function UpdateProductZoomOrigin(Frame, ClientX, ClientY) {
     const Bounds = Frame.getBoundingClientRect();
     const X = ((ClientX - Bounds.left) / Bounds.width) * 100;
@@ -319,7 +319,7 @@ function InitProductImageZoom() {
     document.querySelectorAll('[data-product-zoom]').forEach((Frame) => {
         let TouchZoomActive = false;
 
-        // zoom pc
+        // activa zoom con mouse en escritorio
         Frame.addEventListener('mouseenter', () => {
             if (!window.matchMedia('(hover: hover)').matches) {
                 return;
@@ -342,7 +342,7 @@ function InitProductImageZoom() {
             Frame.style.setProperty('--zoom-y', '50%');
         });
 
-        // zoom movil
+        // activa zoom al tocar la imagen en movil
         Frame.addEventListener('click', (Event) => {
             if (window.matchMedia('(hover: hover)').matches) {
                 return;
@@ -372,7 +372,7 @@ function InitProductImageZoom() {
     });
 }
 
-// bloque comparar
+// agrega o quita productos del comparador
 window.ToggleCompareProduct = function(Product) {
     const CompareKey = 'electroshop-compare';
     let Compare = [];
@@ -402,7 +402,7 @@ window.ToggleCompareProduct = function(Product) {
     window.alert('Producto agregado para comparar.');
 };
 
-// bloque filtros
+// muestra subcategorias segun la categoria elegida
 function SyncSubcategoryOptions() {
     const CategoryInput = document.getElementById('IndexCategoryFilter');
     const SubcategoryInput = document.getElementById('IndexSubcategoryFilter');
@@ -428,7 +428,7 @@ function SyncSubcategoryOptions() {
     });
 }
 
-// bloque arranque
+// prepara carrito filtros zoom y alpine al cargar
 document.addEventListener('DOMContentLoaded', () => {
     window.updateCartUI();
     SyncSubcategoryOptions();
@@ -446,14 +446,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// bloque sync
+// actualiza el carrito cuando cambia en otra pestaña
 window.addEventListener('storage', (Event) => {
     if (Event.key === CartStorageKey || Event.key === null) {
         window.updateCartUI();
     }
 });
 
-// bloque ayuda
+// ordena datos del carrito antes de guardarlos
 function NormalizeCartItem(Item) {
     if (!Item) {
         return null;
@@ -488,7 +488,7 @@ function ItemMatchesId(Item, ProductId) {
     return Number(Item?.id || Item?.productId || 0) === Number(ProductId || 0);
 }
 
-// bloque texto
+// limpia texto antes de pintarlo en html
 function EscapeHtml(Value) {
     return String(Value)
         .replaceAll('&', '&amp;')

@@ -1,24 +1,22 @@
 <?php
 
+// archivo que carga datos iniciales
 namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+// esta clase carga datos iniciales
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
+    // carga datos de inicio
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'Usuario de prueba',
             'email' => 'test@example.com',
         ]);
     }

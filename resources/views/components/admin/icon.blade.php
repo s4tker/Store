@@ -1,3 +1,5 @@
+{{-- componente que imprime iconos usados en el panel --}}
+
 @props([
     'tone' => 'blue',
     'size' => 'md',

@@ -1,10 +1,12 @@
 <?php
 
+// este modelo representa datos de la tienda
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+// esta clase representa variantes de producto
 class ProductoVariantes extends Model
 {
     protected $table = 'ProductoVariantes';
@@ -17,6 +19,7 @@ class ProductoVariantes extends Model
         'Precio',
         'PrecioOferta',
     ];
+    // conecta la variante con su producto
 
     public function producto()
     {

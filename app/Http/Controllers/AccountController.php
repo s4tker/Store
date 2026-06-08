@@ -1,5 +1,6 @@
 <?php
 
+// este controlador atiende pantallas y acciones del sistema
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -10,24 +11,25 @@ use App\Models\User;
 use App\Models\Direccion;
 use App\Models\PasswordReset;
 
+// esta clase controla perfil direcciones y contraseña
 class AccountController extends Controller
 {
-    //  Dashboard "Mi Cuenta"
+    // muestra el resumen del perfil del usuario
     public function index()
     {
         $user = Auth::user();
         $addresses = $user->direcciones ?? collect();
         return view('account.index', compact('user', 'addresses'));
     }
+    // muestra el formulario para editar datos personales
 
-    // Formulario editar perfil
     public function edit()
     {
         $user = Auth::user();
         return view('account.edit', compact('user'));
     }
+    // guarda nombre documento telefono y correo
 
-    //  Actualizar datos
     public function update(Request $request)
     {
         $user = User::findOrFail(Auth::id());
@@ -47,7 +49,7 @@ class AccountController extends Controller
             'Ruc' => 'nullable|max:15|unique:Usuarios,Ruc,' . $user->Id . ',Id'
         ], [
             'Dni.required' => 'El DNI es obligatorio.',
-            'Dni.digits' => 'El DNI debe tener exactamente 8 digitos.',
+            'Dni.digits' => 'El DNI debe tener exactamente 8 dígitos.',
         ]);
 
         $user->update($request->only(
@@ -63,14 +65,14 @@ class AccountController extends Controller
         return redirect()->route('account')
             ->with('success', 'Datos actualizados correctamente');
     }
+    // muestra el formulario para cambiar contraseña
 
-    //  Formulario cambiar contraseña
     public function passwordForm()
     {
         return view('account.password');
     }
+    // cambia la contraseña del usuario
 
-    //  Cambiar contraseña
     public function changePassword(Request $request)
     {
         $request->validate([
@@ -80,29 +82,27 @@ class AccountController extends Controller
 
         $user = User::where('Id', Auth::id())->firstOrFail();
 
-        // Validar contraseña actual
         if (!Hash::check($request->current_password, $user->Password)) {
             return back()->withErrors([
                 'current_password' => __('auth.password_incorrect')
             ]);
         }
 
-        // Update password
         $user->update([
             'Password' => Hash::make($request->new_password)
         ]);
 
         return back()->with('success', 'Contraseña actualizada correctamente');
     }
+    // muestra las direcciones guardadas
 
-    // 📍 Listar direcciones
     public function addresses()
     {
         $addresses = Auth::user()->direcciones ?? collect();
         return view('account.addresses', compact('addresses'));
     }
+    // guarda una direccion del usuario
 
-    //  Guardar nueva dirección
     public function storeAddress(Request $request)
     {
         $request->validate([
@@ -124,8 +124,8 @@ class AccountController extends Controller
 
         return back()->with('success', 'Dirección agregada correctamente');
     }
+    // actualiza una direccion
 
-    // Actualizar dirección
     public function updateAddress(Request $request, $id)
     {
         $direccion = Direccion::where('Id', $id)
@@ -150,8 +150,8 @@ class AccountController extends Controller
 
         return back()->with('success', 'Dirección actualizada');
     }
+    // elimina una direccion del usuario
 
-    //  Eliminar dirección
     public function deleteAddress($id)
     {
         $direccion = Direccion::where('Id', $id)
@@ -162,8 +162,8 @@ class AccountController extends Controller
 
         return back()->with('success', 'Dirección eliminada');
     }
+    // crea el enlace temporal para recuperar la cuenta
 
-    //  (Opcional avanzado) Generar token para reset
     public function generateResetToken()
     {
         $user = Auth::user();
@@ -174,8 +174,6 @@ class AccountController extends Controller
             'Correo' => $user->Correo,
             'Token' => $token
         ]);
-
-        // Aquí luego puedes enviar correo
 
         return back()->with('success', 'Token generado (modo prueba)');
     }

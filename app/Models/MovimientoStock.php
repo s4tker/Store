@@ -1,10 +1,12 @@
 <?php
 
+// este modelo representa datos de la tienda
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+// esta clase representa cambios de stock
 class MovimientoStock extends Model
 {
     protected $table = 'MovimientosStock';
@@ -17,6 +19,7 @@ class MovimientoStock extends Model
         'Cantidad',
         'Motivo',
     ];
+    // conecta el detalle con su variante
 
     public function variante(): BelongsTo
     {

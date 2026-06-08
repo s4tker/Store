@@ -63,7 +63,7 @@ window.compraFlow = function () {
     };
 };
 
-// bloque inicio
+// inicia la pantalla de compra con carrito y datos
 document.addEventListener("DOMContentLoaded", () => {
     if (!document.getElementById("CompraForm")) {
         return;
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     BindPaymentModalEvents();
 });
 
-// bloque carrito
+// lee los productos guardados en el carrito
 function GetCompraCart() {
     try {
         return JSON.parse(localStorage.getItem("electroshop-cart") || "[]");
@@ -87,7 +87,7 @@ function GetCompraCart() {
     }
 }
 
-// bloque usuario
+// coloca datos del usuario dentro del formulario
 function FillCompraUserData() {
     const Usuario = CompraBootstrap.Usuario || {};
 
@@ -101,7 +101,7 @@ function FillCompraUserData() {
     SetInputValue("CompraPais", "Perú");
 }
 
-// bloque direcciones
+// prepara opciones para usar direccion guardada o nueva
 function RenderSavedAddresses() {
     const Container = document.getElementById("CompraSavedAddresses");
     const Direcciones = CompraBootstrap.Direcciones || [];
@@ -143,7 +143,7 @@ function RenderSavedAddresses() {
     });
 }
 
-// bloque empresa
+// muestra datos de empresa cuando se pide comprobante
 function SyncTipoCliente() {
     const TipoCliente = document.getElementById("CompraTipoCliente");
     const EsEmpresa = TipoCliente?.value === "empresa";
@@ -153,14 +153,14 @@ function SyncTipoCliente() {
     });
 }
 
-// bloque resumen
+// calcula y muestra el resumen de compra
 function RenderCompraSummary() {
     const Items = GetCompraCart();
     const ItemsContainer = document.getElementById("CompraItems");
     const EmptyState = document.getElementById("CompraEmptyState");
     const ItemCount = document.getElementById("CompraItemCount");
 
-    // Cálculos de totales
+    // calcula subtotal envio y total
     const Subtotal = Items.reduce(
         (Total, Item) =>
             Total + (Number(Item.price) || 0) * (Number(Item.qty) || 0),
@@ -169,7 +169,7 @@ function RenderCompraSummary() {
     const Shipping = Items.length ? 18.9 : 0;
     const Total = Subtotal + Shipping;
 
-    // Actualizar contadores y textos de totales
+    // actualiza cantidades y montos visibles
     if (ItemCount) {
         const totalQty = Items.reduce(
             (Carry, Item) => Carry + (Number(Item.qty) || 0),
@@ -192,7 +192,7 @@ function RenderCompraSummary() {
         return;
     }
 
-    // Manejo de estado vacío[cite: 2]
+    // muestra aviso cuando el carrito esta vacio
     if (!Items.length) {
         ItemsContainer.innerHTML = "";
         EmptyState?.classList.remove("hidden");
@@ -643,7 +643,7 @@ function IsValidExpiry(Value) {
     return Month >= 1 && Month <= 12;
 }
 
-// bloque acciones
+// prepara botones para enviar o cancelar compra
 function BindCompraEvents() {
     document
         .getElementById("CompraTipoCliente")
@@ -674,13 +674,13 @@ function BindCompraEvents() {
                 return;
             }
 
-            // Llenar el campo oculto con el carrito en JSON
+            // guarda el carrito en un campo oculto para enviarlo
             document.getElementById("CompraCarrito").value =
                 JSON.stringify(Items);
         });
 }
 
-// bloque limpiar
+// limpia datos temporales de la compra
 window.ClearCompraSimulation = function () {
     document.getElementById("CompraForm")?.reset();
     FillCompraUserData();
@@ -690,7 +690,7 @@ window.ClearCompraSimulation = function () {
     document.getElementById("CompraResult")?.classList.add("hidden");
 };
 
-// bloque ayuda
+// busca productos del carrito por clave
 function SetInputValue(Id, Value) {
     const Input = document.getElementById(Id);
 
@@ -707,14 +707,14 @@ function SetText(Id, Value) {
     }
 }
 
-// bloque pedidos
+// arma los datos del pedido antes de enviarlo
 function SavePedido(Pedido) {
     const Pedidos = GetPedidos();
     Pedidos.unshift(Pedido);
     localStorage.setItem(PedidoStorageKey, JSON.stringify(Pedidos));
 }
 
-// bloque lectura
+// lee valores escritos en el formulario
 function GetPedidos() {
     try {
         const Pedidos = JSON.parse(
@@ -726,7 +726,7 @@ function GetPedidos() {
     }
 }
 
-// bloque texto
+// limpia texto antes de insertarlo en html
 function EscapeHtml(Value) {
     return String(Value)
         .replaceAll("&", "&amp;")

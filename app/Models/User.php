@@ -1,5 +1,6 @@
 <?php
 
+// este modelo representa datos de la tienda
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -7,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+// esta clase representa usuarios de la tienda
 class User extends Authenticatable
 {
     use Notifiable;
@@ -25,16 +27,14 @@ class User extends Authenticatable
     protected $hidden = [
         'Password',
     ];
+    // devuelve la contraseña para iniciar sesion
 
     public function getAuthPassword()
     {
         return $this->Password;
     }
+    // conecta el usuario con sus roles
 
-    /**
-     * Relación con los roles.
-     * UsuarioRoles es la tabla pivote.
-     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -44,16 +44,19 @@ class User extends Authenticatable
             'RolId'
         );
     }
+    // conecta el usuario con sus direcciones
 
     public function direcciones(): HasMany
     {
         return $this->hasMany(Direccion::class, 'UsuarioId', 'Id');
     }
+    // conecta el usuario con sus pedidos
 
     public function pedidos(): HasMany
     {
         return $this->hasMany(Pedido::class, 'UsuarioId', 'Id');
     }
+    // revisa si el usuario tiene un rol
 
     public function hasRole($roleName): bool
     {
@@ -63,6 +66,7 @@ class User extends Authenticatable
             return mb_strtolower((string) $role->Nombre) === $expected;
         });
     }
+    // devuelve la fecha de creacion
 
     public function getCreatedAtAttribute()
     {

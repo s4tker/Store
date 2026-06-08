@@ -1,4 +1,4 @@
-// bloque base
+// guarda datos iniciales del panel de administracion
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 const adminProducts = JSON.parse(document.getElementById('AdminProductsData')?.textContent || '[]');
 const adminProductsMap = new Map(adminProducts.map((product) => [String(product.id), product]));
@@ -51,7 +51,7 @@ window.ToggleAdminNav = function(show) {
     document.body.classList.remove('overflow-hidden');
 };
 
-// bloque arranque
+// inicia formularios filtros y botones del panel
 document.addEventListener('DOMContentLoaded', () => {
     initAdminNavigation();
     initSectionNavigation();
@@ -65,14 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initDeleteButtons();
 });
 
-// bloque navegacion admin
+// cierra el menu lateral del panel
 function initAdminNavigation() {
     const overlay = document.getElementById('AdminNavOverlay');
 
     overlay?.addEventListener('click', () => window.ToggleAdminNav(false));
 }
 
-// bloque secciones
+// cambia entre productos categorias marcas y usuarios
 function initSectionNavigation() {
     const navItems = document.querySelectorAll('[data-section]');
     const sections = document.querySelectorAll('.admin-section');
@@ -128,7 +128,7 @@ function initSectionToggles() {
     });
 }
 
-// bloque categorias principales de productos
+// activa la categoria principal del catalogo
 function initProductRootCategories() {
     const buttons = document.querySelectorAll('[data-root-category-id]');
     const categorySelect = document.getElementById('SelectCat');
@@ -225,7 +225,7 @@ function renderProductAttributePresets(categoryName = '') {
     });
 }
 
-// bloque producto
+// prepara el formulario para crear o editar productos
 function initProductEditor() {
     const form = document.getElementById('FormAddProducto');
     const categorySelect = document.getElementById('SelectCat');
@@ -372,7 +372,7 @@ function initProductEditor() {
     filterProducts();
 }
 
-// bloque atributos
+// agrega una fila de atributo al producto
 function addAttributeRow(name = '', value = '') {
     const container = document.getElementById('ContainerAtributos');
 
@@ -392,7 +392,7 @@ function addAttributeRow(name = '', value = '') {
     container.appendChild(row);
 }
 
-// bloque cargar
+// coloca los datos del producto elegido en el formulario
 function loadProductIntoForm(product) {
     const form = document.getElementById('FormAddProducto');
     const formTitle = document.getElementById('ProductFormTitle');
@@ -445,7 +445,7 @@ function loadProductIntoForm(product) {
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// bloque reset producto
+// limpia el formulario para registrar otro producto
 function resetProductForm() {
     const form = document.getElementById('FormAddProducto');
     const methodInput = document.getElementById('ProductFormMethod');
@@ -490,7 +490,7 @@ function resetProductForm() {
     renderProductAttributePresets(categorySelect.options[categorySelect.selectedIndex]?.dataset.name || '');
 }
 
-// bloque imagenes guardadas
+// muestra imagenes ya guardadas del producto
 function renderExistingImages(images) {
     const grid = document.getElementById('ExistingImagesGrid');
 
@@ -523,7 +523,7 @@ function renderExistingImages(images) {
     });
 }
 
-// bloque imagenes nuevas
+// muestra vista previa de imagenes nuevas
 function renderNewImagesPreview(files) {
     const grid = document.getElementById('NewImagesPreview');
 
@@ -563,7 +563,7 @@ function renderNewImagesPreview(files) {
     });
 }
 
-// bloque acumular imagenes nuevas
+// agrega nuevas imagenes sin perder las anteriores
 function addProductImageFiles(files) {
     const currentKeys = new Set(selectedProductImageFiles.map(getProductImageFileKey));
 
@@ -608,7 +608,7 @@ function syncProductImageInput() {
         : 'Sin archivos seleccionados.';
 }
 
-// bloque quitar imagen
+// quita una imagen nueva antes de guardar
 function toggleImageRemoval(imageId, card) {
     const container = document.getElementById('RemovedImagesContainer');
 
@@ -632,7 +632,7 @@ function toggleImageRemoval(imageId, card) {
     card.classList.add('is-marked-remove');
 }
 
-// bloque limpiar imagenes
+// limpia imagenes marcadas para borrar
 function clearRemovedImages() {
     const container = document.getElementById('RemovedImagesContainer');
 
@@ -641,7 +641,7 @@ function clearRemovedImages() {
     }
 }
 
-// bloque limpiar carga
+// limpia imagenes nuevas seleccionadas
 function clearNewImages() {
     const input = document.getElementById('ProductImages');
     selectedProductImageFiles = [];
@@ -653,7 +653,7 @@ function clearNewImages() {
     syncProductImageInput();
 }
 
-// bloque limpiar atributos
+// borra filas de atributos del formulario
 function clearAttributeRows() {
     const container = document.getElementById('ContainerAtributos');
 
@@ -662,14 +662,14 @@ function clearAttributeRows() {
     }
 }
 
-// bloque activo
+// marca el producto que se esta editando
 function highlightActiveProduct(productId) {
     document.querySelectorAll('.product-card-admin').forEach((card) => {
         card.classList.toggle('is-active', String(card.dataset.productId) === String(productId));
     });
 }
 
-// bloque filtros
+// filtra productos por texto marca y categoria
 function filterProducts() {
     const search = document.getElementById('ProductSearch')?.value.trim().toLowerCase() || '';
     const brand = document.getElementById('FilterBrand')?.value.trim().toLowerCase() || '';
@@ -713,7 +713,7 @@ function filterProducts() {
     }
 }
 
-// bloque categoria base
+// habilita padre solo cuando se crea subcategoria
 function initCategoryHelpers() {
     const typeSelect = document.getElementById('SelectCategoryType');
     const parentSelect = document.getElementById('CategoryParentSelect');
@@ -735,7 +735,7 @@ function initCategoryHelpers() {
     syncCategoryType();
 }
 
-// bloque editar categoria
+// prepara el formulario para editar categorias
 function initCategoryEditor() {
     const form = document.getElementById('FormAddCategoria');
     const resetButton = document.getElementById('BtnResetCategoryForm');
@@ -789,7 +789,7 @@ function initCategoryEditor() {
     });
 }
 
-// bloque reset categoria
+// limpia el formulario para registrar categoria
 function resetCategoryForm() {
     const form = document.getElementById('FormAddCategoria');
     const methodInput = document.getElementById('CategoryFormMethod');
@@ -825,7 +825,7 @@ function resetCategoryForm() {
     }
 }
 
-// bloque editar marca
+// prepara el formulario para editar marcas
 function initBrandEditor() {
     const form = document.getElementById('FormAddMarca');
     const resetButton = document.getElementById('BtnResetBrandForm');
@@ -871,7 +871,7 @@ function initBrandEditor() {
     });
 }
 
-// bloque reset marca
+// limpia el formulario para registrar marca
 function resetBrandForm() {
     const form = document.getElementById('FormAddMarca');
     const methodInput = document.getElementById('BrandFormMethod');
@@ -902,7 +902,7 @@ function resetBrandForm() {
     }
 }
 
-// bloque guardado
+// envia formularios del panel sin recargar primero
 function initFormHandlers() {
     ['FormAddProducto', 'FormAddCategoria', 'FormAddMarca', 'FormAdminUsuario'].forEach((formId) => {
         const form = document.getElementById(formId);
@@ -980,14 +980,14 @@ function initFormHandlers() {
     });
 }
 
-// bloque apoyo categoria
+// reinicia estado extra del formulario de categoria
 function resetCategoryFormState(formId) {
     if (formId === 'FormAddCategoria') {
         resetCategoryForm();
     }
 }
 
-// bloque eliminar
+// prepara botones para borrar registros del panel
 function initDeleteButtons() {
     document.querySelectorAll('[data-delete-url]').forEach((button) => {
         button.addEventListener('click', async () => {
@@ -1084,7 +1084,7 @@ function confirmAdminAction(label) {
     });
 }
 
-// bloque toast
+// muestra avisos del panel al usuario
 function showToast(message, isError = false) {
     const toast = document.getElementById('Toast');
 

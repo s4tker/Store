@@ -1,35 +1,16 @@
 <?php
 
+// archivo que define donde se guardan archivos e imagenes
+// define disco local publico y nube
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Default Filesystem Disk
-    |--------------------------------------------------------------------------
-    |
-    | Here you may specify the default filesystem disk that should be used
-    | by the framework. The "local" disk, as well as a variety of cloud
-    | based disks are available to your application for file storage.
-    |
-    */
-
+    // elige donde se guardan archivos
     'default' => env('FILESYSTEM_DISK', 'local'),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Filesystem Disks
-    |--------------------------------------------------------------------------
-    |
-    | Below you may configure as many filesystem disks as necessary, and you
-    | may even configure multiple disks for the same driver. Examples for
-    | most supported storage drivers are configured here for reference.
-    |
-    | Supported drivers: "local", "ftp", "sftp", "s3"
-    |
-    */
-
+    // lista carpetas y servicios para archivos
     'disks' => [
 
+        // guarda archivos privados
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
@@ -38,6 +19,7 @@ return [
             'report' => false,
         ],
 
+        // guarda imagenes publicas
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
@@ -47,6 +29,7 @@ return [
             'report' => false,
         ],
 
+        // guarda archivos en amazon si se configura
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -62,17 +45,7 @@ return [
 
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Symbolic Links
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure the symbolic links that will be created when the
-    | `storage:link` Artisan command is executed. The array keys should be
-    | the locations of the links and the values should be their targets.
-    |
-    */
-
+    // publica archivos guardados en storage
     'links' => [
         public_path('storage') => storage_path('app/public'),
     ],

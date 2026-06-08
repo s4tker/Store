@@ -1,5 +1,6 @@
 <?php
 
+// archivo que conecta rutas con acciones
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 

@@ -1,9 +1,11 @@
 <?php
 
+// archivo que ayuda a iniciar la aplicacion
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
+// prepara el arranque principal
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',

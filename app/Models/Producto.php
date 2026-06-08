@@ -1,9 +1,11 @@
 <?php
 
+// este modelo representa datos de la tienda
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// esta clase representa productos del catalogo
 class Producto extends Model
 {
     protected $table = 'Productos';
@@ -18,21 +20,25 @@ class Producto extends Model
         'Estado',
     ];
     protected $appends = ['image_url', 'display_price'];
+    // conecta el producto con su marca
 
     public function marca()
     {
         return $this->belongsTo(Marca::class, 'MarcaId', 'Id');
     }
+    // conecta el producto con su categoria
 
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'CategoriaId', 'Id');
     }
+    // conecta el producto con sus variantes
 
     public function variantes()
     {
         return $this->hasMany(ProductoVariantes::class, 'ProductoId', 'Id');
     }
+    // arma la ruta de la imagen
 
     public function getImageUrlAttribute()
     {
@@ -69,11 +75,13 @@ class Producto extends Model
 
         return asset('img/logo/logo.png');
     }
+    // conecta el producto con sus imagenes
 
     public function imagenes()
     {
         return $this->hasMany(ProductoImagenes::class, 'ProductoId', 'Id')->orderBy('Orden', 'asc');
     }
+    // calcula el precio visible
 
     public function getDisplayPriceAttribute(): float
     {

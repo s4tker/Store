@@ -1,37 +1,19 @@
 <?php
 
+// archivo que define las conexiones de base de datos
 use Illuminate\Support\Str;
 use Pdo\Mysql;
 
+// define mysql sqlite redis y migraciones
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Default Database Connection Name
-    |--------------------------------------------------------------------------
-    |
-    | Here you may specify which of the database connections below you wish
-    | to use as your default connection for database operations. This is
-    | the connection which will be utilized unless another connection
-    | is explicitly specified when you execute a query / statement.
-    |
-    */
-
+    // elige la base de datos principal
     'default' => env('DB_CONNECTION', 'sqlite'),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Database Connections
-    |--------------------------------------------------------------------------
-    |
-    | Below are all of the database connections defined for your application.
-    | An example configuration is provided for each database system which
-    | is supported by Laravel. You're free to add / remove connections.
-    |
-    */
-
+    // lista las conexiones disponibles
     'connections' => [
 
+        // configura sqlite para uso local
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
@@ -44,6 +26,7 @@ return [
             'transaction_mode' => 'DEFERRED',
         ],
 
+        // configura mysql o mariadb para la tienda
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
@@ -64,6 +47,7 @@ return [
             ]) : [],
         ],
 
+        // configura mariadb si se usa aparte
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
@@ -84,6 +68,7 @@ return [
             ]) : [],
         ],
 
+        // configura postgresql si se cambia de motor
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),
@@ -99,6 +84,7 @@ return [
             'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
 
+        // configura sql server si se usa microsoft
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),
@@ -110,39 +96,17 @@ return [
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Migration Repository Table
-    |--------------------------------------------------------------------------
-    |
-    | This table keeps track of all the migrations that have already run for
-    | your application. Using this information, we can determine which of
-    | the migrations on disk haven't actually been run on the database.
-    |
-    */
-
+    // guarda el historial de cambios de tablas
     'migrations' => [
         'table' => 'migrations',
         'update_date_on_publish' => true,
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Redis Databases
-    |--------------------------------------------------------------------------
-    |
-    | Redis is an open source, fast, and advanced key-value store that also
-    | provides a richer body of commands than a typical key-value system
-    | such as Memcached. You may define your connection settings here.
-    |
-    */
-
+    // configura redis para cache o colas
     'redis' => [
 
         'client' => env('REDIS_CLIENT', 'phpredis'),

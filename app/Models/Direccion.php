@@ -1,9 +1,11 @@
 <?php
 
+// este modelo representa datos de la tienda
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// esta clase representa direcciones de entrega
 class Direccion extends Model
 {
     protected $table = 'Direcciones';
@@ -19,6 +21,7 @@ class Direccion extends Model
         'Direccion',
         'Referencia'
     ];
+    // conecta el pedido con su usuario
 
     public function usuario()
     {

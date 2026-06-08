@@ -1,5 +1,6 @@
 <?php
 
+// archivo que conecta rutas con acciones
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\PedidoController;
@@ -8,13 +9,13 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AccountController;
 use Illuminate\Support\Facades\Route;
 
-// HOME
+// abre el inicio
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/producto/{slug}', [HomeController::class, 'showProduct'])->name('product.show');
 Route::get('/compras/formulario', [CompraController::class, 'formulario'])->name('compras.formulario');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 
-// AUTH (AJAX)
+// atiende el acceso
 Route::post('/auth/check', [AuthController::class, 'checkEmail'])->name('auth.check');
 Route::post('/auth/process', [AuthController::class, 'authenticate'])->name('auth.process');
 Route::get('/auth/otp', [AuthController::class, 'showOtp'])->name('auth.otp.show');
@@ -46,7 +47,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/usuarios/{usuario}', [AdminController::class, 'destroyUser'])->name('admin.usuarios.destroy');
 });
 
-// ACCOUNT (PROTEGIDO)
+// atiende la cuenta protegida
 Route::middleware(['auth'])->group(function () {
     Route::get('/pedidos', [PedidoController::class, 'index'])
         ->name('pedidos.index');

@@ -1,3 +1,5 @@
+{{-- vista para administrar productos categorias marcas y usuarios --}}
+
 @extends('layouts.admin')
 
 @section('title', 'Productos | ElectroShop')
@@ -8,19 +10,17 @@
 
 @section('content')
 <div class="admin-page -mx-4 md:-mx-10">
-    <div class="admin-shell px-4 py-6 md:px-6 lg:px-8">
-        <div class="space-y-5 pb-8">
-            <section class="admin-surface p-4 md:p-5">
-                <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                    <div class="min-w-0">
+<div class="admin-shell px-4 py-6 md:px-6 lg:px-8">
+<div class="space-y-5 pb-8">
+<section class="admin-surface p-4 md:p-5">
+<div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+<div class="min-w-0">
                         <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-slate-700">
-                            <svg class="h-4 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 32 16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 3 3 8l5 5M4 8h25"/></svg>
-                            Panel admin
+                            <svg class="h-4 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 32 16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 3 3 8l5 5M4 8h25"/></svg> Panel admin
                         </a>
                         <h1 class="admin-title mt-3">Productos</h1>
                     </div>
-
-                    <div class="grid w-full max-w-2xl gap-3 sm:grid-cols-3">
+<div class="grid w-full max-w-2xl gap-3 sm:grid-cols-3">
                         <x-admin.stat-card label="Productos" :value="$Productos->count()" tone="blue">
                             <x-slot:icon>
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +52,6 @@
         </div>
     </div>
 </div>
-
 <div id="Toast" class="fixed bottom-6 right-6 z-[9999]"></div>
 @endsection
 

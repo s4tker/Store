@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAdminUserFilters();
 });
 
-// bloque usuarios
+// prepara el formulario para crear o editar usuarios
 function initAdminUserEditor() {
     const form = document.getElementById('FormAdminUsuario');
     const searchInput = document.getElementById('UserEmailSearch');
@@ -35,7 +35,7 @@ function initAdminUserEditor() {
     form.addEventListener('submit', submitAdminUserForm);
 }
 
-// bloque cargar desde busqueda
+// busca el usuario por correo escrito
 function loadUserFromSearch() {
     const email = document.getElementById('UserEmailSearch')?.value.trim().toLowerCase() || '';
 
@@ -50,7 +50,7 @@ function loadUserFromSearch() {
     }
 }
 
-// bloque cargar formulario
+// coloca los datos del usuario en el formulario
 function loadUserIntoForm(user) {
     const form = document.getElementById('FormAdminUsuario');
     const methodInput = document.getElementById('UserFormMethod');
@@ -80,7 +80,7 @@ function loadUserIntoForm(user) {
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// bloque reset formulario
+// limpia el formulario para registrar otro usuario
 function resetAdminUserForm() {
     const form = document.getElementById('FormAdminUsuario');
     const passwordInput = document.getElementById('UserPassword');
@@ -104,7 +104,7 @@ function resetAdminUserForm() {
     highlightActiveUser(null);
 }
 
-// bloque envio
+// envia el formulario de usuario al servidor
 async function submitAdminUserForm(event) {
     event.preventDefault();
 
@@ -146,7 +146,7 @@ async function submitAdminUserForm(event) {
     }
 }
 
-// bloque eliminar
+// prepara los botones para borrar usuarios
 function initAdminUserDelete() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
@@ -239,13 +239,13 @@ function confirmAdminUserAction(label) {
     });
 }
 
-// bloque filtros
+// prepara el buscador de usuarios
 function initAdminUserFilters() {
     document.getElementById('UserListSearch')?.addEventListener('input', filterAdminUsers);
     filterAdminUsers();
 }
 
-// bloque filtrar lista
+// muestra solo usuarios que coinciden con la busqueda
 function filterAdminUsers() {
     const search = document.getElementById('UserListSearch')?.value.trim().toLowerCase() || '';
     const cards = document.querySelectorAll('.user-admin-item');
@@ -275,14 +275,14 @@ function filterAdminUsers() {
     }
 }
 
-// bloque activo
+// marca el usuario que se esta editando
 function highlightActiveUser(userId) {
     document.querySelectorAll('.user-admin-item').forEach((card) => {
         card.classList.toggle('is-active', String(card.dataset.loadUser) === String(userId));
     });
 }
 
-// bloque toast
+// muestra avisos al guardar o borrar usuarios
 function showAdminUserToast(message, isError = false) {
     let toast = document.getElementById('AdminUserToast');
 

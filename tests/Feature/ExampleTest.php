@@ -1,15 +1,14 @@
 <?php
 
+// archivo que revisa que el sistema funcione
 namespace Tests\Feature;
-
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+// esta clase revisa pruebas de ejemplo
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     */
+    // comprueba que el inicio responda
+
     public function test_the_application_returns_a_successful_response(): void
     {
         $response = $this->get('/');

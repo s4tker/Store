@@ -1,5 +1,6 @@
 <?php
 
+// este controlador atiende pantallas y acciones del sistema
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
@@ -18,11 +19,12 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+// esta clase controla el panel administrativo
 class AdminController extends Controller
 {
+    // abre el panel principal con productos categorias y marcas
     public function index()
     {
-        // datos del dashboard principal
         $rootCategories = Categoria::with('subcategorias')
             ->select(['Id', 'Nombre', 'Slug', 'ParentId'])
             ->whereNull('ParentId')
@@ -54,7 +56,7 @@ class AdminController extends Controller
 
         return view('Admin.admin', [
             'Search' => '',
-            'AdminNavLabel' => 'Panel Admin',
+            'AdminNavLabel' => 'Panel',
             'AdminNavRoute' => route('admin.dashboard'),
             'HideNavbarSearch' => true,
             'HideNavbarOrders' => true,
@@ -68,10 +70,10 @@ class AdminController extends Controller
             'ProductosAdmin' => $this->buildProductEditorPayloads($products),
         ]);
     }
+    // muestra productos con marcas categorias y stock
 
     public function products()
     {
-        // datos de la vista independiente de productos
         $rootCategories = Categoria::with('subcategorias')
             ->select(['Id', 'Nombre', 'Slug', 'ParentId'])
             ->whereNull('ParentId')
@@ -114,6 +116,7 @@ class AdminController extends Controller
             'ProductosAdmin' => $this->buildProductEditorPayloads($products),
         ]);
     }
+    // muestra usuarios y roles del panel
 
     public function users()
     {
@@ -146,6 +149,7 @@ class AdminController extends Controller
             'UsuariosBusqueda' => $this->buildUserManagementPayloads($allUsers),
         ]);
     }
+    // muestra estadisticas del panel
 
     public function statistics()
     {
@@ -183,6 +187,7 @@ class AdminController extends Controller
             'PedidosStats' => $this->buildOrderStatisticsPayloads($orders),
         ]);
     }
+    // muestra los pedidos del panel
 
     public function orders(Request $request)
     {
@@ -206,6 +211,7 @@ class AdminController extends Controller
             'PeriodosPedido' => ['todos', 'hora', 'dia', 'ayer', 'semana', 'mes', 'anio', 'personalizado'],
         ]);
     }
+    // exporta pedidos del panel
 
     public function exportOrders(Request $request): StreamedResponse
     {
@@ -220,6 +226,7 @@ class AdminController extends Controller
             'pedidos_' . now()->format('Ymd_His') . '.csv'
         );
     }
+    // exporta un pedido
 
     public function exportOrder(Pedido $pedido): StreamedResponse
     {
@@ -234,6 +241,7 @@ class AdminController extends Controller
             'pedido_' . str_pad((string) $pedido->Id, 5, '0', STR_PAD_LEFT) . '.csv'
         );
     }
+    // arma la consulta de pedidos del panel
 
     protected function buildAdminOrdersQuery(array $filters)
     {
@@ -247,6 +255,7 @@ class AdminController extends Controller
             ->when($filters['desde'], fn ($query) => $query->where('CreatedAt', '>=', $filters['desde']))
             ->when($filters['hasta'], fn ($query) => $query->where('CreatedAt', '<=', $filters['hasta']));
     }
+    // prepara filtros de pedidos
 
     protected function resolveOrderFilters(Request $request): array
     {
@@ -304,6 +313,7 @@ class AdminController extends Controller
             'hasta_input' => (string) $request->query('hasta', ''),
         ];
     }
+    // escribe pedidos en csv
 
     protected function streamOrdersCsv($orders, string $filename): StreamedResponse
     {
@@ -369,6 +379,7 @@ class AdminController extends Controller
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
     }
+    // muestra detalle del pedido dentro del panel
 
     public function showOrder(Pedido $pedido)
     {
@@ -390,6 +401,7 @@ class AdminController extends Controller
             'EstadosPedido' => ['pendiente', 'pagado', 'enviado', 'entregado', 'cancelado'],
         ]);
     }
+    // actualiza el estado del pedido
 
     public function updateOrderStatus(Request $request, Pedido $pedido)
     {
@@ -404,16 +416,19 @@ class AdminController extends Controller
             ->route('admin.pedidos.show', $pedido->Id)
             ->with('success', 'Estado del pedido actualizado correctamente.');
     }
+    // crea una categoria o subcategoria del catalogo
 
     public function storeCategory(Request $request)
     {
         return $this->saveCategory($request);
     }
+    // cambia nombre tipo o padre de una categoria
 
     public function updateCategory(Request $request, Categoria $categoria)
     {
         return $this->saveCategory($request, $categoria);
     }
+    // borra una categoria si no esta protegida
 
     public function destroyCategory(Categoria $categoria)
     {
@@ -441,16 +456,19 @@ class AdminController extends Controller
             'message' => 'Categoría eliminada correctamente.',
         ]);
     }
+    // crea una marca del catalogo
 
     public function storeBrand(Request $request)
     {
         return $this->saveBrand($request);
     }
+    // cambia el nombre de una marca
 
     public function updateBrand(Request $request, Marca $marca)
     {
         return $this->saveBrand($request, $marca);
     }
+    // borra una marca si no tiene bloqueos
 
     public function destroyBrand(Marca $marca)
     {
@@ -468,26 +486,31 @@ class AdminController extends Controller
             'message' => 'Marca eliminada correctamente.',
         ]);
     }
+    // crea producto con precio stock imagenes y atributos
 
     public function storeProduct(Request $request)
     {
         return $this->saveProduct($request);
     }
+    // crea usuario del panel con rol y contraseña
 
     public function storeUser(Request $request)
     {
         return $this->saveUserAccount($request);
     }
+    // cambia datos imagenes y atributos del producto
 
     public function updateProduct(Request $request, Producto $producto)
     {
         return $this->saveProduct($request, $producto);
     }
+    // cambia correo rol o contraseña del usuario
 
     public function updateUser(Request $request, User $usuario)
     {
         return $this->saveUserAccount($request, $usuario);
     }
+    // borra producto y sus datos relacionados
 
     public function destroyProduct(Producto $producto)
     {
@@ -508,6 +531,7 @@ class AdminController extends Controller
             'message' => 'Producto eliminado correctamente.',
         ]);
     }
+    // borra usuario permitido del panel
 
     public function destroyUser(User $usuario)
     {
@@ -532,6 +556,7 @@ class AdminController extends Controller
             'message' => 'Usuario eliminado correctamente.',
         ]);
     }
+    // guarda datos de un producto
 
     protected function saveProduct(Request $request, ?Producto $product = null)
     {
@@ -631,6 +656,7 @@ class AdminController extends Controller
             ],
         ]);
     }
+    // guarda datos de una categoria
 
     protected function saveCategory(Request $request, ?Categoria $category = null)
     {
@@ -676,6 +702,7 @@ class AdminController extends Controller
             ],
         ]);
     }
+    // guarda datos de una marca
 
     protected function saveBrand(Request $request, ?Marca $brand = null)
     {
@@ -701,6 +728,7 @@ class AdminController extends Controller
             ],
         ]);
     }
+    // guarda datos de un usuario
 
     protected function saveUserAccount(Request $request, ?User $user = null)
     {
@@ -754,6 +782,7 @@ class AdminController extends Controller
             ],
         ]);
     }
+    // decide la categoria del producto
 
     protected function resolveCategoryId(array $data)
     {
@@ -775,6 +804,7 @@ class AdminController extends Controller
 
         return (int) $data['SubCategoriaId'];
     }
+    // actualiza imagenes del producto
 
     protected function syncProductImages(Request $request, Producto $product, array $removeImageIds = []): void
     {
@@ -819,6 +849,7 @@ class AdminController extends Controller
 
         $this->normalizeProductImageOrder($product);
     }
+    // ordena las imagenes del producto
 
     protected function normalizeProductImageOrder(Producto $product): void
     {
@@ -834,6 +865,7 @@ class AdminController extends Controller
                 }
             });
     }
+    // guarda atributos del producto
 
     protected function persistAttributes(int $variantId, array $names, array $values): void
     {
@@ -871,6 +903,7 @@ class AdminController extends Controller
             ]);
         }
     }
+    // prepara datos de un producto para editar
 
     protected function buildProductEditorPayload(Producto $product, array $stocks = [], array $attributesByVariant = []): array
     {
@@ -904,6 +937,7 @@ class AdminController extends Controller
             'atributos' => $variantId ? ($attributesByVariant[$variantId] ?? []) : [],
         ];
     }
+    // prepara datos de productos para editar
 
     protected function buildProductEditorPayloads($products): array
     {
@@ -938,6 +972,7 @@ class AdminController extends Controller
             ->values()
             ->all();
     }
+    // prepara datos de un usuario del panel
 
     protected function buildUserManagementPayload(User $user): array
     {
@@ -953,6 +988,7 @@ class AdminController extends Controller
             'creado_en' => $user->CreatedAt,
         ];
     }
+    // prepara datos de usuarios del panel
 
     protected function buildUserManagementPayloads($users): array
     {
@@ -961,6 +997,7 @@ class AdminController extends Controller
             ->values()
             ->all();
     }
+    // prepara datos de un cliente para estadisticas
 
     protected function buildCustomerStatisticsPayload(User $user): array
     {
@@ -978,6 +1015,7 @@ class AdminController extends Controller
             'ultimo_pedido_en' => $latestOrderDate,
         ];
     }
+    // prepara datos de clientes para estadisticas
 
     protected function buildCustomerStatisticsPayloads($users): array
     {
@@ -986,6 +1024,7 @@ class AdminController extends Controller
             ->values()
             ->all();
     }
+    // prepara datos de un pedido para estadisticas
 
     protected function buildOrderStatisticsPayload(Pedido $order): array
     {
@@ -1007,6 +1046,7 @@ class AdminController extends Controller
             'creado_en' => $order->CreatedAt,
         ];
     }
+    // prepara datos de pedidos para estadisticas
 
     protected function buildOrderStatisticsPayloads($orders): array
     {
@@ -1015,6 +1055,7 @@ class AdminController extends Controller
             ->values()
             ->all();
     }
+    // crea el codigo sku del producto
 
     protected function generateSku(string $name): string
     {
@@ -1025,6 +1066,7 @@ class AdminController extends Controller
 
         return $sku;
     }
+    // crea una ruta unica
 
     protected function uniqueSlug(string $table, string $name, ?int $ignoreId = null): string
     {
@@ -1044,6 +1086,7 @@ class AdminController extends Controller
 
         return $slug;
     }
+    // resuelve la ruta de la imagen
 
     protected function resolveImageUrl(string $path): string
     {
@@ -1053,6 +1096,7 @@ class AdminController extends Controller
 
         return asset('storage/' . ltrim($path, '/'));
     }
+    // revisa si un usuario es del panel
 
     protected function userHasAdminRole(User $user): bool
     {
@@ -1060,11 +1104,13 @@ class AdminController extends Controller
             return $this->resolveRoleKey($role->Nombre) === 'admin';
         });
     }
+    // protege al usuario principal del panel
 
     protected function isProtectedAdminUser(User $user): bool
     {
         return $this->userHasAdminRole($user);
     }
+    // decide la clave del rol
 
     protected function resolveRoleKey(?string $roleName): string
     {
@@ -1076,6 +1122,7 @@ class AdminController extends Controller
             default => $normalized,
         };
     }
+    // muestra el nombre del rol
 
     protected function formatRoleLabel(?string $roleName): string
     {
@@ -1086,6 +1133,7 @@ class AdminController extends Controller
             default => Str::headline((string) $roleName),
         };
     }
+    // ordena los roles
 
     protected function resolveRoleSortOrder(?string $roleName): int
     {

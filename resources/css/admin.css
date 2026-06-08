@@ -1,3 +1,5 @@
+/* archivo que da estilo al panel */
+
 @reference "tailwindcss";
 
 :root {
@@ -11,7 +13,6 @@
     --admin-muted: #64748b;
     --admin-muted-soft: #94a3b8;
     
-    /* Sombras más suaves y modernas */
     --admin-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
     --admin-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.02);
     --admin-shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.06), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
@@ -22,11 +23,13 @@
     --admin-accent-ring: rgba(15, 23, 42, 0.15);
 }
 
+/* ajusta el fondo y la base visual */
 body {
     background-color: var(--admin-bg);
     color: var(--admin-ink);
 }
 
+/* define el contenedor principal del panel */
 .admin-page {
     min-height: 100vh;
     background-color: var(--admin-bg);
@@ -271,7 +274,6 @@ body {
     @apply h-2 w-2 rounded-full bg-current opacity-80;
 }
 
-/* El drawer móvil usa transición nativa. No cambiar padding/margin/width para no afectar el JS de toggle */
 .admin-mobile-drawer {
     transform: translateX(-100%);
     transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);

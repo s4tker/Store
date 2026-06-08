@@ -1,5 +1,7 @@
+{{-- barra principal con buscador categorias y carrito --}}
+
 <nav class="bg-[#0f172a] sticky top-0 z-[60] px-3 md:px-8 py-3 shadow-xl">
-    <div class="max-w-7xl mx-auto flex items-center gap-2 md:gap-8">
+<div class="max-w-7xl mx-auto flex items-center gap-2 md:gap-8">
         @unless($HideNavbarMobileTrigger ?? false)
             <button type="button" class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700 bg-slate-900 text-white" onclick="{{ $NavbarMobileTriggerAction ?? 'ToggleMobileCatalog(true)' }}" aria-label="Abrir menú">
                 <span class="space-y-1.5">
@@ -18,27 +20,24 @@
             @if(Auth::user()->hasRole('admin') || Auth::user()->hasRole('administrador'))
                 <a href="{{ $AdminNavRoute ?? route('admin.dashboard') }}" class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-[#0f172a] px-2.5 md:px-3 py-1.5 rounded-lg transition-all active:scale-95 shrink-0">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4z"></path></svg>
-                    <span class="text-[10px] md:text-[11px] font-black uppercase hidden sm:block text-slate-900">{{ $AdminNavLabel ?? 'Panel Admin' }}</span>
-                    <span class="text-[9px] font-black uppercase sm:hidden text-slate-900">{{ $AdminNavLabel ?? 'Admin' }}</span>
+                    <span class="text-[10px] md:text-[11px] font-black uppercase hidden sm:block text-slate-900">{{ $AdminNavLabel ?? 'Panel' }}</span>
+                    <span class="text-[9px] font-black uppercase sm:hidden text-slate-900">{{ $AdminNavLabel ?? 'Panel' }}</span>
                 </a>
             @endif
         @endauth
 
         @unless($HideNavbarSearch ?? false)
-            <div class="flex-1 min-w-0 flex bg-slate-800/50 rounded-xl px-2 md:px-4 py-1.5 items-center border border-slate-700 focus-within:border-blue-500 transition-all">
-                <input id="q" type="text" value="{{ $Search ?? '' }}" placeholder="Buscar productos..."
-                    class="flex-1 bg-transparent outline-none text-[12px] md:text-sm text-slate-100 py-1 placeholder-slate-500 min-w-0 border-none focus:ring-0">
+<div class="flex-1 min-w-0 flex bg-slate-800/50 rounded-xl px-2 md:px-4 py-1.5 items-center border border-slate-700 focus-within:border-blue-500 transition-all">
+                <input id="q" type="text" value="{{ $Search ?? '' }}" placeholder="Buscar productos..." class="flex-1 bg-transparent outline-none text-[12px] md:text-sm text-slate-100 py-1 placeholder-slate-500 min-w-0 border-none focus:ring-0">
                 <button type="button" onclick="Search()" class="hidden sm:block text-blue-400 font-bold text-[11px] px-2">Buscar</button>
             </div>
         @else
-            <div class="flex-1"></div>
+<div class="flex-1"></div>
         @endunless
-
-        <div class="flex items-center gap-2 md:gap-5 shrink-0">
+<div class="flex items-center gap-2 md:gap-5 shrink-0">
             @auth
                 @unless($HideNavbarOrders ?? false)
-                    <a href="{{ route('pedidos.index') }}" class="hidden md:inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-blue-500 hover:text-white">
-                        Pedidos
+                    <a href="{{ route('pedidos.index') }}" class="hidden md:inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-blue-500 hover:text-white"> Pedidos
                     </a>
                 @endunless
 

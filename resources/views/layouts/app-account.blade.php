@@ -1,3 +1,5 @@
+{{-- plantilla base para paginas de perfil pedidos y direcciones --}}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,8 +12,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap'); body { font-family: 'Inter', sans-serif; }
         .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }

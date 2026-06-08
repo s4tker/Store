@@ -1,6 +1,6 @@
 const PedidoStorageKey = 'electroshop-orders';
 
-// bloque inicio
+// prepara pedidos al cargar la pantalla
 document.addEventListener('DOMContentLoaded', () => {
     if (!document.getElementById('PedidosList')) {
         return;
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     RenderPedidos();
 });
 
-// bloque lista
+// muestra cada pedido con sus datos principales
 function RenderPedidos() {
     const Pedidos = GetPedidos();
     const List = document.getElementById('PedidosList');
@@ -76,7 +76,7 @@ function RenderPedidos() {
     `).join('');
 }
 
-// bloque acciones
+// prepara botones para abrir y cerrar detalles
 window.CancelPedido = function(PedidoId) {
     const Pedidos = GetPedidos();
     const Pedido = Pedidos.find((Item) => String(Item.id) === String(PedidoId));
@@ -92,7 +92,7 @@ window.CancelPedido = function(PedidoId) {
     RenderPedidos();
 };
 
-// bloque ayuda
+// obtiene datos guardados en cada pedido
 function GetPedidos() {
     try {
         const Pedidos = JSON.parse(localStorage.getItem(PedidoStorageKey) || '[]');
@@ -102,7 +102,7 @@ function GetPedidos() {
     }
 }
 
-// bloque texto
+// limpia texto antes de pintarlo en la pantalla
 function EscapeHtml(Value) {
     return String(Value)
         .replaceAll('&', '&amp;')

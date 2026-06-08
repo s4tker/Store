@@ -1,15 +1,19 @@
 <?php
 
+// archivo que revisa datos antes de guardarlos
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+// esta clase valida datos para crear pedidos
 class StorePedidoRequest extends FormRequest
 {
+    // permite usar la solicitud
     public function authorize(): bool
     {
         return true;
     }
+    // indica lo que se debe llenar
 
     public function rules(): array
     {
@@ -29,26 +33,28 @@ class StorePedidoRequest extends FormRequest
             'MetodoPago' => ['nullable', 'string', 'max:50'],
         ];
     }
+    // muestra mensajes claros
 
     public function messages(): array
     {
         return [
             'carrito.required' => 'El carrito es obligatorio.',
-            'carrito.json' => 'El carrito debe ser un JSON valido.',
+            'carrito.json' => 'El carrito debe ser un JSON válido.',
             'Documento.required' => 'El DNI es obligatorio.',
-            'Documento.regex' => 'El DNI debe tener exactamente 8 digitos.',
+            'Documento.regex' => 'El DNI debe tener exactamente 8 dígitos.',
             'Nombre.required' => 'El nombre es obligatorio.',
             'Apellidos.required' => 'Los apellidos son obligatorios.',
             'Correo.required' => 'El correo es obligatorio.',
-            'Correo.email' => 'Ingresa un correo valido.',
-            'Telefono.required' => 'El telefono es obligatorio.',
-            'Telefono.regex' => 'El telefono peruano debe tener 9 digitos y empezar con 9.',
-            'DireccionId.exists' => 'La direccion seleccionada no existe.',
-            'Region.required_without' => 'La region es obligatoria.',
+            'Correo.email' => 'Ingresa un correo válido.',
+            'Telefono.required' => 'El teléfono es obligatorio.',
+            'Telefono.regex' => 'El teléfono peruano debe tener 9 dígitos y empezar con 9.',
+            'DireccionId.exists' => 'La dirección seleccionada no existe.',
+            'Region.required_without' => 'La región es obligatoria.',
             'Ciudad.required_without' => 'La ciudad es obligatoria.',
-            'Direccion.required_without' => 'La direccion es obligatoria.',
+            'Direccion.required_without' => 'La dirección es obligatoria.',
         ];
     }
+    // limpia datos antes de validar
 
     protected function prepareForValidation(): void
     {

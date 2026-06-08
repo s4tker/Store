@@ -1,5 +1,6 @@
 <?php
 
+// archivo que reúne pasos importantes del pedido
 namespace App\Services;
 
 use App\Models\Carrito;
@@ -15,8 +16,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
+// esta clase crea y cancela pedidos
 class PedidoService
 {
+    // crea el pedido desde el carrito
+
     public function crearPedidoDesdeCarrito(int $usuarioId, int $direccionId, array $carritoItems): Pedido
     {
         if (empty($carritoItems)) {
@@ -99,6 +103,7 @@ class PedidoService
             return $pedido;
         });
     }
+    // devuelve stock al cancelar un pedido
 
     public function cancelarPedido(int $pedidoId): Pedido
     {
@@ -134,6 +139,7 @@ class PedidoService
             return $pedido;
         });
     }
+    // busca la direccion principal del usuario
 
     private function obtenerDireccionPrincipal(int $usuarioId): ?int
     {

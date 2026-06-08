@@ -1,5 +1,6 @@
 <?php
 
+// este controlador atiende pantallas y acciones del sistema
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CancelPedidoRequest;
@@ -15,11 +16,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
+// esta clase controla pedidos del usuario
 class PedidoController extends Controller
 {
+    // recibe el servicio que crea y cancela pedidos
+
     public function __construct(private PedidoService $pedidoService)
     {
     }
+    // muestra pedidos del usuario actual
 
     public function index()
     {
@@ -33,6 +38,7 @@ class PedidoController extends Controller
             'pedidos' => $pedidos,
         ]);
     }
+    // guarda el pedido con direccion productos y cliente
 
     public function store(StorePedidoRequest $request): RedirectResponse
     {
@@ -64,6 +70,7 @@ class PedidoController extends Controller
             return back()->withErrors(['pedido' => $exception->getMessage()])->withInput();
         }
     }
+    // busca un cliente por dni
 
     public function buscarClientePorDni(string $dni): JsonResponse
     {
@@ -93,6 +100,7 @@ class PedidoController extends Controller
                 ->get(['Id', 'Pais', 'Region', 'Ciudad', 'Direccion', 'Referencia']),
         ]);
     }
+    // muestra un pedido del usuario con productos y estado
 
     public function show(int $id)
     {
@@ -102,6 +110,7 @@ class PedidoController extends Controller
             'pedido' => $pedido,
         ]);
     }
+    // cancela un pedido del usuario
 
     public function cancelar(int $id, CancelPedidoRequest $request): RedirectResponse
     {
@@ -122,6 +131,7 @@ class PedidoController extends Controller
             return back()->withErrors(['pedido' => $exception->getMessage()]);
         }
     }
+    // busca un pedido del usuario actual
 
     private function findPedidoForUsuario(int $id): Pedido
     {
@@ -130,6 +140,7 @@ class PedidoController extends Controller
             ->where('UsuarioId', Auth::id())
             ->firstOrFail();
     }
+    // busca o crea cliente por dni
 
     private function resolverClientePorDni(StorePedidoRequest $request, User $usuarioAutenticado): User
     {
@@ -153,6 +164,7 @@ class PedidoController extends Controller
 
         return $cliente;
     }
+    // decide la direccion del pedido
 
     private function resolverDireccionPedido(StorePedidoRequest $request, User $cliente): Direccion
     {
@@ -162,7 +174,7 @@ class PedidoController extends Controller
             $direccion = Direccion::query()->find($direccionId);
 
             if (! $direccion) {
-                abort(422, 'La direccion seleccionada no existe.');
+                abort(422, 'La dirección seleccionada no existe.');
             }
 
             if ((int) $direccion->UsuarioId === (int) $cliente->Id) {
@@ -180,7 +192,7 @@ class PedidoController extends Controller
         }
 
         if ($cliente->direcciones()->exists()) {
-            abort(422, 'Selecciona una direccion guardada para continuar.');
+            abort(422, 'Selecciona una dirección guardada para continuar.');
         }
 
         return Direccion::create([
@@ -192,6 +204,7 @@ class PedidoController extends Controller
             'Referencia' => $request->validated('Referencia'),
         ]);
     }
+    // crea un alias para el cliente
 
     private function crearAliasCliente(string $correo, string $dni): string
     {
@@ -203,6 +216,7 @@ class PedidoController extends Controller
 
         return $base !== '' ? $base : 'cliente' . $dni;
     }
+    // confirma el correo del cliente
 
     private function resolverCorreoCliente(string $correo, User $cliente): string
     {

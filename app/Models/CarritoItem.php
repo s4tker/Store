@@ -1,10 +1,12 @@
 <?php
 
+// este modelo representa datos de la tienda
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+// esta clase representa productos del carrito
 class CarritoItem extends Model
 {
     protected $table = 'CarritoItems';
@@ -17,16 +19,19 @@ class CarritoItem extends Model
         'Cantidad',
         'Precio',
     ];
+    // conecta el item con su carrito
 
     public function carrito(): BelongsTo
     {
         return $this->belongsTo(Carrito::class, 'CarritoId', 'Id');
     }
+    // conecta el detalle con su variante
 
     public function variante(): BelongsTo
     {
         return $this->belongsTo(ProductoVariantes::class, 'VarianteId', 'Id');
     }
+    // calcula el subtotal del detalle
 
     public function getSubtotalAttribute(): float
     {

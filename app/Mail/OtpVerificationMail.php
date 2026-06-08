@@ -1,5 +1,6 @@
 <?php
 
+// archivo que prepara un correo del sistema
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -8,9 +9,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+// esta clase arma el correo de codigo
 class OtpVerificationMail extends Mailable
 {
     use Queueable, SerializesModels;
+    // recibe los datos iniciales
 
     public function __construct(
         public readonly string $code,
@@ -18,6 +21,7 @@ class OtpVerificationMail extends Mailable
         public readonly int $minutes = 10,
     ) {
     }
+    // define el asunto del correo
 
     public function envelope(): Envelope
     {
@@ -25,6 +29,7 @@ class OtpVerificationMail extends Mailable
             subject: 'Tu codigo de verificacion',
         );
     }
+    // arma el contenido del correo
 
     public function content(): Content
     {

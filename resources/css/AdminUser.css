@@ -1,5 +1,8 @@
+/* archivo que da estilo a usuarios del panel */
+
 @reference "tailwindcss";
 
+/* define el contenedor de usuarios del panel */
 .user-admin-shell {
     --admin-blue-strong: #0f3d91;
     --admin-blue-main: #2563eb;

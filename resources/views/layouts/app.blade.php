@@ -1,3 +1,5 @@
+{{-- plantilla base con navbar contenido y carrito de la tienda --}}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

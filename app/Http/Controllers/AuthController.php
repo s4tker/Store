@@ -1,5 +1,6 @@
 <?php
 
+// este controlador atiende pantallas y acciones del sistema
 namespace App\Http\Controllers;
 
 use App\Mail\OtpVerificationMail;
@@ -13,9 +14,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
+// esta clase controla acceso registro y codigo
 class AuthController extends Controller
 {
     private const OTP_EXPIRATION_MINUTES = 10;
+    // muestra formulario de login y registro
 
     public function showLogin(Request $request)
     {
@@ -23,6 +26,7 @@ class AuthController extends Controller
             'RedirectTo' => $request->query('redirect', ''),
         ]);
     }
+    // reenvia el codigo de verificacion
 
     public function resendOtp(Request $request)
     {
@@ -80,6 +84,7 @@ class AuthController extends Controller
             ], 422);
         }
     }
+    // muestra formulario para escribir el codigo otp
 
     public function showOtp(Request $request)
     {
@@ -94,6 +99,7 @@ class AuthController extends Controller
             'RedirectTo' => session('otp_redirect', ''),
         ]);
     }
+    // revisa si el correo ya existe
 
     public function checkEmail(Request $request)
     {
@@ -106,6 +112,7 @@ class AuthController extends Controller
 
         return response()->json(['exists' => (bool) $user]);
     }
+    // valida credenciales o datos nuevos de usuario
 
     public function authenticate(Request $request)
     {
@@ -187,6 +194,7 @@ class AuthController extends Controller
             'message' => 'Clave incorrecta',
         ], 422);
     }
+    // verifica el codigo enviado
 
     public function verifyOtp(Request $request)
     {
@@ -262,12 +270,14 @@ class AuthController extends Controller
             'redirect' => $this->resolveRedirect($request),
         ]);
     }
+    // cierra la sesion del usuario
 
     public function logout()
     {
         Auth::logout();
         return redirect()->route('home');
     }
+    // envia al panel o a la tienda segun su rol
 
     protected function resolveRedirect(Request $request): string
     {

@@ -1,5 +1,6 @@
 <?php
 
+// archivo que crea datos de prueba
 namespace Database\Factories;
 
 use App\Models\User;
@@ -7,21 +8,12 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends Factory<User>
- */
+// esta clase crea usuarios de prueba
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
+    // crea datos falsos para pruebas
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
@@ -32,10 +24,8 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
         ];
     }
+    // usa correos sin verificar
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [

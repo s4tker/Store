@@ -1,4 +1,4 @@
-// bloque base
+// guarda referencias del formulario de acceso
 const Token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 const JsonHeaders = {
     'Content-Type': 'application/json',
@@ -9,7 +9,7 @@ const JsonHeaders = {
 
 let authMode = 'login';
 
-// bloque login
+// envia correo y contraseña para iniciar sesion
 function ResetAuthForm() {
     const EmailInput = document.getElementById('AuthEmail');
     const PassInput = document.getElementById('AuthPass');
@@ -32,7 +32,7 @@ function ResetAuthForm() {
     AlertBox.classList.add('hidden');
 }
 
-// bloque ojo
+// cambia visibilidad de la contraseña
 window.togglePassword = function() {
     const PassInput = document.getElementById('AuthPass');
     const EyeIcon = document.getElementById('eyeIcon');
@@ -51,7 +51,7 @@ window.togglePassword = function() {
     EyeIcon.classList.remove('text-blue-600');
 };
 
-// bloque validacion
+// revisa correo y contraseña antes de enviar
 function ValidateEmail(Email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(Email);
 }
@@ -74,14 +74,14 @@ window.handleAuthStep = async function() {
 
     AlertBox.classList.add('hidden');
 
-    // bloque correo
+    // valida que el correo tenga formato correcto
     if (!ValidateEmail(Email)) {
         AlertBox.innerText = 'Ingresa un correo válido';
         AlertBox.classList.remove('hidden');
         return;
     }
 
-    // bloque verificacion
+    // muestra mensaje cuando falta validar la cuenta
     if (PassWrapper.classList.contains('hidden')) {
         Button.innerText = 'Verificando...';
         Button.disabled = true;
@@ -118,7 +118,7 @@ window.handleAuthStep = async function() {
         return;
     }
 
-    // bloque acceso
+    // termina el ingreso si los datos son correctos
     if (!Password) {
         AlertBox.innerText = 'Ingresa tu contraseña';
         AlertBox.classList.remove('hidden');
@@ -157,7 +157,7 @@ window.handleAuthStep = async function() {
     }
 };
 
-// bloque arranque
+// prepara eventos del formulario de login
 document.addEventListener('DOMContentLoaded', () => {
     ResetAuthForm();
 
