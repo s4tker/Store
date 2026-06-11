@@ -4,7 +4,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Inventario;
 use App\Models\Marca;
+use App\Models\MovimientoStock;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\ProductoImagenes;
@@ -68,6 +70,7 @@ class AdminController extends Controller
             'Productos' => $products,
             'PedidosCount' => $ordersCount,
             'ProductosAdmin' => $this->buildProductEditorPayloads($products),
+            'StockAlerts' => $this->buildStockAlertPayloads(),
         ]);
     }
     // muestra productos con marcas categorias y stock
@@ -503,6 +506,36 @@ class AdminController extends Controller
     public function updateProduct(Request $request, Producto $producto)
     {
         return $this->saveProduct($request, $producto);
+    }
+    // ajusta stock directo desde alertas del panel
+
+    public function updateStock(Request $request, ProductoVariantes $variante)
+    {
+        $data = $request->validate([
+            'Stock' => ['required', 'integer', 'min:0', 'max:32767'],
+        ]);
+
+        DB::transaction(function () use ($data, $variante) {
+            $inventario = Inventario::firstOrNew(['VarianteId' => $variante->Id]);
+            $stockAnterior = (int) ($inventario->Stock ?? 0);
+            $stockNuevo = (int) $data['Stock'];
+
+            $inventario->Stock = $stockNuevo;
+            $inventario->save();
+
+            $diferencia = $stockNuevo - $stockAnterior;
+
+            if ($diferencia !== 0) {
+                MovimientoStock::create([
+                    'VarianteId' => $variante->Id,
+                    'Tipo' => $diferencia > 0 ? 'Entrada' : 'Salida',
+                    'Cantidad' => abs($diferencia),
+                    'Motivo' => 'Ajuste admin desde alertas',
+                ]);
+            }
+        });
+
+        return back()->with('stock_status', 'Stock actualizado correctamente.');
     }
     // cambia correo rol o contraseña del usuario
 
@@ -971,6 +1004,84 @@ class AdminController extends Controller
             ->map(fn (Producto $product) => $this->buildProductEditorPayload($product, $stocks, $attributesByVariant))
             ->values()
             ->all();
+    }
+    // prepara alertas reales de inventario para el panel admin
+
+    protected function buildStockAlertPayloads(): array
+    {
+        return ProductoVariantes::query()
+            ->with([
+                'producto' => fn ($query) => $query->select(['Id', 'Nombre', 'Slug', 'MarcaId', 'CategoriaId'])->with([
+                    'marca',
+                    'categoria.padre',
+                    'imagenes',
+                ]),
+            ])
+            ->leftJoin('Inventario', 'Inventario.VarianteId', '=', 'ProductoVariantes.Id')
+            ->whereRaw('COALESCE(Inventario.Stock, 0) <= ?', [20])
+            ->orderByRaw('COALESCE(Inventario.Stock, 0) asc')
+            ->orderBy('ProductoVariantes.Id')
+            ->get([
+                'ProductoVariantes.Id',
+                'ProductoVariantes.ProductoId',
+                'ProductoVariantes.Sku',
+                DB::raw('COALESCE(Inventario.Stock, 0) as StockActual'),
+            ])
+            ->map(function (ProductoVariantes $variant) {
+                $stock = (int) $variant->StockActual;
+                $level = $this->resolveStockAlertLevel($stock);
+                $product = $variant->producto;
+                $category = $product?->categoria;
+
+                return [
+                    'variante_id' => $variant->Id,
+                    'producto_id' => $product?->Id,
+                    'producto' => $product?->Nombre ?? 'Producto sin nombre',
+                    'sku' => $variant->Sku ?: 'Sin SKU',
+                    'stock' => $stock,
+                    'nivel' => $level['label'],
+                    'tono' => $level['tone'],
+                    'icono' => $level['icon'],
+                    'mensaje' => $level['message'],
+                    'marca' => $product?->marca?->Nombre ?? 'Sin marca',
+                    'categoria' => $category?->ParentId
+                        ? $category->padre?->Nombre . ' / ' . $category->Nombre
+                        : ($category?->Nombre ?? 'Sin categoría'),
+                    'imagen' => $product ? $this->resolveImageUrl($product->imagenes->first()?->Url) : asset('img/logo/logo.png'),
+                    'stock_update_url' => route('admin.stock.update', $variant),
+                    'advanced_url' => route('admin.productos.index') . '?producto=' . $product?->Id,
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    protected function resolveStockAlertLevel(int $stock): array
+    {
+        if ($stock <= 5) {
+            return [
+                'label' => 'Stock en peligro',
+                'tone' => 'danger',
+                'icon' => 'fa-triangle-exclamation',
+                'message' => 'Reposición urgente.',
+            ];
+        }
+
+        if ($stock <= 12) {
+            return [
+                'label' => 'Stock crítico',
+                'tone' => 'critical',
+                'icon' => 'fa-circle-exclamation',
+                'message' => 'Queda muy poco inventario.',
+            ];
+        }
+
+        return [
+            'label' => 'Stock bajo',
+            'tone' => 'low',
+            'icon' => 'fa-bell',
+            'message' => 'Planifica reposición.',
+        ];
     }
     // prepara datos de un usuario del panel
 

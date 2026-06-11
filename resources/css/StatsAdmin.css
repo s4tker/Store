@@ -141,6 +141,127 @@
     z-index: 1;
 }
 
+.stats-admin-stock-flash {
+    @apply flex items-center gap-2 rounded-[0.85rem] border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700;
+}
+
+.stats-admin-stock-panel {
+    max-width: 72rem;
+}
+
+.stats-admin-stock-legend {
+    @apply flex flex-wrap gap-2 text-[11px] font-semibold;
+}
+
+.stats-admin-stock-legend span {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5;
+}
+
+.stats-admin-stock-legend svg,
+.stats-admin-stock-form button svg,
+.stats-admin-stock-advanced svg {
+    @apply h-3.5 w-3.5 shrink-0;
+}
+
+.stats-admin-stock-legend .is-low {
+    @apply border-amber-200 bg-amber-50 text-amber-700;
+}
+
+.stats-admin-stock-legend .is-critical {
+    @apply border-orange-200 bg-orange-50 text-orange-700;
+}
+
+.stats-admin-stock-legend .is-danger {
+    @apply border-rose-200 bg-rose-50 text-rose-700;
+}
+
+.stats-admin-stock-alert {
+    @apply flex max-w-5xl flex-col gap-3 rounded-[1rem] border bg-white p-3 shadow-sm md:flex-row;
+}
+
+.stats-admin-stock-alert.is-low {
+    @apply border-amber-200 bg-amber-50/45;
+}
+
+.stats-admin-stock-alert.is-critical {
+    @apply border-orange-200 bg-orange-50/45;
+}
+
+.stats-admin-stock-alert.is-danger {
+    @apply border-rose-200 bg-rose-50/50;
+}
+
+.stats-admin-stock-alert-media {
+    @apply relative h-16 w-16 shrink-0 overflow-hidden rounded-[0.85rem] border border-white bg-white;
+}
+
+.stats-admin-stock-alert-media img {
+    @apply h-full w-full object-cover;
+}
+
+.stats-admin-stock-alert-media span {
+    @apply absolute bottom-1 right-1 inline-flex h-7 w-7 items-center justify-center rounded-full text-white shadow-lg;
+}
+
+.stats-admin-stock-alert-media span svg {
+    @apply h-4 w-4;
+}
+
+.stats-admin-stock-alert.is-low .stats-admin-stock-alert-media span {
+    @apply bg-amber-500;
+}
+
+.stats-admin-stock-alert.is-critical .stats-admin-stock-alert-media span {
+    @apply bg-orange-500;
+}
+
+.stats-admin-stock-alert.is-danger .stats-admin-stock-alert-media span {
+    @apply bg-rose-600;
+}
+
+.stats-admin-stock-level {
+    @apply text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500;
+}
+
+.stats-admin-stock-count {
+    @apply inline-flex shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-bold text-slate-950;
+}
+
+.stats-admin-stock-form {
+    @apply flex w-fit flex-wrap items-center gap-1.5 rounded-full border border-slate-200 bg-white p-1;
+}
+
+.stats-admin-stock-form label {
+    @apply pl-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400;
+}
+
+.stats-admin-stock-form input {
+    @apply h-8 w-20 rounded-full border border-slate-200 px-2.5 text-sm font-semibold text-slate-900 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100;
+}
+
+.stats-admin-stock-form input::-webkit-outer-spin-button,
+.stats-admin-stock-form input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.stats-admin-stock-form input {
+    -moz-appearance: textfield;
+}
+
+.stats-admin-stock-form button,
+.stats-admin-stock-advanced {
+    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-full px-3 text-[10px] font-bold uppercase tracking-[0.08em] transition;
+}
+
+.stats-admin-stock-form button {
+    @apply bg-slate-950 text-white hover:bg-slate-800;
+}
+
+.stats-admin-stock-advanced {
+    @apply w-fit border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:text-slate-950;
+}
+
 #TimelineScopeFilters {
     max-width: 100%;
 }

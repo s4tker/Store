@@ -33,6 +33,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/pedidos/{pedido}/exportar', [AdminController::class, 'exportOrder'])->name('admin.pedidos.export-one');
     Route::patch('/admin/pedidos/{pedido}/estado', [AdminController::class, 'updateOrderStatus'])->name('admin.pedidos.estado');
     Route::get('/admin/estadisticas', [AdminController::class, 'statistics'])->name('admin.estadisticas.index');
+    Route::patch('/admin/stock/{variante}', [AdminController::class, 'updateStock'])->name('admin.stock.update');
     Route::post('/admin/productos/store', [AdminController::class, 'storeProduct'])->name('admin.productos.store');
     Route::put('/admin/productos/{producto}', [AdminController::class, 'updateProduct'])->name('admin.productos.update');
     Route::delete('/admin/productos/{producto}', [AdminController::class, 'destroyProduct'])->name('admin.productos.destroy');

@@ -5,7 +5,7 @@
 @section('title', 'Panel | ElectroShop')
 
 @section('styles')
-    @vite(['resources/css/admin.css'])
+    @vite(['resources/css/admin.css', 'resources/css/StatsAdmin.css'])
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
 <div class="flex min-h-screen">
 <div id="AdminNavOverlay" class="fixed inset-0 z-40 hidden bg-slate-950/30 backdrop-blur-sm lg:hidden" onclick="ToggleAdminNav(false)"></div>
 
-        <aside id="AdminNavDrawer" class="admin-mobile-drawer fixed inset-y-0 left-0 z-50 flex w-[20.5rem] max-w-[92vw] flex-col bg-transparent p-3 sm:p-4 lg:relative lg:translate-x-0 lg:w-[19.25rem] lg:pl-7 lg:pr-2 lg:py-6">
+        <aside id="AdminNavDrawer" class="admin-mobile-drawer fixed inset-y-0 left-0 z-50 flex w-[20.5rem] max-w-[92vw] flex-col bg-transparent p-3 sm:p-4 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:w-[19.25rem] lg:pl-0 lg:pr-2 lg:py-6">
 <div class="admin-sidebar-shell flex h-full flex-col rounded-[1.6rem] border p-5 text-slate-200 shadow-2xl">
 <div class="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
                     <a href="{{ route('home') }}" class="flex items-center gap-3">
@@ -108,6 +108,15 @@
                         </x-admin.icon>
                         <span class="admin-sidebar-label">Estadísticas</span>
                     </a>
+
+                    <button type="button" class="admin-sidebar-button" data-section="notificaciones">
+                        <x-admin.icon tone="rose" size="sm" class="admin-sidebar-icon bg-slate-800 text-rose-300 ring-0">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.6 1.43L4 17h5m6 0a3 3 0 0 1-6 0"/>
+                            </svg>
+                        </x-admin.icon>
+                        <span class="admin-sidebar-label">Notificaciones</span>
+                    </button>
                 </nav>
 <div class="mt-5 border-t border-white/10 pt-4">
                     <a href="{{ route('logout') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white/8 px-3.5 py-2.5 text-[11px] font-medium uppercase tracking-[0.16em] text-rose-300 transition hover:bg-white/12 hover:text-rose-200">
@@ -182,6 +191,7 @@
                             <a href="{{ route('admin.usuarios.index') }}" class="admin-tab shrink-0">Usuarios</a>
                             <a href="{{ route('admin.pedidos.index') }}" class="admin-tab shrink-0">Gestión de pedidos</a>
                             <a href="{{ route('admin.estadisticas.index') }}" class="admin-tab shrink-0">Estadísticas</a>
+                            <button type="button" class="admin-tab shrink-0" data-section="notificaciones">Notificaciones</button>
                         </nav>
                     </div>
 <section class="space-y-6">
@@ -190,6 +200,9 @@
                         </div>
 <div class="admin-section hidden" id="section-marcas">
                             @include('Admin.sections.marcas')
+                        </div>
+<div class="admin-section hidden" id="section-notificaciones">
+                            @include('Admin.sections.notificaciones')
                         </div>
                     </section>
                 </main>

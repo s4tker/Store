@@ -370,6 +370,22 @@ function initProductEditor() {
     syncCategoryState();
     syncPriceFields('offer');
     filterProducts();
+    loadProductFromQuery();
+}
+
+// abre el editor real cuando se llega desde una alerta de stock
+function loadProductFromQuery() {
+    const productId = new URLSearchParams(window.location.search).get('producto');
+
+    if (!productId) {
+        return;
+    }
+
+    const product = adminProductsMap.get(String(productId));
+
+    if (product) {
+        loadProductIntoForm(product);
+    }
 }
 
 // agrega una fila de atributo al producto
