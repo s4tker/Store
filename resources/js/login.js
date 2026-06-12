@@ -17,7 +17,6 @@ function ResetAuthForm() {
     const Subtitle = document.getElementById('AuthSubtitle');
     const Button = document.getElementById('AuthBtn');
     const AlertBox = document.getElementById('AuthAlert');
-
     if (!EmailInput || !PassInput || !PassWrapper || !Subtitle || !Button || !AlertBox) {
         return;
     }
@@ -30,6 +29,8 @@ function ResetAuthForm() {
     Subtitle.innerText = 'Ingresa tu correo para continuar';
     Button.innerText = 'Continuar';
     AlertBox.classList.add('hidden');
+
+    UpdateForgotPasswordLink(EmailInput.value.trim(), document.getElementById('AuthRedirect')?.value || '');
 }
 
 // cambia visibilidad de la contraseña
@@ -54,6 +55,26 @@ window.togglePassword = function() {
 // revisa correo y contraseña antes de enviar
 function ValidateEmail(Email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(Email);
+}
+
+// prepara enlace de recuperacion con el correo actual
+function UpdateForgotPasswordLink(Email, RedirectTo) {
+    const ForgotPasswordLink = document.getElementById('ForgotPasswordLink');
+
+    if (!ForgotPasswordLink) {
+        return;
+    }
+
+    const Url = new URL(ForgotPasswordLink.href, window.location.origin);
+    Url.searchParams.set('email', Email);
+
+    if (RedirectTo) {
+        Url.searchParams.set('redirect', RedirectTo);
+    } else {
+        Url.searchParams.delete('redirect');
+    }
+
+    ForgotPasswordLink.href = Url.toString();
 }
 
 window.handleAuthStep = async function() {
@@ -103,6 +124,7 @@ window.handleAuthStep = async function() {
                 authMode = 'login';
                 document.getElementById('AuthSubtitle').innerText = 'Bienvenido, ingresa tu clave';
                 Button.innerText = 'Iniciar Sesión';
+                UpdateForgotPasswordLink(Email, RedirectTo);
             } else {
                 authMode = 'register';
                 document.getElementById('AuthSubtitle').innerText = 'Correo nuevo: Crea tu clave';
@@ -147,6 +169,11 @@ window.handleAuthStep = async function() {
         }
 
         AlertBox.innerText = Result.message || 'Error';
+
+        if (authMode === 'login') {
+            UpdateForgotPasswordLink(Email, RedirectTo);
+        }
+
         AlertBox.classList.remove('hidden');
         Button.disabled = false;
         Button.innerText = authMode === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta';
@@ -170,5 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
             Event.preventDefault();
             window.handleAuthStep();
         });
+    });
+
+    document.getElementById('AuthEmail')?.addEventListener('input', (Event) => {
+        UpdateForgotPasswordLink(Event.target.value.trim(), document.getElementById('AuthRedirect')?.value || '');
     });
 });

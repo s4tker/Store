@@ -34,8 +34,8 @@
                         </svg>
                     </button>
                 </div>
-
                 <button id="AuthBtn" onclick="handleAuthStep()" class="btn-primary-es w-full rounded-2xl bg-slate-900 py-4 text-[11px] font-black uppercase tracking-widest text-white transition-all hover:bg-blue-600">Continuar</button>
+                <a id="ForgotPasswordLink" href="{{ route('password.forgot', ['redirect' => $RedirectTo]) }}" class="block text-center text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors hover:text-blue-600">Olvide mi contraseña</a>
 <div id="AuthAlert" class="hidden rounded-xl bg-red-50 p-3 text-center text-[10px] font-bold uppercase text-red-600"></div>
             </div>
 

@@ -14,6 +14,11 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
+    // guarda la clave API de Brevo para correos transaccionales
+    'brevo' => [
+        'key' => env('BREVO_API_KEY'),
+    ],
+
     // guarda datos de amazon
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),

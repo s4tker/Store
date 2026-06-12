@@ -4,20 +4,27 @@
 namespace App\Http\Controllers;
 
 use App\Mail\OtpVerificationMail;
+use App\Mail\PasswordResetCodeMail;
 use App\Models\PendingUserVerification;
+use App\Models\PasswordReset;
 use App\Models\User;
 use App\Models\Role;
+use App\Services\BrevoMailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 // esta clase controla acceso registro y codigo
 class AuthController extends Controller
 {
     private const OTP_EXPIRATION_MINUTES = 10;
+    private const PASSWORD_RESET_EXPIRATION_MINUTES = 10;
+
+    public function __construct(private readonly BrevoMailService $mailService)
+    {
+    }
     // muestra formulario de login y registro
 
     public function showLogin(Request $request)
@@ -62,7 +69,7 @@ class AuthController extends Controller
                 'CreatedAt' => now(),
             ]);
 
-            Mail::to($email)->send(new OtpVerificationMail(
+            $this->mailService->send($email, new OtpVerificationMail(
                 $otpCode,
                 $email,
                 self::OTP_EXPIRATION_MINUTES,
@@ -112,6 +119,136 @@ class AuthController extends Controller
 
         return response()->json(['exists' => (bool) $user]);
     }
+    // muestra formulario para pedir codigo de recuperacion
+
+    public function showForgotPassword(Request $request)
+    {
+        return view('Login.forgot-password', [
+            'Email' => mb_strtolower(trim((string) $request->query('email', ''))),
+            'RedirectTo' => $request->query('redirect', ''),
+        ]);
+    }
+    // envia codigo para restablecer contraseña
+
+    public function sendPasswordResetCode(Request $request)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'redirect' => ['nullable', 'string'],
+        ]);
+
+        $email = mb_strtolower(trim($data['email']));
+        $user = User::where('Correo', $email)->first();
+
+        if (! $user) {
+            return back()
+                ->withInput(['email' => $email])
+                ->withErrors(['email' => 'No encontramos una cuenta con ese correo.']);
+        }
+
+        try {
+            $code = (string) random_int(100000, 999999);
+
+            PasswordReset::updateOrCreate(
+                ['Correo' => $email],
+                [
+                    'Token' => Hash::make($code),
+                    'CreatedAt' => now(),
+                ],
+            );
+
+            $this->mailService->send($email, new PasswordResetCodeMail(
+                $code,
+                $email,
+                self::PASSWORD_RESET_EXPIRATION_MINUTES,
+            ));
+
+            session([
+                'password_reset_email' => $email,
+                'password_reset_redirect' => $this->normalizeRedirect($data['redirect'] ?? ''),
+            ]);
+
+            return redirect()
+                ->route('password.reset.form')
+                ->with('status', 'Codigo enviado a tu correo.');
+        } catch (\Exception $e) {
+            Log::error('No se pudo enviar el codigo de recuperacion', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()
+                ->withInput(['email' => $email])
+                ->withErrors(['email' => 'No se pudo enviar el codigo. Revisa la configuracion de correo.']);
+        }
+    }
+    // muestra formulario para escribir codigo y nueva clave
+
+    public function showResetPassword(Request $request)
+    {
+        $email = mb_strtolower(trim((string) (session('password_reset_email') ?: $request->query('email', ''))));
+
+        if ($email === '' || ! PasswordReset::where('Correo', $email)->exists()) {
+            return redirect()->route('password.forgot', ['email' => $email]);
+        }
+
+        return view('Login.reset-password', [
+            'Email' => $email,
+            'RedirectTo' => session('password_reset_redirect', ''),
+        ]);
+    }
+    // valida codigo y cambia contraseña
+
+    public function resetPassword(Request $request)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'code' => ['required', 'digits:6'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'redirect' => ['nullable', 'string'],
+        ]);
+
+        $email = mb_strtolower(trim($data['email']));
+        $reset = PasswordReset::where('Correo', $email)->latest('CreatedAt')->first();
+
+        if (! $reset) {
+            return back()->withErrors(['code' => 'Solicita un codigo nuevo.']);
+        }
+
+        if ($reset->CreatedAt && $reset->CreatedAt->copy()->addMinutes(self::PASSWORD_RESET_EXPIRATION_MINUTES)->isPast()) {
+            $reset->delete();
+
+            return redirect()
+                ->route('password.forgot', ['email' => $email])
+                ->withErrors(['email' => 'El codigo expiro. Solicita uno nuevo.']);
+        }
+
+        if (! Hash::check($data['code'], $reset->Token)) {
+            return back()
+                ->withInput(['email' => $email])
+                ->withErrors(['code' => 'Codigo incorrecto.']);
+        }
+
+        $user = User::where('Correo', $email)->first();
+
+        if (! $user) {
+            $reset->delete();
+
+            return redirect()
+                ->route('password.forgot')
+                ->withErrors(['email' => 'No encontramos una cuenta con ese correo.']);
+        }
+
+        $user->Password = Hash::make($data['password']);
+        $user->save();
+        $reset->delete();
+
+        Auth::login($user);
+        session()->forget(['password_reset_email', 'password_reset_redirect']);
+
+        return redirect($this->normalizeRedirect($data['redirect'] ?? ''))
+            ->with('status', 'Contraseña actualizada correctamente.');
+    }
     // valida credenciales o datos nuevos de usuario
 
     public function authenticate(Request $request)
@@ -145,7 +282,7 @@ class AuthController extends Controller
                     ],
                 );
 
-                Mail::to($email)->send(new OtpVerificationMail(
+                $this->mailService->send($email, new OtpVerificationMail(
                     $otpCode,
                     $email,
                     self::OTP_EXPIRATION_MINUTES,
@@ -283,7 +420,13 @@ class AuthController extends Controller
     {
         $redirect = (string) $request->input('redirect', '');
 
-        if ($redirect !== '' && str_starts_with($redirect, '/')) {
+        return $this->normalizeRedirect($redirect);
+    }
+    // evita redirecciones externas
+
+    protected function normalizeRedirect(string $redirect): string
+    {
+        if ($redirect !== '' && str_starts_with($redirect, '/') && ! str_starts_with($redirect, '//')) {
             return $redirect;
         }
 

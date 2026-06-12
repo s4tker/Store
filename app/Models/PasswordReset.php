@@ -15,6 +15,11 @@ class PasswordReset extends Model
 
     protected $fillable = [
         'Correo',
-        'Token'
+        'Token',
+        'CreatedAt',
+    ];
+
+    protected $casts = [
+        'CreatedAt' => 'datetime',
     ];
 }

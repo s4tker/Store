@@ -21,6 +21,10 @@ Route::post('/auth/process', [AuthController::class, 'authenticate'])->name('aut
 Route::get('/auth/otp', [AuthController::class, 'showOtp'])->name('auth.otp.show');
 Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])->name('auth.otp.verify');
 Route::post('/auth/otp/resend', [AuthController::class, 'resendOtp'])->name('auth.otp.resend');
+Route::get('/password/forgot', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
+Route::post('/password/email', [AuthController::class, 'sendPasswordResetCode'])->name('password.email');
+Route::get('/password/reset', [AuthController::class, 'showResetPassword'])->name('password.reset.form');
+Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'admin'])->group(function () {
