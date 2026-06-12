@@ -248,6 +248,27 @@ body {
     @apply min-w-0 flex-1 truncate text-left font-semibold;
 }
 
+.admin-notification-badge {
+    @apply inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-rose-500 px-1.5 text-[10px] font-black leading-none text-white shadow-lg shadow-rose-950/20;
+}
+
+.admin-notification-pill {
+    @apply inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white/10 px-2 text-xs font-black text-slate-300;
+}
+
+.admin-notification-pill.is-active {
+    @apply bg-rose-500 text-white shadow-lg shadow-rose-950/20;
+}
+
+.admin-tab-badge {
+    @apply ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-[10px] font-black leading-none text-white;
+}
+
+.admin-tab.active .admin-tab-badge,
+.admin-tab.is-active .admin-tab-badge {
+    @apply bg-white text-slate-950;
+}
+
 .admin-sidebar-icon {
     @apply h-9 w-9 shrink-0 rounded-lg flex items-center justify-center bg-transparent transition-colors duration-200 text-slate-400;
 }

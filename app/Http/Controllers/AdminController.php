@@ -1022,9 +1022,9 @@ class AdminController extends Controller
             ->orderByRaw('COALESCE(Inventario.Stock, 0) asc')
             ->orderBy('ProductoVariantes.Id')
             ->get([
-                'ProductoVariantes.Id',
-                'ProductoVariantes.ProductoId',
-                'ProductoVariantes.Sku',
+                'ProductoVariantes.Id as Id',
+                'ProductoVariantes.ProductoId as ProductoId',
+                'ProductoVariantes.Sku as Sku',
                 DB::raw('COALESCE(Inventario.Stock, 0) as StockActual'),
             ])
             ->map(function (ProductoVariantes $variant) {

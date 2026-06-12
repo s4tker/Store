@@ -9,6 +9,10 @@
 @endsection
 
 @section('content')
+@php
+    $stockAlertCount = count($StockAlerts ?? []);
+    $stockAlertLabel = $stockAlertCount > 99 ? '99+' : $stockAlertCount;
+@endphp
 <div class="admin-page -mx-4 md:-mx-10">
 <div class="flex min-h-screen">
 <div id="AdminNavOverlay" class="fixed inset-0 z-40 hidden bg-slate-950/30 backdrop-blur-sm lg:hidden" onclick="ToggleAdminNav(false)"></div>
@@ -50,6 +54,10 @@
 <div class="flex items-center justify-between rounded-[0.9rem] bg-white/5 px-3 py-2.5">
                             <span class="text-xs text-slate-400">Pedidos</span>
                             <span class="text-sm font-semibold text-white">{{ $PedidosCount ?? 0 }}</span>
+                        </div>
+<div class="flex items-center justify-between rounded-[0.9rem] bg-white/5 px-3 py-2.5">
+                            <span class="text-xs text-slate-400">Notificaciones</span>
+                            <span class="admin-notification-pill {{ $stockAlertCount > 0 ? 'is-active' : '' }}">{{ $stockAlertLabel }}</span>
                         </div>
                     </div>
                 </div>
@@ -116,6 +124,9 @@
                             </svg>
                         </x-admin.icon>
                         <span class="admin-sidebar-label">Notificaciones</span>
+                        @if($stockAlertCount > 0)
+                            <span class="admin-notification-badge">{{ $stockAlertLabel }}</span>
+                        @endif
                     </button>
                 </nav>
 <div class="mt-5 border-t border-white/10 pt-4">
@@ -156,7 +167,7 @@
                                 <p class="admin-card-kicker">Panel</p>
                                 <h1 class="admin-title mt-2">Administración</h1>
                             </div>
-<div class="grid w-full max-w-xl gap-3 sm:grid-cols-3">
+<div class="grid w-full max-w-3xl gap-3 sm:grid-cols-2 xl:grid-cols-4">
                                 <x-admin.stat-card label="Productos" :value="$Productos->count()" tone="blue">
                                     <x-slot:icon>
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,6 +191,14 @@
                                         </svg>
                                     </x-slot:icon>
                                 </x-admin.stat-card>
+
+                                <x-admin.stat-card label="Alertas stock" :value="$stockAlertLabel" tone="amber">
+                                    <x-slot:icon>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.17V11a6 6 0 1 0-12 0v3.17a2 2 0 0 1-.6 1.43L4 17h5m6 0a3 3 0 0 1-6 0"/>
+                                        </svg>
+                                    </x-slot:icon>
+                                </x-admin.stat-card>
                             </div>
                         </div>
                     </section>
@@ -191,7 +210,12 @@
                             <a href="{{ route('admin.usuarios.index') }}" class="admin-tab shrink-0">Usuarios</a>
                             <a href="{{ route('admin.pedidos.index') }}" class="admin-tab shrink-0">Gestión de pedidos</a>
                             <a href="{{ route('admin.estadisticas.index') }}" class="admin-tab shrink-0">Estadísticas</a>
-                            <button type="button" class="admin-tab shrink-0" data-section="notificaciones">Notificaciones</button>
+                            <button type="button" class="admin-tab shrink-0" data-section="notificaciones">
+                                Notificaciones
+                                @if($stockAlertCount > 0)
+                                    <span class="admin-tab-badge">{{ $stockAlertLabel }}</span>
+                                @endif
+                            </button>
                         </nav>
                     </div>
 <section class="space-y-6">
