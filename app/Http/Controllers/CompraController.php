@@ -24,9 +24,12 @@ class CompraController extends Controller
             ? $usuarioCompra->direcciones()->orderByDesc('Id')->get()
             : collect();
 
+        $datosCompletos = $usuarioCompra ? $usuarioCompra->isDatosIdentificacionCompletos() : false;
+
         return view('Compras.formulario', [
             'UsuarioCompra' => $usuarioCompra,
             'DireccionesCompra' => $direccionesCompra,
+            'DatosCompletos' => $datosCompletos,
         ]);
     }
 }

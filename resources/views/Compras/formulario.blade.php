@@ -18,6 +18,7 @@ $compraBootstrap = [
 'BuscarDniUrl' => url('/clientes/dni'),
 'TieneDirecciones' => $tieneDirecciones,
 'DireccionSeleccionadaId' => $direccionSeleccionadaId,
+'DatosCompletos' => $DatosCompletos,
 'Form' => [
 'Documento' => old('Documento', $UsuarioCompra?->Dni ?? ''),
 'Telefono' => old('Telefono', $UsuarioCompra?->Telefono ?? ''),
@@ -73,7 +74,48 @@ $compraBootstrap = [
                         <span class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-black italic">01</span>
                         <h2 class="text-xl font-black text-slate-900 uppercase italic">Identificación</h2>
                     </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                {{-- CARD RESUMEN (Si datos están completos) --}}
+                <div x-show="datosCompletos && !editMode" class="space-y-6 animate-fadeIn">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3 text-sm">
+                            <i class="fa-solid fa-user text-lg text-slate-900 w-5 h-5"></i>
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nombre completo</p>
+                                <p class="text-base font-black text-slate-900" x-text="`${form.Nombre} ${form.Apellidos}`"></p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <i class="fa-solid fa-id-card text-lg text-slate-900 w-5 h-5"></i>
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">DNI</p>
+                                <p class="text-base font-black text-slate-900 font-mono" x-text="form.Documento"></p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <i class="fa-solid fa-phone text-lg text-slate-900 w-5 h-5"></i>
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Teléfono</p>
+                                <p class="text-base font-black text-slate-900 font-mono" x-text="form.Telefono"></p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <i class="fa-solid fa-envelope text-lg text-slate-900 w-5 h-5"></i>
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Correo electrónico</p>
+                                <p class="text-base font-black text-blue-600 truncate" x-text="form.Correo"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" @click="toggleEditMode()" class="w-full inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition-colors hover:bg-blue-600">
+                        <i class="fa-solid fa-edit mr-2 w-4 h-4"></i> Editar datos
+                    </button>
+                </div>
+
+                {{-- FORMULARIO (Si datos no están completos O modo edición activo) --}}
+                <div x-show="!datosCompletos || editMode" class="space-y-6 animate-fadeIn">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div class="space-y-2">
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">DNI</label>
                             <input id="CompraDocumento" type="text" name="Documento" x-model="form.Documento" x-on:blur="buscarCliente" inputmode="numeric" maxlength="8" required placeholder="DNI de 8 dígitos" class="industrial-input">
@@ -95,6 +137,17 @@ $compraBootstrap = [
                             <input id="CompraCorreo" type="email" name="Correo" x-model="form.Correo" required class="industrial-input">
                         </div>
                     </div>
+
+                    {{-- Botones de acción si está en modo edición --}}
+                    <div x-show="editMode" class="flex gap-3 pt-4 border-t border-slate-200">
+                        <button type="button" @click="toggleEditMode()" class="flex-1 inline-flex items-center justify-center rounded-2xl bg-slate-200 px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 transition-colors hover:bg-slate-300">
+                            Cancelar
+                        </button>
+                        <button type="button" @click="saveIdentificacionChanges()" class="flex-1 inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition-colors hover:bg-blue-700">
+                            <i class="fa-solid fa-check mr-2 w-4 h-4"></i> Guardar cambios
+                        </button>
+                    </div>
+                </div>
                 </section>
 <section class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-xl shadow-slate-200/50 border border-slate-100">
 <div class="flex items-center gap-4 mb-8">
@@ -182,17 +235,6 @@ $compraBootstrap = [
                         </label>
 
                         <label class="relative cursor-pointer group">
-                            <input type="radio" name="MetodoPago" value="Transferencia" class="peer sr-only" x-model="metodoPago" data-payment-method="Transferencia" @checked(old('MetodoPago', 'Tarjeta' )==='Transferencia' )>
-<div class="min-h-[110px] p-5 border-2 border-slate-100 rounded-[2rem] bg-slate-50/50 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:shadow-md transition-all flex flex-col justify-between group-hover:border-slate-200">
-<div class="flex justify-between items-start">
-                                    <span class="text-[10px] font-black uppercase tracking-tighter text-slate-900">Transferencia</span>
-<div class="w-2 h-2 rounded-full bg-slate-200"></div>
-                                </div>
-                                <span class="block text-[11px] font-extrabold text-slate-500 uppercase tracking-tight">Banca móvil</span>
-                            </div>
-                        </label>
-
-                        <label class="relative cursor-pointer group">
                             <input type="radio" name="MetodoPago" value="Yape" class="peer sr-only" x-model="metodoPago" data-payment-method="Yape" @checked(old('MetodoPago', 'Tarjeta' )==='Yape' )>
 <div class="min-h-[110px] p-5 border-2 border-slate-100 rounded-[2rem] bg-slate-50/50 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:shadow-md transition-all flex flex-col justify-between group-hover:border-slate-200">
 <div class="flex justify-between items-start">
@@ -218,9 +260,7 @@ $compraBootstrap = [
                 </section>
 
                 <button type="submit" class="btn-confirm group flex items-center justify-center w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-6 rounded-[2rem] text-sm uppercase tracking-[0.3em] transition-all shadow-2xl shadow-blue-500/40"> Confirmar Pedido S/. <span x-text="totals.total.toFixed(2)" class="ml-2">0.00</span>
-                    <svg class="w-5 h-5 ml-3 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M13 7l5 5m0 0l-5 5m5-5H6" stroke-width="3"></path>
-                    </svg>
+                    <i class="fa-solid fa-chevron-right ml-3 w-5 h-5 group-hover:translate-x-2 transition-transform"></i>
                 </button>
             </form>
         </div>

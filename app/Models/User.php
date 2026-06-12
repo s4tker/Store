@@ -72,4 +72,14 @@ class User extends Authenticatable
     {
         return $this->attributes['CreatedAt'] ?? null;
     }
+    // verifica si el usuario tiene datos personales completos para identificacion
+
+    public function isDatosIdentificacionCompletos(): bool
+    {
+        return !empty($this->Nombre)
+            && !empty($this->Apellidos)
+            && !empty($this->Dni)
+            && !empty($this->Telefono)
+            && !empty($this->Correo);
+    }
 }

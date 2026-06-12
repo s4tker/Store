@@ -13,6 +13,8 @@ window.compraFlow = function () {
         dirId: CompraBootstrap.DireccionSeleccionadaId || null,
         metodoPago: CompraBootstrap.MetodoPago || "Tarjeta",
         tieneDirecciones: Boolean(CompraBootstrap.TieneDirecciones),
+        datosCompletos: Boolean(CompraBootstrap.DatosCompletos),
+        editMode: false,
         direccionesGuardadas: CompraBootstrap.Direcciones || [],
         totals: { total: 0 },
         form: {
@@ -32,6 +34,19 @@ window.compraFlow = function () {
             this.form.Ciudad = dir.Ciudad || "";
             this.form.Direccion = dir.Direccion || "";
             this.form.Referencia = dir.Referencia || "";
+        },
+        toggleEditMode() {
+            this.editMode = !this.editMode;
+        },
+        saveIdentificacionChanges() {
+            this.datosCompletos = Boolean(
+                this.form.Nombre &&
+                this.form.Apellidos &&
+                this.form.Documento &&
+                this.form.Telefono &&
+                this.form.Correo
+            );
+            this.editMode = false;
         },
         async buscarCliente() {
             const dni = String(this.form.Documento || "").replace(/\D/g, "");

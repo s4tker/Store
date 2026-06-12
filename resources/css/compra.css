@@ -4,10 +4,40 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
 
+/* Excepción para Font Awesome - usar su fuente específica */
+i[class*="fa-"],
+i[class*="fab"],
+i[class*="fas"],
+i[class*="far"],
+.fa,
+.fas,
+.far,
+.fab {
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900;
+    font-style: normal;
+}
+
 /* ajusta el fondo y la base visual */
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f8fafc;
+}
+
+/* define animación fadeIn */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
