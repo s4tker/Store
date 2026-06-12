@@ -22,10 +22,17 @@
         </div>
 <div class="flex items-center gap-3 md:gap-8 shrink-0">
             @auth
-                <a href="{{ route('account') }}" class="flex flex-col items-end group">
-                    <span class="hidden md:block text-[9px] text-slate-500 font-black uppercase tracking-[0.2em] group-hover:text-blue-400 transition-colors">Mi Perfil</span>
-                    <span class="text-[13px] md:text-sm font-bold text-slate-100 group-hover:text-white">{{ Auth::user()->Alias ?: Auth::user()->Nombre ?: 'Usuario' }}</span>
-                </a>
+            <a href="{{ route('account') }}" class="flex items-center gap-3 group">
+                @php
+                    $nombre = Auth::user()->Nombre ?? '';
+                    $apellidos = Auth::user()->Apellidos ?? '';
+                    $inicial1 = strtoupper(substr($nombre, 0, 1));
+                    $inicial2 = strtoupper(substr($apellidos, 0, 1));
+                    $iniciales = $inicial1 . $inicial2;
+                @endphp
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-black text-sm md:text-base shadow-lg shadow-blue-600/20 group-hover:shadow-blue-600/40 transition-all">{{ $iniciales }}</div>
+                
+            </a>
             @else
                 <a href="{{ route('login') }}" class="text-[13px] md:text-sm font-bold text-slate-200 hover:text-white bg-slate-800 px-4 py-2 rounded-xl">Ingresar</a>
             @endauth

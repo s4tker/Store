@@ -17,7 +17,8 @@
             <h1 class="text-5xl font-black text-slate-900 tracking-tighter uppercase italic">Detalle <span class="text-slate-300">Pedido</span></h1>
         </div>
 
-        @if($pedido->estado_normalizado === 'pendiente')
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+            @if($pedido->estado_normalizado === 'pendiente')
 {{-- formulario para solicitar cancelacion del pedido --}}
             <form action="{{ route('pedidos.cancelar', $pedido->Id) }}" method="POST" onsubmit="return confirm('¿Confirmar cancelación?')">
                 @csrf
@@ -25,7 +26,11 @@
                     <svg class="w-4 h-4 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path d="M6 18L18 6M6 6l12 12"/></svg> Anular pedido
                 </button>
             </form>
-        @endif
+            @endif
+            <a href="{{ route('pedidos.index') }}" class="group flex items-center gap-3 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all">
+                <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 19l-7-7 7-7"></path></svg> Mis pedidos
+            </a>
+        </div>
     </header>
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
 <div class="lg:col-span-7 space-y-10">

@@ -17,6 +17,9 @@
             <p class="mt-4 text-slate-500 font-medium max-w-md"> Gestiona tus compras recientes, descarga facturas y sigue el estado de tus envíos.
             </p>
         </div>
+        <a href="{{ route('home') }}" class="group flex items-center gap-3 bg-slate-900 text-white hover:bg-blue-600 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all">
+            <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 19l-7-7 7-7"></path></svg> Ir al inicio
+        </a>
     </header>
 
     <!-- mensajes de exito o error de pedidos -->

@@ -53,7 +53,49 @@
                 <span class="w-8 h-[2px] bg-blue-600"></span> Información de contacto y personal
             </p>
         </header>
-<div class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-slate-200/60 border border-slate-100 relative overflow-hidden">
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+            <div class="lg:col-span-4">
+                <div class="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/60 border border-slate-100 sticky top-28 transition-all hover:shadow-2xl">
+                    <div class="text-center mb-8 pb-8 border-b border-slate-50">
+                        <div class="relative inline-block group">
+                            @php
+                                $nombre = $user->Nombre ?? '';
+                                $apellidos = $user->Apellidos ?? '';
+                                $inicial1 = strtoupper(substr($nombre, 0, 1));
+                                $inicial2 = strtoupper(substr($apellidos, 0, 1));
+                                $iniciales = $inicial1 . $inicial2;
+                            @endphp
+                            <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-[2rem] flex items-center justify-center text-white text-3xl font-black shadow-2xl shadow-blue-500/40 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                                {{ $iniciales }}
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center border border-slate-100">
+                                <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.16em] text-blue-600 mb-2">{{ $user->Alias ?: 'Usuario' }}</p>
+                        <h2 class="text-xl font-black text-slate-900">{{ $user->Nombre }} {{ $user->Apellidos }}</h2>
+                        <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-tighter mt-3">{{ $user->Correo }}</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <span class="text-[10px] font-black text-slate-400 uppercase">DNI</span>
+                            <span class="text-sm font-black text-slate-900 font-mono">{{ $user->Dni ?? '—' }}</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <span class="text-[10px] font-black text-slate-400 uppercase">Teléfono</span>
+                            <span class="text-sm font-black text-slate-900">{{ $user->Telefono ?? '—' }}</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <span class="text-[10px] font-black text-slate-400 uppercase">Rol</span>
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-tighter">{{ $user->Rol ?? 'Usuario' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8">
 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 blur-3xl opacity-50"></div>
 {{-- formulario que guarda nombre dni telefono y correo --}}
             
