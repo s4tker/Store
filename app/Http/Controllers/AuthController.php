@@ -259,17 +259,35 @@ class AuthController extends Controller
             'mode' => ['required', 'in:login,register'],
         ]);
 
+        $email = mb_strtolower(trim($data['email']));
+        $user = User::where('Correo', $email)->first();
+
+        if ($user) {
+            if (Hash::check($data['password'], $user->Password)) {
+                Auth::login($user);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Sesion iniciada correctamente.',
+                    'redirect' => $this->resolveRedirect($request),
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Clave incorrecta',
+            ], 422);
+        }
+
+        if ($data['mode'] === 'login') {
+            return response()->json([
+                'success' => false,
+                'message' => 'No existe una cuenta con ese correo',
+            ], 422);
+        }
+
         if ($data['mode'] === 'register') {
             try {
-                $email = mb_strtolower(trim($data['email']));
-
-                if (User::where('Correo', $email)->exists()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Este correo ya esta registrado',
-                    ], 422);
-                }
-
                 $otpCode = (string) random_int(100000, 999999);
 
                 PendingUserVerification::updateOrCreate(

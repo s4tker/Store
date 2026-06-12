@@ -17,6 +17,7 @@ return [
     // guarda la clave API de Brevo para correos transaccionales
     'brevo' => [
         'key' => env('BREVO_API_KEY'),
+        'verify_ssl' => env('BREVO_VERIFY_SSL'),
     ],
 
     // guarda datos de amazon
