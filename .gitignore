@@ -40,6 +40,7 @@ Homestead.json
 
 .env.backup
 .env.production
+Untitled.env
 .phpactor.json
 auth.json
 
