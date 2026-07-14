@@ -150,31 +150,3 @@ Abrir en el navegador:
 ```text
 http://127.0.0.1:8000
 ```
-
-### Comandos completos resumidos
-
-```bash
-cd /mnt/d/ISW-V_G02
-git clone https://github.com/s4tker/Store.git
-cd Store
-
-composer install
-
-cp /mnt/e/.env .env
-cp /mnt/e/Store.sql database/Store.sql
-
-/c/xampp/mysql/bin/mysql.exe -u root -e "CREATE DATABASE IF NOT EXISTS Store CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-/c/xampp/mysql/bin/mysql.exe -u root Store < database/Store.sql
-
-php artisan storage:link
-
-npm install
-npm run build
-
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
-
-php artisan serve
-```
